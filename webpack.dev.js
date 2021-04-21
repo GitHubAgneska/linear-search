@@ -27,7 +27,8 @@ module.exports = merge(common, {
                 use: [
                     'style-loader', // 3 - inject <style> in DOM (≠ prod where separate bundle css file with mini-css-extract-plugin)
                     { loader: 'css-loader', options: { url:true } },  // 2 - css => js ///  url true: Enable/disable url() resolving.
-                    'postcss-loader', // 1B - 
+                    { loader: 'postcss-loader',  // 1B - no options (base)
+                        options: { postcssOptions: { plugins: function () {  return [ require('autoprefixer') ]; }} }},// 1B - + options (Bootstrap)
                     'sass-loader'   // 1 - scss => css
                 ]
             }

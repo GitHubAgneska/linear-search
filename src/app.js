@@ -1,1 +1,2 @@
-console.log('dirty dancing coucou');
+import 'main';
+import '~bootstrap/scss/bootstrap';

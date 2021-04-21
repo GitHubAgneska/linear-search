@@ -41,14 +41,13 @@ module.exports = merge(common, {
         rules: [
             {
                 test: /\.scss$/,
-                // exclude: [/\.main.scss$/, /node_modules/],  // necessary ?
                 use: [
                     MiniCssExtractPlugin.loader, // 3 - extract css into files ( ≠ dev where css included in js bundle)
                     { loader: 'css-loader',  // 2 - css => js
                         options: { 
                             url:true,
-                            // modules: {localIdentContext: path.resolve(__dirname, "src")}, -style injection tests
-                        } }, 
+                        }
+                    }, 
                     'sass-loader'   // 1 - scss => css
                 ]
             }
