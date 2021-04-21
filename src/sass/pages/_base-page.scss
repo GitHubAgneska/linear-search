@@ -1,0 +1,12 @@
+/* ================================== */
+/* BASE PAGE (host to any view)*/
+/* ================================== */
+
+body  {
+    #root {
+        background: rgba(196, 196, 196, 0.4);
+        height: 100vh;
+        position: relative; // for absolute positioned children
+        width:90%; margin:auto;
+    }
+}

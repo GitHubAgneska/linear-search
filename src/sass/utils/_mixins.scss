@@ -1,0 +1,22 @@
+@use "sass:map";
+
+/* ======================================== */
+/* MIXINS */
+/* ======================================== */
+/* ======================================== */
+/* BREAKPOINTS*/
+/* ======================================== */
+$breakpoints: (xs-mobile: 375px, mobile: 600px, tablet: 768px, laptop: 992px, desktop: 1200px );
+
+
+/* ======================================== */
+/* COMMON ELEMENTS */
+/* ======================================== */
+@mixin icon-base {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@mixin icon-size( $size: 1.3em ) { 
+    font-size: $size;
+}
