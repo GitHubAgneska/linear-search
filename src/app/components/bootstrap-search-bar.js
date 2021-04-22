@@ -1,4 +1,6 @@
-
+/* ================================================== */
+/* TEMPLATE FOR MAIN SEARCHBAR */
+/* ================================================== */
 
 export class SearchBar extends HTMLElement {
     constructor() {
@@ -16,4 +18,4 @@ export class SearchBar extends HTMLElement {
     }
 }
 // register custom element in the built-in CustomElementRegistry object
-customElements.define('searchBar-component', SearchBar);
+customElements.define('searchbar-component', SearchBar);

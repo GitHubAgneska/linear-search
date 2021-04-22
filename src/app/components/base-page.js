@@ -9,7 +9,10 @@ export class BasePageTemplate extends HTMLElement {
 
         // generate 'main'
         const main = document.createElement('main');
+
         this.appendChild(main);
 
     }
 }
+// register custom element in the built-in CustomElementRegistry object
+customElements.define('base-page-component', BasePageTemplate);
