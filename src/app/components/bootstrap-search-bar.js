@@ -5,15 +5,16 @@
 export class SearchBar extends HTMLElement {
     constructor() {
         super();
+        let placeholder = 'Rechercher un ingrédient, appareil, ustensiles ou une recette';
         this.innerHTML = 
-            `<div class="input-group">
+            `<div class="input-group d-inline m-0">
                 <div class="form-outline">
-                    <input type="search" id="form1" class="form-control" />
-                    <label class="form-label" for="form1">Search</label>
+                    <input type="search" id="form1" class="form-control rounded" placeholder=${placeholder} aria-label="Search" aria-describedby="search-addon"/>
+                    <label class="form-label visuallyHidden" for="form1">Search</label>
+                    <span class="input-group-text border-0" id="search-addon">
+                        <i class="fas fa-search"></i>
+                    </span>
                 </div>
-                <button type="button" class="btn btn-primary">
-                    <i class="fas fa-search"></i>
-                </button>
             </div>`;
     }
 }

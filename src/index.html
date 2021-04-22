@@ -21,16 +21,34 @@
     <script src="../src/app/components/bootstrap-collapseMenus.js" type="module"></script>
 
     <link src="./main.css" rel="stylesheet" type="text/css">
+    <!-- (get rid of firefox err) -->
     <link rel="shortcut icon" href="#">
+
+    <!-- Font awesome cdn -->
+    <script src="https://kit.fontawesome.com/711ecd1ff8.js" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
-    <div id="root">
-        <header-template-component></header-template-component>
-        <searchBar-component></searchBar-component>
-        <card-component></card-component>
-        <collapsing-search-component></collapsing-search-component>
-    </div>
+    <header-template-component></header-template-component>
+
+    <main id="root">
+        <section id="main-search">
+            <searchBar-component></searchBar-component>
+        </section>
+
+        <section id="advanced-search" class="advanced-search">
+            <collapsing-search-component></collapsing-search-component>
+        </section>
+
+        <section id="recipes-list" class="recipes-list">
+            <card-component></card-component>
+            <card-component></card-component>
+            <card-component></card-component>
+            <card-component></card-component>
+            <card-component></card-component>
+        </section>
+    </main>
 </body>
 
 </html>

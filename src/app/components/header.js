@@ -9,9 +9,9 @@ export class HeaderBaseTemplate extends HTMLElement {
 
         this.innerHTML = 
         `
-        <div id="header-wrapper" class="header-wrapper">
+        <div id="header-wrapper" class="header-wrapper d-flex flex-col align-items-center justify-content-center">
             <header class="header" role="banner" id="header">
-                <div id="header__logo-wrapper" class="header__logo-wrapper" tabindex="0">
+                <div id="header__logo-wrapper" class="header__logo-wrapper text-center" tabindex="0">
                     <a href="" aria-label="Les petits plats homepage"><img src="./assets/icons/toque.png" alt="Les petits plats logo"></a>
                     <h1>Les petits plats</h1>
                 </div>
