@@ -1,6 +1,6 @@
 import {BasePageTemplate} from './app/components/base-page';
 import {CardTemplate} from './app/components/bootstrap-card';
-import {CollapsingMenus} from './app/components/bootstrap-collapseMenus';
+import {CollapsingMenu} from './app/components/bootstrap-collapseMenus';
 import {SearchBar} from './app/components/bootstrap-search-bar';
 
 /* ================================================== */

@@ -14,11 +14,14 @@ const myRequest = new Request( apiUrl, {
     'Content-Type': 'text/plain'
 });
 
-fetch( myRequest )
-    .then(response => response.text()) // get api data as 'text/plain'
-    .then(data => { 
-        let localData = parseApiData(data);  // convert data to JSON
-        console.log(localData);
-    })
-    .catch(error => console.error(error));
+function fetchData() {
+
+    fetch( myRequest )
+        .then(response => response.text()) // get api data as 'text/plain'
+        .then(data => { 
+            let localData = parseApiData(data);  // convert data to JSON
+            console.log(localData);
+        })
+        .catch(error => console.error(error));
+}
 

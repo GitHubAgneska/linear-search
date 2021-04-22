@@ -1,0 +1,24 @@
+/* =============================================== */
+/* MAIN BUTTON  */
+/* =============================================== */
+
+.main-btn {
+    height: 70px;
+    width: 170px;
+    color: white; font-weight:700;
+    // @include max-600px {font-size:1em; }// =16px
+    // @include min-600px {font-size:1.2em;} // 
+    text-transform: capitalize;
+    // @include border-radius(3px);
+    &--ingredients { //specific to contact btn - see _photographer-infos.scss
+       /*  @include max-600px {height: 35px; } */
+        //background-color: $blue-400;
+    }
+   /*  &--contact:focus, 
+    &--contact:active, 
+    &--contact:hover { 
+        background-color: $orange-main; 
+        color: black;
+        transition: background-color, 0.2s, ease-in-out !important;
+    } */
+}
