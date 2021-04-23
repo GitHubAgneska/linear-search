@@ -14,3 +14,6 @@ export class MenuListItem extends HTMLElement {
         `;
     }
 }
+// register custom element in the built-in CustomElementRegistry object
+customElements.define('menu-list-item-component', MenuListItem);
+
