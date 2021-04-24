@@ -1,27 +1,27 @@
 import './main.scss';
-import {parseApiData} from '../src/app/utils/parse-api-data';
+// import {parseApiData} from './app/utils/parse-api-data';
 
 
-const apiUrl = 'https://raw.githubusercontent.com/OpenClassrooms-Student-Center/P11-front-end-search-engine/master/recipes.js';
+// const apiUrl = 'https://raw.githubusercontent.com/OpenClassrooms-Student-Center/P11-front-end-search-engine/master/recipes.js';
+const localUrl = './assets/data.json';
 
-const myHeaders = new Headers();
-const myRequest = new Request( apiUrl, {
-    method: 'GET',
-    headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    credentials: 'include',
-    'Content-Type': 'text/plain'
-});
-
-function fetchData() {
-
-    fetch( myRequest )
-        .then(response => response.text()) // get api data as 'text/plain'
-        .then(data => { 
-            let localData = parseApiData(data);  // convert data to JSON
-            console.log(localData);
+fetch(localUrl)
+    .then(response => {
+        const contentType = response.headers.get('content-type');
+        // console.log('contentType is==', contentType);
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new TypeError('no JSON content was found!'); }
+            return response.json();
         })
-        .catch(error => console.error(error));
-}
+        .then(data => console.log(data));
+
+
+
+
+
+
+
+
+
+
 

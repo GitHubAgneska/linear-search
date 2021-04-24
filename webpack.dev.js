@@ -15,9 +15,6 @@ module.exports = merge(common, {
         new HtmlWebpackPlugin({
             template: './src/index.html', // use this template to generate dist/html and inside include script "main.[contenthash].js"
         }),
-        /* new CopyWebpackPlugin([
-            {from:'./src/assets/img',to:'images'} // same job as before
-        ]), */
     ],
     module: {
         rules: [

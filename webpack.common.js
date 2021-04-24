@@ -13,7 +13,7 @@ module.exports = {
                     loader: 'babel-loader', //for compatibility accross browsers
                     options: {
                             presets: ['@babel/preset-env'],  // could be done in a separate file babel.config.js
-                            plugins: [ '@babel/plugin-proposal-class-properties']
+                            plugins: ['@babel/plugin-transform-runtime', '@babel/plugin-proposal-class-properties', '@babel/plugin-syntax-dynamic-import']
                         }
                     }
                 },
