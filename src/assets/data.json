@@ -275,7 +275,7 @@
             "appliance": "Four",
             "ustensils": [
                 "moule à tartelettes (6)",
-                "casserolle"
+                "casserole"
             ]
         },
         {
@@ -318,7 +318,7 @@
             "appliance": "Four",
             "ustensils": [
                 "moule à gateaux",
-                "casserolle"
+                "casserole"
             ]
         },
         {
@@ -463,7 +463,7 @@
                 }
             ],
             "time": 40,
-            "description": "Éplucher les fruits et les couper en morceaux, les mettre dans une casserolle en ajoutant l'eau et le sucre vanillé. Laisser cuire 15 minutes en remuant régulièrement.",
+            "description": "Éplucher les fruits et les couper en morceaux, les mettre dans une casserole en ajoutant l'eau et le sucre vanillé. Laisser cuire 15 minutes en remuant régulièrement.",
             "appliance": "Casserole",
             "ustensils": [
                 "couteau",
@@ -853,7 +853,7 @@
             "ustensils": [
                 "moule à gateaux",
                 "fouet",
-                "casserolle"
+                "casserole"
             ]
         },
         {
@@ -1086,7 +1086,7 @@
             "description": "Emincer les blanc de poireaux et les faire chauffer dans 25 grammes de beurre. AJouter les pommes de terres coupées en morceaux. Ajouter l'eau et laisser mijoter pour 45 minutes. Chauffer l'oseille avec le beurre restant puis incorporer le tout. Mixez. Ajoutez la crème. Bon appetit.",
             "appliance": "Mixer",
             "ustensils": [
-                "casserolle",
+                "casserole",
                 "couteau"
             ]
         },
@@ -1148,7 +1148,7 @@
             "description": "Mettre tous les ingrédients dans une cocotte. ajouter de l'eau pour recouvrir l'ensemble et laisser cuirre à petit feur pour 1 heure. Passer au mixer. Salez, poivrez. C'est prêt",
             "appliance": "Mixer",
             "ustensils": [
-                "casserolle",
+                "casserole",
                 "cuillère en bois"
             ]
         },
@@ -1296,7 +1296,7 @@
                 }
             ],
             "time": 25,
-            "description": "Eplucher les patates douces et coupez les en morceaux. Les faire cuire durant 20 minute dans une casserolle d'eau bouillante. Passer au mixer en ajoutant la crème et l'huile d'olive à son gout. Salez, poivrez. Pressez l'orange et ajouter le jus à l'ensemble. Servir.",
+            "description": "Eplucher les patates douces et coupez les en morceaux. Les faire cuire durant 20 minute dans une casserole d'eau bouillante. Passer au mixer en ajoutant la crème et l'huile d'olive à son gout. Salez, poivrez. Pressez l'orange et ajouter le jus à l'ensemble. Servir.",
             "appliance": "Mixer",
             "ustensils": [
                 "couteau",

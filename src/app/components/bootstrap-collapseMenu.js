@@ -1,31 +1,32 @@
 /* ================================================== */
 /* TEMPLATE FOR A SEARCH MENU : button + collapsible menu body  */
 /* ================================================== */
+
 export class CollapsingMenu extends HTMLElement{
-    constructor(category){
+    constructor(categoryName){
         super();
-        
+
+        // this.setAttribute('data', categoryElements);
+
         this.innerHTML = `
 
             <button class="btn" 
                     type="button" 
                     data-bs-toggle="collapse" 
-                    data-bs-target="#${category}"
+                    data-bs-target="#${categoryName}"
                     aria-expanded="false"
-                    aria-controls="${category}">${category}
+                    aria-controls="${categoryName}">${categoryName}
                 
                 <i class="fas fa-angle-down"></i>
             </button>
-            <div class="collapse multi-collapse" id="${category}">
+            <div class="collapse multi-collapse" id="${categoryName}">
                 <div class="card card-body">
-                    <ul id="list">
+                    <ul id="${categoryName}-list">
                     </ul>
                 </div>
             </div>
         `;
     }
-    // populate ul list
-    // let listElement = this.innerHTML.querySelector('#list');
 
 }
 // register custom element in the built-in CustomElementRegistry object

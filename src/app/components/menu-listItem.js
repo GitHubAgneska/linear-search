@@ -3,13 +3,13 @@
 /* ================================================== */
 
 export class MenuListItem extends HTMLElement {
-    constructor() {
+    constructor(name) {
         super();
 
         this.innerHTML = `
 
             <li>
-                <a>test</a>
+                <a>${name}</a>
             </li>
         `;
     }
