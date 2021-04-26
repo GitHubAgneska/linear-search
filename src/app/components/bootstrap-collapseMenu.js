@@ -9,17 +9,17 @@ export class CollapsingMenu extends HTMLElement{
 
         this.innerHTML = `
             
-            <div class="menu-header" id="menu-header-${categoryName}">
+            <div class="menu-header" id="menu-header-${categoryName}" isActive="false">
                 <button class="btn" 
                         type="button" 
                         data-bs-toggle="collapse" 
                         data-bs-target="#${categoryName}"
                         aria-expanded="false"
                         aria-controls="${categoryName}">${categoryName}
-                        </button>
-                <i class="fas fa-angle-down"></i>
+                        <i class="fas fa-angle-down"></i>
+                </button>
             </div>
-            <div class="collapse multi-collapse category-menu" id="menu-${categoryName}">
+            <div class="collapse multi-collapse category-menu" id="menu-${categoryName}" isOpen="false">
                 <div class="card card-body">
                     <ul id="${categoryName}-list" class="list">
                     </ul>
@@ -58,11 +58,12 @@ export class CollapsingMenu extends HTMLElement{
         searchInputField.setAttribute('class', 'searchInput');
         searchInputField.setAttribute('placeholder', 'rechercher un ' + categoryName );
 
-        btn.addEventListener('click', function(event){
 
-            
+        menuHeader.addEventListener('click', function(event){
 
-            if ( menuToOpen.getAttribute('isOpen') === 'false' ) {
+            menuHeader = event.currentTarget;
+        
+            if ( menuHeader.getAttribute('isActive') === 'false' ) {
 
                 btn.style.display = 'none';
                 menuToOpen.style.display = 'block';
@@ -70,19 +71,18 @@ export class CollapsingMenu extends HTMLElement{
                 menuToOpen.setAttribute('isOpen', 'true');
                 menuHeader.setAttribute('isActive', 'true');
                 
-            } else {
-                btn.style.display = 'block';
+            } else  if ( menuHeader.getAttribute('isActive') === 'true' &&  menuToOpen.getAttribute('isOpen') === 'true'){
+                
                 menuToOpen.style.display = 'none';
-                
                 if ( menuHeader.contains(searchInputField) ) { menuHeader.removeChild(searchInputField);  }// remove input field
-                
-                // btn.removeAttribute('aria-expanded','true' );
+                btn.style.display = 'block';
                 btn.setAttribute('aria-expanded', 'false');
                 btnCategoryName = btnCategoryName + categoryName; // add category name
                 menuToOpen.setAttribute('isOpen', 'false');
                 menuHeader.removeAttribute('isActive', 'true');
+                menuHeader.setAttribute('isActive', 'false');
             }
-        });
+        }, false);
     }
 }
 

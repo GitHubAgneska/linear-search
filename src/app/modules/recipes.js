@@ -16,7 +16,6 @@ export const RecipeModule = (function() {
     
     // define vars
     const root = document.querySelector('#root'); // where 'main' content will be hosted
-    const body = Document.body;
     const localUrl = './assets/data.json';
     let localData;
     let recipes = []; // to store fetched data
