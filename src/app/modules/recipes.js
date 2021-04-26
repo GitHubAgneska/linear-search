@@ -127,8 +127,23 @@ export const RecipeModule = (function() {
         root.appendChild(advancedSearchWrapper);
     }
 
+
+    function processCurrentMainSearch(currentSearchTerm) {
+        console.log(currentSearchTerm);
+        if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
+            console.log('currentSearchTerm is 3 chars long');
+        }
+    }
+
+    function launchMainSearch(currentSearchTerm){
+        console.log('SEARCHING FOR: ', currentSearchTerm);
+    }
+
     
-    return {};
+    return {
+        processCurrentMainSearch: processCurrentMainSearch,
+        launchMainSearch: launchMainSearch
+    };
     
 
 

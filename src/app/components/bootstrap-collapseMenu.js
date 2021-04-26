@@ -49,8 +49,9 @@ export class CollapsingMenu extends HTMLElement{
         let btnCategoryName = btn.textContent;
         let caretIcon = this.querySelector('i');
 
-        // check - only one menu is open at the time
+        // check - only one menu can be open at the time
         const allMenus = this.querySelectorAll('#menu-' + categoryName);
+
 
         // set up input field that replaces category name inside btn when menu = open
         let searchInputField = document.createElement('input');
