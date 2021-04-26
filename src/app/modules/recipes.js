@@ -4,7 +4,7 @@ import {Recipe, Ingredient} from '../utils/recipe-model';
 import {SearchBar} from '../components/bootstrap-search-bar';
 import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
 import {CardTemplate} from '../components/bootstrap-card';
-
+import {HeaderBaseTemplate} from '../components/header';
 
 /* ================================================== */
 /* MODULE IN CHARGE OF ALL COMPONENTS + LOGIC */
@@ -16,6 +16,7 @@ export const RecipeModule = (function() {
     
     // define vars
     const root = document.querySelector('#root'); // where 'main' content will be hosted
+    const body = Document.body;
     const localUrl = './assets/data.json';
     let localData;
     let recipes = []; // to store fetched data
@@ -42,6 +43,8 @@ export const RecipeModule = (function() {
 
 
     function initDefaultView(recipes) {
+        const header = new HeaderBaseTemplate();
+        document.body.insertBefore(header, root);
         setUpMainSearchBar();
         initData(recipes);
     }

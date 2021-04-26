@@ -16,8 +16,8 @@ export class CollapsingMenu extends HTMLElement{
                         data-bs-target="#${categoryName}"
                         aria-expanded="false"
                         aria-controls="${categoryName}">${categoryName}
-                    <i class="fas fa-angle-down"></i>
-                </button>
+                        </button>
+                <i class="fas fa-angle-down"></i>
             </div>
             <div class="collapse multi-collapse category-menu" id="menu-${categoryName}">
                 <div class="card card-body">
@@ -61,22 +61,18 @@ export class CollapsingMenu extends HTMLElement{
         btn.addEventListener('click', function(event){
 
             
-            if ( menuToOpen.getAttribute('isOpen') === 'false' ) {
-                menuToOpen.style.display = 'block';
 
-                // menuHeader.removeChild(btn);
+            if ( menuToOpen.getAttribute('isOpen') === 'false' ) {
+
                 btn.style.display = 'none';
+                menuToOpen.style.display = 'block';
                 menuHeader.appendChild(searchInputField); // add input field
                 menuToOpen.setAttribute('isOpen', 'true');
                 menuHeader.setAttribute('isActive', 'true');
-
-                /* btn.removeAttribute('aria-expanded', 'false');
-                btn.setAttribute('aria-expanded', 'true');
-                btnCategoryName = ''; // remove category name*/
                 
             } else {
-                menuToOpen.style.display = 'none';
                 btn.style.display = 'block';
+                menuToOpen.style.display = 'none';
                 
                 if ( menuHeader.contains(searchInputField) ) { menuHeader.removeChild(searchInputField);  }// remove input field
                 

@@ -4,10 +4,14 @@
     collapsing-menu-component * {
         background-color: $primary !important;
         color: $white;
-        
-        .btn { color: $white !important; }
-        .searchInput { 
-            width:100%;
+        .menu-header {
+            height:50px;
+            button.btn { width:90% !important; color: $white !important; }
+            i { width:10%; }
+            .searchInput { 
+                width:90%;
+            }
+
         }
         .category-menu {
             width: 50%;
