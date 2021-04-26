@@ -109,14 +109,20 @@ export const RecipeModule = (function() {
         let categories = [ingredientsList, appliancesList, ustensilsList];
         const categoryNames = [ 'ingredients', 'appareils', 'ustensils'];
         
+        // set up wrapper for all 3 collapsing menus
+        const advancedSearchWrapper = document.createElement('section');
+        advancedSearchWrapper.setAttribute('class', 'adv-search-wrapper');
+        advancedSearchWrapper.classList.add('row');
+
         // generate advanced search : button + menu CONTAINER for each category
         categories.forEach( (category, index) => {
             let catName = categoryNames[index];
             // generate menu container for each category
             let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu     
 
-            root.appendChild(catComponent);
+            advancedSearchWrapper.appendChild(catComponent);
         });
+        root.appendChild(advancedSearchWrapper);
     }
 
     

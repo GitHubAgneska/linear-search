@@ -8,15 +8,17 @@ export class CollapsingMenu extends HTMLElement{
         super();
 
         this.innerHTML = `
-
-            <button class="btn" 
-                    type="button" 
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#${categoryName}"
-                    aria-expanded="false"
-                    aria-controls="${categoryName}">${categoryName}
-                <i class="fas fa-angle-down"></i>
-            </button>
+            
+            <div class="menu-header" id="menu-header-${categoryName}">
+                <button class="btn" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#${categoryName}"
+                        aria-expanded="false"
+                        aria-controls="${categoryName}">${categoryName}
+                    <i class="fas fa-angle-down"></i>
+                </button>
+            </div>
             <div class="collapse multi-collapse category-menu" id="menu-${categoryName}">
                 <div class="card card-body">
                     <ul id="${categoryName}-list" class="list">
@@ -24,6 +26,10 @@ export class CollapsingMenu extends HTMLElement{
                 </div>
             </div>
         `;
+
+        if (categoryName === 'ingredients') {
+            this.setAttribute('class', 'col-6');
+        } else { this.setAttribute('class', 'col-3'); }
 
         // get UL container for category items 
         const categoryUl = this.querySelector('#' + categoryName + '-list');
@@ -35,12 +41,13 @@ export class CollapsingMenu extends HTMLElement{
             categoryUl.appendChild(listELement);
         });
 
+        let menuHeader = this.querySelector('#menu-header-' + categoryName);
+        let menuToOpen = this.querySelector('#menu-'+ categoryName);
+
         // toggle menu
         let btn = this.querySelector('button');
         let btnCategoryName = btn.textContent;
-
-        const toggleMenuBtn = this.querySelector('i');
-        let menuToOpen = this.querySelector('#menu-'+ categoryName);
+        let caretIcon = this.querySelector('i');
 
         // check - only one menu is open at the time
         const allMenus = this.querySelectorAll('#menu-' + categoryName);
@@ -48,28 +55,36 @@ export class CollapsingMenu extends HTMLElement{
         // set up input field that replaces category name inside btn when menu = open
         let searchInputField = document.createElement('input');
         searchInputField.setAttribute('id', 'searchInto-'+ categoryName);
+        searchInputField.setAttribute('class', 'searchInput');
         searchInputField.setAttribute('placeholder', 'rechercher un ' + categoryName );
 
-        toggleMenuBtn.addEventListener('click', function(event){
+        btn.addEventListener('click', function(event){
 
-            btn = event.target;
-
+            
             if ( menuToOpen.getAttribute('isOpen') === 'false' ) {
                 menuToOpen.style.display = 'block';
-                btn.removeAttribute('aria-expanded', 'false');
-                btn.setAttribute('aria-expanded', 'true');
-                btnCategoryName = ''; // remove category name
-                btn.appendChild(searchInputField); // add input field
-                menuToOpen.setAttribute('isOpen', 'true');
 
+                // menuHeader.removeChild(btn);
+                btn.style.display = 'none';
+                menuHeader.appendChild(searchInputField); // add input field
+                menuToOpen.setAttribute('isOpen', 'true');
+                menuHeader.setAttribute('isActive', 'true');
+
+                /* btn.removeAttribute('aria-expanded', 'false');
+                btn.setAttribute('aria-expanded', 'true');
+                btnCategoryName = ''; // remove category name*/
+                
             } else {
                 menuToOpen.style.display = 'none';
-                btn.removeAttribute('aria-expanded','true' );
+                btn.style.display = 'block';
+                
+                if ( menuHeader.contains(searchInputField) ) { menuHeader.removeChild(searchInputField);  }// remove input field
+                
+                // btn.removeAttribute('aria-expanded','true' );
                 btn.setAttribute('aria-expanded', 'false');
-                if ( btn.contains(searchInputField) ) { btn.removeChild(searchInputField);  }// remove input field
-               
                 btnCategoryName = btnCategoryName + categoryName; // add category name
                 menuToOpen.setAttribute('isOpen', 'false');
+                menuHeader.removeAttribute('isActive', 'true');
             }
         });
     }

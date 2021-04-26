@@ -1,9 +1,21 @@
 // Advanced search menus
-.category-menu {
-    width: 50%;
-    .list {
-        display: flex; flex-flow: row wrap;
-        li a { width: 30%; }
+.adv-search-wrapper {
+
+    collapsing-menu-component * {
+        background-color: $primary !important;
+        color: $white;
+        
+        .btn { color: $white !important; }
+        .searchInput { 
+            width:100%;
+        }
+        .category-menu {
+            width: 50%;
+            .list {
+                display: flex; flex-flow: row wrap;
+                li a { width: 30%; }
+            }
+        }
     }
 
 }

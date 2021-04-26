@@ -20,3 +20,21 @@ $breakpoints: (xs-mobile: 375px, mobile: 600px, tablet: 768px, laptop: 992px, de
 @mixin icon-size( $size: 1.3em ) { 
     font-size: $size;
 }
+
+
+/* ======================================== */
+/* POSITION */
+/* ======================================== */
+@mixin centered {
+    display: flex;       
+    justify-content: center;
+    align-items: center;
+}
+
+/* ======================================== */
+/* FLEXBOX */
+/* ======================================== */
+@mixin flex($dir, $wraptype) {
+    display: flex;
+    flex-flow: $dir $wraptype;
+}
