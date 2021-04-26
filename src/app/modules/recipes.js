@@ -1,12 +1,10 @@
-import {HeaderBaseTemplate} from '../components/header';
-import {BasePageTemplate} from '../components/base-page';
-import {CardTemplate} from '../components/bootstrap-card';
-import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
-import {MenuListItem} from '../components/menu-listItem';
-import {SearchBar} from '../components/bootstrap-search-bar';
-import {Recipe, Ingredient} from '../utils/recipe-model';
+
 import {RecipeFactory, IngredientFactory} from '../utils/recipe-factory';
-import {fetchAllData, setLocal} from '../utils/fetch-data';
+import {Recipe, Ingredient} from '../utils/recipe-model';
+import {SearchBar} from '../components/bootstrap-search-bar';
+import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
+import {CardTemplate} from '../components/bootstrap-card';
+
 
 /* ================================================== */
 /* MODULE IN CHARGE OF ALL COMPONENTS + LOGIC */
@@ -20,7 +18,7 @@ export const RecipeModule = (function() {
     const root = document.querySelector('#root'); // where 'main' content will be hosted
     const localUrl = './assets/data.json';
     let localData;
-    let recipes = []; // to store fetch data
+    let recipes = []; // to store fetched data
     const recipesList = []; // to store all recipes
     let ingredientsList = [];
     let appliancesList = [];
@@ -46,7 +44,6 @@ export const RecipeModule = (function() {
     function initDefaultView(recipes) {
         setUpMainSearchBar();
         initData(recipes);
-        // setUpAdvancedSearchView(recipes);
     }
 
     // set up main search bar
@@ -56,8 +53,7 @@ export const RecipeModule = (function() {
     }
 
     // cast retrieved data into local recipe model
-    // each recipe contains an ingredients array, an appliance string, an ustensils array
-    //  
+    // each recipe contains an ingredients array, an appliance string, an ustensils array 
     function initData(recipes) {
         let recipeFactory = new RecipeFactory();
         let ingredientFactory = new IngredientFactory();
@@ -100,65 +96,23 @@ export const RecipeModule = (function() {
     }
 
 
-    // advanced search is based on DEFAULT OR SORTED recipe LIST
+    // ADVANCED SEARCH = based on DEFAULT OR SORTED LIST of recipes 
     // components are generated accordingly
     function setUpAdvancedSearchView(ingredientsList, appliancesList, ustensilsList){
-
         // console.log('ingredientsList, appliancesList, ustensilsList===', ingredientsList, appliancesList, ustensilsList);
-        let categoriesContent = [ingredientsList, appliancesList, ustensilsList];
+        let categories = [ingredientsList, appliancesList, ustensilsList];
+        const categoryNames = [ 'ingredients', 'appareils', 'ustensils'];
         
         // generate advanced search : button + menu CONTAINER for each category
-        categoriesContent.forEach(categoryContent => {
-
-            // generate li item element for each item of each category
-            let collapsingMenuUl = document.createElement('ul');
-
-            categoryContent.forEach(el => {
-                
-                let listELement = new MenuListItem(el.name);
-                // let listELement = generateMenuListItem(el);
-            
-                collapsingMenuUl.appendChild(listELement);
-            });
-
+        categories.forEach(category => {
             // generate menu container for each category
-            let catComponent = new CollapsingMenu('name');
-            // document.appendChild(collapsingMenuUl);
+            let catComponent = new CollapsingMenu('name', category); // population of each menu container = done inside CollapsingMenu     
+
             root.appendChild(catComponent);
         });
-
-        
-        // populate each menu container with category list items
     }
 
-    // how each menu list item is generated
-    function generateMenuListItem(item) {
-        let newEl = document.createElement('li');
-        let newElAnchor = document.createElement('a');
-        let elContent = document.createTextNode(item.name);
-        newElAnchor.appendChild(elContent);
-
-        newEl.appendChild(newElAnchor);
-        return newEl;
-    }
     
-
-/*     function getCategoryCurrentElements(category) {
-        let categoryName = `${category}`;
-        console.log(categoryName);
-        let currentElementsOfCategory = [];
-
-        // retrieve each category current elements 
-        recipesList.forEach(recipe => {
-            if ( typeof(recipe.categoryName) === Array ) {
-                currentElementsOfCategory.push(recipe.categoryName)
-            }
-            currentElementsOfCategory.push(recipe.categoryName);
-        });
-        console.log('currentElementsOfCategory==', currentElementsOfCategory);
-        return currentElementsOfCategory;
-    } */
-
     return {};
     
 

@@ -1,12 +1,11 @@
 /* ================================================== */
 /* TEMPLATE FOR A SEARCH MENU : button + collapsible menu body  */
 /* ================================================== */
+import {MenuListItem} from '../components/menu-listItem';
 
 export class CollapsingMenu extends HTMLElement{
-    constructor(categoryName){
+    constructor(categoryName, categoryElements){
         super();
-
-        // this.setAttribute('data', categoryElements);
 
         this.innerHTML = `
 
@@ -26,9 +25,19 @@ export class CollapsingMenu extends HTMLElement{
                 </div>
             </div>
         `;
-    }
 
+        const categoryUl = this.querySelector('#' + categoryName + '-list');
+        
+        // populate each menu container with category list items
+        categoryElements.forEach(el => {
+            // generate li item element for each item of each category
+            let listELement = new MenuListItem(el);
+        
+            categoryUl.appendChild(listELement);
+        });
+    }
 }
+
 // register custom element in the built-in CustomElementRegistry object
 customElements.define('collapsing-menu-component', CollapsingMenu);
 
