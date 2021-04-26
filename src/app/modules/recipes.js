@@ -72,13 +72,19 @@ export const RecipeModule = (function() {
                 );
             
             // take advantage of this loop to retrieve category elements
-            appliancesList.push(recipe.appliance);
+            if (!appliancesList.includes(recipe.appliance)) { appliancesList.push(recipe.appliance); }
 
             const recipeUst = recipe.ustensils;
-            recipeUst.forEach(ust => { ustensilsList.push(ust); });
+            recipeUst.forEach(ust => {
+                if ( !ustensilsList.includes(ust) ) // skip if already in list
+                ustensilsList.push(ust);
+            });
 
             const recipeIngr = recipe.ingredients;
-            recipeIngr.forEach( ingre => {ingredientsList.push(ingre.ingredient); });
+            recipeIngr.forEach( ingre => {
+                if ( !ingredientsList.includes(ingre) ) // skip if already in list
+                ingredientsList.push(ingre.ingredient);
+            });
 
 
             // for each ingredient of recipe's ingredients array, cast ingredient into new ingredient object (UI display purposes)
@@ -104,9 +110,10 @@ export const RecipeModule = (function() {
         const categoryNames = [ 'ingredients', 'appareils', 'ustensils'];
         
         // generate advanced search : button + menu CONTAINER for each category
-        categories.forEach(category => {
+        categories.forEach( (category, index) => {
+            let catName = categoryNames[index];
             // generate menu container for each category
-            let catComponent = new CollapsingMenu('name', category); // population of each menu container = done inside CollapsingMenu     
+            let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu     
 
             root.appendChild(catComponent);
         });

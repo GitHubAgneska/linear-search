@@ -1,0 +1,9 @@
+// Advanced search menus
+.category-menu {
+    width: 50%;
+    .list {
+        display: flex; flex-flow: row wrap;
+        li a { width: 30%; }
+    }
+
+}
