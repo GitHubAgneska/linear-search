@@ -51,7 +51,6 @@ export class CollapsingMenu extends HTMLElement{
         // check - only one menu can be open at the time
         const allMenus = this.querySelectorAll('#menu-' + categoryName);
 
-
         // set up input field that replaces category name inside btn when menu = open
         let searchInputField = document.createElement('input');
         searchInputField.setAttribute('id', 'searchInto-'+ categoryName);

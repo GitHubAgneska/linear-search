@@ -2,7 +2,8 @@
 import {RecipeFactory, IngredientFactory} from '../utils/recipe-factory';
 import {Recipe, Ingredient} from '../utils/recipe-model';
 import {SearchBar} from '../components/bootstrap-search-bar';
-import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
+import {CollapsingMenu} from '../components/advanced-search-menu';
+// import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
 import {CardTemplate} from '../components/bootstrap-card';
 import {HeaderBaseTemplate} from '../components/header';
 
@@ -134,7 +135,7 @@ export const RecipeModule = (function() {
             let catName = categoryNames[index];
             // generate menu container for each category
             let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu     
-            
+
             advancedSearchWrapper.appendChild(catComponent);
         });
         root.insertBefore(advancedSearchWrapper, recipesListWrapper);
