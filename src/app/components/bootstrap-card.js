@@ -2,15 +2,16 @@
 /* RECIPE TEMPLATE  */
 /* ================================================== */
 export class CardTemplate extends HTMLElement {
-    constructor() {
+    constructor(recipe) {
         super();
 
+        this.setAttribute('class', 'col');
         this.innerHTML = 
             `
-            <div class="card">
+            <div class="card recipe-card col">
                 <img src="" class="card-img-top" alt="">
                 <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
+                    <h5 class="card-title">${recipe.name}</h5>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                     <a href="#" class="btn btn-primary">Go somewhere</a>
                 </div>

@@ -72,7 +72,7 @@ export const RecipeModule = (function() {
                 recipe.appliance,
                 recipe.ustensils
                 );
-            
+                
             // take advantage of this loop to retrieve category elements
             if (!appliancesList.includes(recipe.appliance)) { appliancesList.push(recipe.appliance); }
 
@@ -98,9 +98,21 @@ export const RecipeModule = (function() {
                 );
                 recipe.ingredients.push(newIngredient);
             });
-            recipesList.push(newRecipe);
+            generateRecipeCard(recipe); // generate view for recipe
+
+            recipesList.push(newRecipe); // all recipes casted, ordered as coming from api (default)
         });
         setUpAdvancedSearchView(ingredientsList, appliancesList, ustensilsList);
+    }
+
+    const recipesListWrapper = document.createElement('section');
+    recipesListWrapper.setAttribute('id', 'recipes-list');
+    recipesListWrapper.setAttribute('class', 'row');
+    
+    function generateRecipeCard(recipe){
+        let newRecipeCard = new CardTemplate(recipe);
+        recipesListWrapper.appendChild(newRecipeCard);
+        root.appendChild(recipesListWrapper);
     }
 
 
@@ -124,7 +136,7 @@ export const RecipeModule = (function() {
 
             advancedSearchWrapper.appendChild(catComponent);
         });
-        root.appendChild(advancedSearchWrapper);
+        root.insertBefore(advancedSearchWrapper, recipesListWrapper);
     }
 
 

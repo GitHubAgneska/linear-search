@@ -34,11 +34,8 @@ body {
                 position: absolute;z-index:5; // search menus pos when toggled open
             }
         }
-
-
-        .recipes-list {
-            width: 100%;
-            display: flex; flex-flow: row wrap;
+        .recipesListWrapper {
+            
         }
     }
 }
