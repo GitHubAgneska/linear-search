@@ -6,7 +6,6 @@ import {MenuListItem} from '../components/menu-listItem';
 export class CollapsingMenu extends HTMLElement{
     constructor(categoryName, categoryElements){
         super();
-
         this.innerHTML = `
             
             <div class="menu-header" id="menu-header-${categoryName}" isActive="false">

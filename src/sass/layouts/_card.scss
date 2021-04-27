@@ -2,16 +2,18 @@
 card-component {
     margin:2%;
     display: flex;
+
     .card.recipe-card {
         width: 400px !important; height: 350px !important;
         img { height:45%; width:100%;}
+        
         .card-body {
             padding: 2% 7% !important;
+
             .card-header-recipe {
-                margin-bottom: 2%;
-                * { font-weight : 700;}
-                
-                h5 { font-size:1em;}
+                padding: 4% 0;
+                h5 { font-weight : 500; font-size: 1em;}
+            
                 .card-time {
                     .far.fa-clock {
                         @include icon-base;
@@ -21,8 +23,16 @@ card-component {
             }
         }
         .recipe-description {
-            .ingredients-list li, p  { font-size: 0.8em;}
-            .recipe-txt { max-height:100%; overflow: scroll; }
+            height: 60%;
+            overflow: hidden;
+            .ingredients-list li, p  { font-size: 0.7em;}
+            .recipe-txt { 
+                height: 100%;
+                p {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                }
+            }
         }
     }
 }

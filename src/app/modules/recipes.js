@@ -127,13 +127,14 @@ export const RecipeModule = (function() {
         const advancedSearchWrapper = document.createElement('section');
         advancedSearchWrapper.setAttribute('class', 'adv-search-wrapper');
         advancedSearchWrapper.classList.add('row');
+        advancedSearchWrapper.classList.add('m-0');
 
         // generate advanced search : button + menu CONTAINER for each category
         categories.forEach( (category, index) => {
             let catName = categoryNames[index];
             // generate menu container for each category
             let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu     
-
+            
             advancedSearchWrapper.appendChild(catComponent);
         });
         root.insertBefore(advancedSearchWrapper, recipesListWrapper);

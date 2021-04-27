@@ -12,8 +12,8 @@ export class CardTemplate extends HTMLElement {
                 <img src="" class="card-img-top" alt="">
                 <div class="card-body">
                     <div class="card-header-recipe row">
-                        <h5 class="card-title col-8 m-0 p-0">${recipe.name}</h5>
-                        <div class="card-time col-4 row">
+                        <h5 class="card-title col-10 m-0 p-0">${recipe.name}</h5>
+                        <div class="card-time col-2 row m-0 p-0">
                             <i class="far fa-clock col m-0 p-0"></i>
                             <h5 class="time col m-0 p-0">${recipe.time}min</h5>
                         </div>
@@ -21,8 +21,8 @@ export class CardTemplate extends HTMLElement {
                     <div class="recipe-description row">
                         <ul id="ingredients-list" class="ingredients-list col m-0 p-0">
                         </ul>
-                        <div class="recipe-txt col">
-                            <p>${recipe.description}</p>
+                        <div class="recipe-txt col m-0 p-0">
+                            <p class="m-0">${recipe.description}</p>
                         </div>
                     </div>
                 </div>
@@ -36,7 +36,7 @@ export class CardTemplate extends HTMLElement {
                 let newListItem = document.createElement('li');
                 let newListItemContent = document.createTextNode(ingredient.ingredient);
                 if (ingredient.quantity) { newListItemContent.textContent+= ': ' + ingredient.quantity; }
-                if (ingredient.unit) { newListItemContent.textContent+= ingredient.unit; }
+                if (ingredient.unit) { newListItemContent.textContent+= ' ' + ingredient.unit; }
 
                 newListItem.appendChild(newListItemContent);
                 ingredientsList.appendChild(newListItem);

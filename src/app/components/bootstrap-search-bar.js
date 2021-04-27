@@ -9,6 +9,7 @@ export class SearchBar extends HTMLElement {
         super();
         const placeholder = 'Rechercher un ingrédient, appareil, ustensile ou une recette';
 
+        this.setAttribute('class', 'main-search');
         this.innerHTML = 
             `<div class="input-group d-inline m-0">
                 <div class="form-outline d-flex flex-row">

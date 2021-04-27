@@ -21,22 +21,13 @@ body {
     flex-direction: column;
     width: 100%; height: 100vh;
     justify-content: space-between;
+    header-template-component {margin-bottom: 2%; }
     
     #root {
+        position: relative; // for collapsing menus abs pos
         background: rgba(196, 196, 196, 0.4);
-        height: 100vh;
         position: relative; // for absolute positioned children
         width:90%; margin:auto;
-        #main-search { margin-bottom: 25px;}
-
-        #advanced-search {
-            #multiCollapse {
-                position: absolute;z-index:5; // search menus pos when toggled open
-            }
-        }
-        .recipesListWrapper {
-            
-        }
     }
 }
 
