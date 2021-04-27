@@ -1,8 +1,18 @@
 
 card-component {
+    margin:2%;
     display: flex;
-    .recipe-card {
-        img {}
-        .card-body {}
+    .card.recipe-card {
+        width: 400px !important; height: 350px !important;
+        img { height:45%; width:100%;}
+        .card-body {
+            .card-header {
+                height:20%;
+                .card-time {}
+            }
+        }
+        .recipe-description {
+            p { font-size: 0.5em;}
+        }
     }
 }
