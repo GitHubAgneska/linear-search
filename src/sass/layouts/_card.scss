@@ -6,13 +6,23 @@ card-component {
         width: 400px !important; height: 350px !important;
         img { height:45%; width:100%;}
         .card-body {
-            .card-header {
-                height:20%;
-                .card-time {}
+            padding: 2% 7% !important;
+            .card-header-recipe {
+                margin-bottom: 2%;
+                * { font-weight : 700;}
+                
+                h5 { font-size:1em;}
+                .card-time {
+                    .far.fa-clock {
+                        @include icon-base;
+                        @include icon-size;
+                    }
+                }
             }
         }
         .recipe-description {
-            p { font-size: 0.5em;}
+            .ingredients-list li, p  { font-size: 0.8em;}
+            .recipe-txt { max-height:100%; overflow: scroll; }
         }
     }
 }

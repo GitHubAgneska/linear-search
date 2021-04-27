@@ -8,31 +8,36 @@ export class CardTemplate extends HTMLElement {
         this.setAttribute('class', 'col');
         this.innerHTML = 
             `
-            <div class="card recipe-card col">
+            <div class="card recipe-card col m-0 p-0">
                 <img src="" class="card-img-top" alt="">
                 <div class="card-body">
                     <div class="card-header-recipe row">
-                        <h5 class="card-title col-8">${recipe.name}</h5>
+                        <h5 class="card-title col-8 m-0 p-0">${recipe.name}</h5>
                         <div class="card-time col-4 row">
-                            <i class="far fa-clock col"></i>
-                            <h5 class="time col">${recipe.time}min</h5>
+                            <i class="far fa-clock col m-0 p-0"></i>
+                            <h5 class="time col m-0 p-0">${recipe.time}min</h5>
                         </div>
                     </div>
                     <div class="recipe-description row">
-                        <ul id="ingredients-list" class="col>
+                        <ul id="ingredients-list" class="ingredients-list col m-0 p-0">
                         </ul>
-                        <p class="col">${recipe.description}</p>
+                        <div class="recipe-txt col">
+                            <p>${recipe.description}</p>
+                        </div>
                     </div>
                 </div>
             </div>
             `;
 
             const ingredientsList = this.querySelector('#ingredients-list');
-            const recipeDescr = this.querySelector('#recipe-description');
 
             recipe.ingredients.forEach(ingredient => {
+    
                 let newListItem = document.createElement('li');
-                let newListItemContent = document.createTextNode(ingredient.ingredient + ':' + ingredient.quantity +  ingredient.unit || null);
+                let newListItemContent = document.createTextNode(ingredient.ingredient);
+                if (ingredient.quantity) { newListItemContent.textContent+= ': ' + ingredient.quantity; }
+                if (ingredient.unit) { newListItemContent.textContent+= ingredient.unit; }
+
                 newListItem.appendChild(newListItemContent);
                 ingredientsList.appendChild(newListItem);
 

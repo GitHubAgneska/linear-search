@@ -90,14 +90,14 @@ export const RecipeModule = (function() {
 
 
             // for each ingredient of recipe's ingredients array, cast ingredient into new ingredient object (UI display purposes)
-            recipe.ingredients.forEach(ingredient => {
+            /* recipe.ingredients.forEach(ingredient => {
                 let newIngredient = ingredientFactory.create(
                     ingredient.ingredient,
                     ingredient.quantity,
                     ingredient.unit
                 );
                 recipe.ingredients.push(newIngredient);
-            });
+            }); */
             generateRecipeCard(recipe); // generate view for recipe
 
             recipesList.push(newRecipe); // all recipes casted, ordered as coming from api (default)
