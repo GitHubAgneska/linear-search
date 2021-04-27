@@ -60,10 +60,28 @@ export class CollapsingMenu extends HTMLElement{
         let caretUp = document.createElement('i');
         caretUp.setAttribute('class', 'fas fa-angle-up');
 
-        menuHeader.addEventListener('click', function(event){
+
+        menuHeader.addEventListener('click', toggleMenu, false);
+
+        // remove click event from menu header if click inside search input
+        searchInputField.addEventListener('click', function(event){ 
+            menuHeader.removeEventListener('click', toggleMenu );
+        }, false);
+        // then add input event on search input
+        let searchTerm = '';
+        searchInputField.addEventListener('input', function(event){
+            searchTerm = event.target.value;
+            processSearchInput(searchTerm);
+        });
+
+        function processSearchInput(searchTerm) {
+            console.log('searchTerm==', searchTerm);
+        }
+
+        function toggleMenu(event) {
 
             menuHeader = event.currentTarget;
-        
+
             if ( menuHeader.getAttribute('isActive') === 'false' ) {
 
                 btn.style.display = 'none';
@@ -73,6 +91,9 @@ export class CollapsingMenu extends HTMLElement{
 
                 menuToOpen.setAttribute('isOpen', 'true');
                 menuHeader.setAttribute('isActive', 'true');
+
+                
+
                 
             } else  if ( menuHeader.getAttribute('isActive') === 'true' &&  menuToOpen.getAttribute('isOpen') === 'true'){
                 
@@ -88,7 +109,7 @@ export class CollapsingMenu extends HTMLElement{
                 menuHeader.removeAttribute('isActive', 'true');
                 menuHeader.setAttribute('isActive', 'false');
             }
-        }, false);
+        }
     }
 }
 
