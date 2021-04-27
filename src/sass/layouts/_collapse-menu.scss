@@ -19,7 +19,8 @@
         }
         i { width:10%; float:right;}
         
-        .searchInput {  width:100%; height: 70px; }
+        .searchInput {  width:80%; height: 70px; }
+        .fas.fa-angle-up {height:70px; width:20%; @include centered;} // caret up
     }
     .category-menu {
         height:50vh;

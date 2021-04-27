@@ -57,7 +57,8 @@ export class CollapsingMenu extends HTMLElement{
         searchInputField.setAttribute('id', 'searchInto-'+ categoryName);
         searchInputField.setAttribute('class', 'searchInput');
         searchInputField.setAttribute('placeholder', 'rechercher un ' + categoryName );
-
+        let caretUp = document.createElement('i');
+        caretUp.setAttribute('class', 'fas fa-angle-up');
 
         menuHeader.addEventListener('click', function(event){
 
@@ -68,13 +69,18 @@ export class CollapsingMenu extends HTMLElement{
                 btn.style.display = 'none';
                 menuToOpen.style.display = 'block';
                 menuHeader.appendChild(searchInputField); // add input field
+                menuHeader.appendChild(caretUp); // + caret
+
                 menuToOpen.setAttribute('isOpen', 'true');
                 menuHeader.setAttribute('isActive', 'true');
                 
             } else  if ( menuHeader.getAttribute('isActive') === 'true' &&  menuToOpen.getAttribute('isOpen') === 'true'){
                 
                 menuToOpen.style.display = 'none';
-                if ( menuHeader.contains(searchInputField) ) { menuHeader.removeChild(searchInputField);  }// remove input field
+                if ( menuHeader.contains(searchInputField) ) { 
+                    menuHeader.removeChild(searchInputField);// remove input field
+                    menuHeader.removeChild(caretUp);
+                }
                 btn.style.display = 'block';
                 btn.setAttribute('aria-expanded', 'false');
                 btnCategoryName = btnCategoryName + categoryName; // add category name
