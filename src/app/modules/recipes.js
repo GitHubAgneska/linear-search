@@ -6,6 +6,7 @@ import {CollapsingMenu} from '../components/advanced-search-menu';
 // import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
 import {CardTemplate} from '../components/bootstrap-card';
 import {HeaderBaseTemplate} from '../components/header';
+import {search} from '../utils/search-algo';
 
 /* ================================================== */
 /* MODULE IN CHARGE OF ALL COMPONENTS + LOGIC */
@@ -144,8 +145,10 @@ export const RecipeModule = (function() {
 
     function processCurrentMainSearch(currentSearchTerm) {
         console.log(currentSearchTerm);
+        
         if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
             console.log('currentSearchTerm is 3 chars long');
+            search(recipesList, currentSearchTerm);
         }
     }
 

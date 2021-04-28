@@ -26,11 +26,9 @@ export class SearchBar extends HTMLElement {
         let searchIcon = this.querySelector('#search-addon');
 
         mainInputSearch.addEventListener('input', function(event){
-
             currentSearchTerm = event.target.value;
             RecipeModule.processCurrentMainSearch(currentSearchTerm); // process input as it enters field
             return currentSearchTerm;
-            
         }, false);
 
 
