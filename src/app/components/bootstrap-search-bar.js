@@ -23,16 +23,31 @@ export class SearchBar extends HTMLElement {
 
         const mainInputSearch = this.querySelector('#main-search-input');
         let currentSearchTerm = '';
+        let inputFieldTouched = false;
+        let newSearch = false;
         let searchIcon = this.querySelector('#search-addon');
 
         mainInputSearch.addEventListener('input', function(event){
             currentSearchTerm = event.target.value;
             RecipeModule.processCurrentMainSearch(currentSearchTerm); // process input as it enters field
-            return currentSearchTerm;
+            inputFieldTouched = true;
+            handleManualSearchReset();
+
         }, false);
 
+        // case where user deletes chars until field = empty
+        // when input has been touched + searchterm is empty + focus still on input
+        // 
+        function handleManualSearchReset(){
+            if ( inputFieldTouched && !currentSearchTerm && mainInputSearch == document.activeElement ){
+                console.log('NEW SEARCH PENDING');
+            }
 
+        }
+
+        // case where user confirm searchterm manually
         searchIcon.addEventListener('click', function(event, currentSearchTerm ){
+            currentSearchTerm = mainInputSearch.value;
             console.log('currentSearchTerm==', currentSearchTerm);
             if (currentSearchTerm && currentSearchTerm !== null) {
                 RecipeModule.launchMainSearch(currentSearchTerm);
