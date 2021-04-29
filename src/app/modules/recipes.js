@@ -147,24 +147,43 @@ export const RecipeModule = (function() {
         if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
             console.log('currentSearchTerm is 3 chars long');
             search(recipes, currentSearchTerm); // launch search for term in recipes list
-            // addSuggestionsList();
         }
     }
 
-    function addSuggestionsList(searchterm, suggestions){
+     // when an array of suggestions for the search term is ready to be displayed in UI
+    function processSearchSuggestions(searchterm, suggestions){
+        console.log('searchterm==', searchterm, 'suggestions==', suggestions);
+
+    }
+    
+    function initSuggestionsWrapper(){
 
         let parentWhereSuggestionsWrapperGoes = document.querySelector('.form-outline');
         // create a DIV element that will contain the suggestions
         let suggestionsWrapper = document.createElement('div');
         suggestionsWrapper.setAttribute('id', 'main-suggestions');
         suggestionsWrapper.setAttribute('class', 'main-suggestions');
+
         // append div to parent
         parentWhereSuggestionsWrapperGoes.appendChild(suggestionsWrapper);
-        suggestions.forEach( sug => { 
-            let newSuggestion = document.createElement('p');
-            let newSuggestedWord = document.createTextNode(sug);
-            newSuggestion.appendChild(newSuggestedWord);
-        });
+    }
+
+    // for each new found suggestion, generate list item in suggestions wrapper
+    function addSuggestionInList(suggestion){
+
+        let newSuggestion = document.createElement('p');
+        let newSuggestedWord = document.createTextNode(suggestion);
+        newSuggestion.appendChild(newSuggestedWord);
+
+        let suggestionsWrapper = document.querySelector('#main-suggestions');
+        suggestionsWrapper.appendChild(newSuggestion);
+    }
+
+    // suggestions list should be updated at each new keystroke
+    function resetSuggestions(suggestionsWrapper){
+        let parent = suggestionsWrapper;
+        while (parent.firstChild) { parent.removeChild(parent.firstChild); }
+        return parent;
     }
     
     // when an array of recipes search results is ready to be displayed in UI
@@ -173,16 +192,14 @@ export const RecipeModule = (function() {
         // resetSearch(resultsList);
     }
     
-    // when an array of suggestions for the search term is ready to be displayed in UI
-    function processSearchSuggestions(searchterm, suggestions){
-        console.log('searchterm==', searchterm, 'suggestions==', suggestions);
-    }
+
 
     
-
-
     function resetSearch(arr){ // arr = resultsList or/and suggestions
-        while( arr.length > 0  ) { arr.pop(); } // remove arr items
+        if (arr) {
+            while( arr.length > 0  ) { arr.pop(); } // remove arr items
+        }
+        else { return; }
     }
     
 
@@ -197,7 +214,9 @@ export const RecipeModule = (function() {
         processCurrentMainSearch: processCurrentMainSearch,
         launchMainSearch: launchMainSearch,
         processSearchResults: processSearchResults,
-        addSuggestionsList: addSuggestionsList,
+        initSuggestionsWrapper: initSuggestionsWrapper,
+        addSuggestionInList: addSuggestionInList,
+        resetSuggestions:resetSuggestions,
         resetSearch: resetSearch
     };
     

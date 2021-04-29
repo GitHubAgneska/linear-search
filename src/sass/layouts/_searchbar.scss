@@ -2,13 +2,16 @@
 .form-outline {
     position: relative; // for suggestions wrapper abs pos
     height: 40px;
-    border: 2px solid red;
     .icon-search { height:100%;}
 }
 
-.main-suggestions { 
-    position: absolute; z-index:2;
-    height:200px;
+// suggestions wrapper
+.main-suggestions {
+    background-color: lightgrey;
+    color: white;
+    border-bottom: 1px solid white;
+    position: absolute; z-index:6;top: 40px;
     width: 500px;
-
+    p { 
+        height: 30px;padding:2%; }
 }

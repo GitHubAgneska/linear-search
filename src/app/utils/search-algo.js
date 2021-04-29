@@ -6,25 +6,26 @@ import {RecipeModule} from '../modules/recipes';
 
 
 let resultsList = []; // list of recipes matching search
-let suggestions = [];
-
+let suggestions = []; // list of suggested words matching search
 
 // search term in recipes list
 export function search(recipes, searchterm) {
+    resultsList = [];suggestions = []; // reset these 2 at every new keystroke
+    RecipeModule.resetSuggestions(parent);
 
     recipes.forEach( recipe => {
         searchInName(recipe, recipe.name, searchterm); // search term in each recipe name
     });
     console.log('results=====',resultsList );
+    console.log('CURRENT suggestions for word ==', suggestions);
+
     if (resultsList.length > 0) {
-        RecipeModule.processSearchResults(resultsList); // return updated results array
+        RecipeModule.processSearchResults(resultsList); // return updated results array tp Module
     } else {
         console.log('NO RESULTS FOUND IN RECIPES NAMES');
         // searchInDescription(recipe.description, searchterm){}
         // searchInIngredients(recipe.ingredients, searchterm) {}
     }
-    
-
 }
 
 // search in each recipe name
@@ -40,12 +41,14 @@ function searchInName(recipe, name, searchterm){
             if (word.includes(searchterm)) { 
                 console.log(' search is ==', searchterm, 'word matching is==', word);
 
-                // (if not there already) store suggestion in array : all words beginning with these letters
-                if ( !suggestions.includes(word)) { suggestions.push(word); }
+                RecipeModule.initSuggestionsWrapper();
 
-                // delegate result to module to use it
-                RecipeModule.addSuggestionsList(searchterm, suggestions);
-                // RecipeModule.processSearchSuggestions(searchterm, suggestions);
+                // (if not there already) store suggestion in array : all words beginning with these letters
+                if ( !suggestions.includes(word)) { 
+                    suggestions.push(word);
+                    // delegate result to module to use it
+                    RecipeModule.addSuggestionInList(word);
+                }
 
                 if ( !resultsList.includes(recipe)){  // prevents multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
                     resultsList.push(recipe); // store recipes in array: all recipes names  containing these letters

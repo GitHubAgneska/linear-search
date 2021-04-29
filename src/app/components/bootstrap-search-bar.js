@@ -26,18 +26,15 @@ export class SearchBar extends HTMLElement {
 
         let currentSearchTerm = '';
         let inputFieldTouched = false;
-        let suggestions = [];
+
 
         mainInputSearch.addEventListener('input', function(event){
             currentSearchTerm = event.target.value;
-
             // process input as it enters field = init match search
             RecipeModule.processCurrentMainSearch(currentSearchTerm);
             
             inputFieldTouched = true;
             handleManualSearchReset();
-            
-
         }, false);
 
 
@@ -47,7 +44,6 @@ export class SearchBar extends HTMLElement {
             if ( inputFieldTouched && !currentSearchTerm && mainInputSearch == document.activeElement ){
                 console.log('NEW SEARCH PENDING');
                 RecipeModule.resetSearch();
-                
             }
         }
         
