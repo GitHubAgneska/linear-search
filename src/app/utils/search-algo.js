@@ -14,7 +14,6 @@ export function search(recipes, searchterm) {
 
     recipes.forEach( recipe => {
         searchInName(recipe, recipe.name, searchterm); // search term in each recipe name
-        return resultsList;
     });
     console.log('results=====',resultsList );
     if (resultsList.length > 0) {
@@ -24,29 +23,37 @@ export function search(recipes, searchterm) {
         // searchInDescription(recipe.description, searchterm){}
         // searchInIngredients(recipe.ingredients, searchterm) {}
     }
+    
+
 }
 
-
+// search in each recipe name
 function searchInName(recipe, name, searchterm){
+
     let arrayFromName = name.toLowerCase().split(' ');  // 'Soupe de concombre' => [ 'soupe', 'de', 'concombre' ]
     
+    // search match in each word of the name (or in word if name = one word)
     arrayFromName.filter(word => { 
         
-        // part of a word in array matches current searchterm // ex : searchterm = 'soup' - => should match all recipes names containing 'soupe'
-        if (word.includes(searchterm)) { 
-            console.log(' search is ==', searchterm, 'word matching is==', word);
+        // if part of a word in array matches current searchterm 
+        // ex : searchterm = 'soup' - => should match 'soupe' in [ 'soupe', 'de', 'concombre' ]
+            if (word.includes(searchterm)) { 
+                console.log(' search is ==', searchterm, 'word matching is==', word);
 
-            if ( !suggestions.includes(word)) { 
-                suggestions.push(word); } // store suggestion in array: all words beginning with these letters
-            
-                RecipeModule.processSearchSuggestions(suggestions);
+                // (if not there already) store suggestion in array : all words beginning with these letters
+                if ( !suggestions.includes(word)) { suggestions.push(word); }
 
-            if ( !resultsList.includes(recipe)){  // prevents multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
-                resultsList.push(recipe); // store recipes in array: all recipes names  containing these letters
+                // delegate result to module to use it
+                RecipeModule.addSuggestionsList(searchterm, suggestions);
+                // RecipeModule.processSearchSuggestions(searchterm, suggestions);
+
+                if ( !resultsList.includes(recipe)){  // prevents multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
+                    resultsList.push(recipe); // store recipes in array: all recipes names  containing these letters
+                }
             }
-        }
     });
     return resultsList;
 }
+
 
 

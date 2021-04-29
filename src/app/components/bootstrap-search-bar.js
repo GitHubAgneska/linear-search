@@ -15,7 +15,7 @@ export class SearchBar extends HTMLElement {
                 <div class="form-outline d-flex flex-row">
                     <input type="search" id="main-search-input" class="form-control rounded" placeholder="${placeholder}" aria-label="Search" aria-describedby="search-addon"/>
                     <label class="form-label visuallyHidden" for="main-search-input">Search</label>
-                    <span class="input-group-text border-0 d-inline-block" id="search-addon">
+                    <span class="icon-search input-group-text border-0 d-inline-block" id="search-addon">
                         <i class="fas fa-search"></i>
                     </span>
                 </div>
@@ -26,15 +26,20 @@ export class SearchBar extends HTMLElement {
 
         let currentSearchTerm = '';
         let inputFieldTouched = false;
-
+        let suggestions = [];
 
         mainInputSearch.addEventListener('input', function(event){
             currentSearchTerm = event.target.value;
-            RecipeModule.processCurrentMainSearch(currentSearchTerm); // process input as it enters field
+
+            // process input as it enters field = init match search
+            RecipeModule.processCurrentMainSearch(currentSearchTerm);
+            
             inputFieldTouched = true;
             handleManualSearchReset();
+            
 
         }, false);
+
 
         // case where user deletes chars until field = empty
         // when input has been touched + searchterm is empty + focus still on input
@@ -42,10 +47,11 @@ export class SearchBar extends HTMLElement {
             if ( inputFieldTouched && !currentSearchTerm && mainInputSearch == document.activeElement ){
                 console.log('NEW SEARCH PENDING');
                 RecipeModule.resetSearch();
+                
             }
         }
         
-
+        
         // case where user confirm searchterm manually
         searchIcon.addEventListener('click', function(event, currentSearchTerm ){
             currentSearchTerm = mainInputSearch.value;

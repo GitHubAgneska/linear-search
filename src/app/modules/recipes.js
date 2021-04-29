@@ -144,24 +144,42 @@ export const RecipeModule = (function() {
 
     function processCurrentMainSearch(currentSearchTerm) {
         console.log(currentSearchTerm);
-        if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions & display results
+        if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
             console.log('currentSearchTerm is 3 chars long');
-            search(recipes, currentSearchTerm); // search term in recipes list
+            search(recipes, currentSearchTerm); // launch search for term in recipes list
+            // addSuggestionsList();
         }
+    }
+
+    function addSuggestionsList(searchterm, suggestions){
+
+        let parentWhereSuggestionsWrapperGoes = document.querySelector('.form-outline');
+        // create a DIV element that will contain the suggestions
+        let suggestionsWrapper = document.createElement('div');
+        suggestionsWrapper.setAttribute('id', 'main-suggestions');
+        suggestionsWrapper.setAttribute('class', 'main-suggestions');
+        // append div to parent
+        parentWhereSuggestionsWrapperGoes.appendChild(suggestionsWrapper);
+        suggestions.forEach( sug => { 
+            let newSuggestion = document.createElement('p');
+            let newSuggestedWord = document.createTextNode(sug);
+            newSuggestion.appendChild(newSuggestedWord);
+        });
     }
     
     // when an array of recipes search results is ready to be displayed in UI
     function processSearchResults(resultsList){
         console.log('resultsList==', resultsList);
-        resetSearch(resultsList);
-
+        // resetSearch(resultsList);
     }
     
     // when an array of suggestions for the search term is ready to be displayed in UI
-    function processSearchSuggestions(suggestions){
-        console.log('suggestions==', suggestions);
-        resetSearch(suggestions);
+    function processSearchSuggestions(searchterm, suggestions){
+        console.log('searchterm==', searchterm, 'suggestions==', suggestions);
     }
+
+    
+
 
     function resetSearch(arr){ // arr = resultsList or/and suggestions
         while( arr.length > 0  ) { arr.pop(); } // remove arr items
@@ -179,7 +197,7 @@ export const RecipeModule = (function() {
         processCurrentMainSearch: processCurrentMainSearch,
         launchMainSearch: launchMainSearch,
         processSearchResults: processSearchResults,
-        processSearchSuggestions: processSearchSuggestions,
+        addSuggestionsList: addSuggestionsList,
         resetSearch: resetSearch
     };
     

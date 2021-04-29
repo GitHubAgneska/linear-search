@@ -1,0 +1,14 @@
+
+.form-outline {
+    position: relative; // for suggestions wrapper abs pos
+    height: 40px;
+    border: 2px solid red;
+    .icon-search { height:100%;}
+}
+
+.main-suggestions { 
+    position: absolute; z-index:2;
+    height:200px;
+    width: 500px;
+
+}
