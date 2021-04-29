@@ -142,16 +142,34 @@ export const RecipeModule = (function() {
         root.insertBefore(advancedSearchWrapper, recipesListWrapper);
     }
 
-
     function processCurrentMainSearch(currentSearchTerm) {
         console.log(currentSearchTerm);
-        
-        if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
+        if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions & display results
             console.log('currentSearchTerm is 3 chars long');
-            search(recipesList, currentSearchTerm);
+            search(recipes, currentSearchTerm); // search term in recipes list
         }
     }
+    
+    // when an array of recipes search results is ready to be displayed in UI
+    function processSearchResults(resultsList){
+        console.log('resultsList==', resultsList);
+        resetSearch(resultsList);
 
+    }
+    
+    // when an array of suggestions for the search term is ready to be displayed in UI
+    function processSearchSuggestions(suggestions){
+        console.log('suggestions==', suggestions);
+        resetSearch(suggestions);
+    }
+
+    function resetSearch(arr){ // arr = resultsList or/and suggestions
+        while( arr.length > 0  ) { arr.pop(); } // remove arr items
+    }
+    
+
+    // when user uses searchbar icon to confirm search start
+    // meaning search has actually been done already (as user was typing in)
     function launchMainSearch(currentSearchTerm){
         console.log('SEARCHING FOR: ', currentSearchTerm);
     }
@@ -159,7 +177,10 @@ export const RecipeModule = (function() {
     
     return {
         processCurrentMainSearch: processCurrentMainSearch,
-        launchMainSearch: launchMainSearch
+        launchMainSearch: launchMainSearch,
+        processSearchResults: processSearchResults,
+        processSearchSuggestions: processSearchSuggestions,
+        resetSearch: resetSearch
     };
     
 
