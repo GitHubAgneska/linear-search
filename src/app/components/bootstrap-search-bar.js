@@ -24,6 +24,16 @@ export class SearchBar extends HTMLElement {
         const mainInputSearch = this.querySelector('#main-search-input');
         let searchIcon = this.querySelector('#search-addon');
 
+        // prepare a wrapper for incoming suggestions: it will be empty and non visible until items come in
+        const suggestionsWrapperParent = this.querySelector('.form-outline');
+        // create a DIV element that will contain the suggestions
+        let suggestionsWrapper = document.createElement('div');
+        suggestionsWrapper.setAttribute('id', 'main-suggestions');
+        suggestionsWrapper.setAttribute('class', 'main-suggestions');
+        // append div to parent
+        suggestionsWrapperParent.appendChild(suggestionsWrapper);
+
+
         let currentSearchTerm = '';
         let inputFieldTouched = false;
 
@@ -37,6 +47,7 @@ export class SearchBar extends HTMLElement {
             handleManualSearchReset();
         }, false);
 
+        
 
         // case where user deletes chars until field = empty
         // when input has been touched + searchterm is empty + focus still on input

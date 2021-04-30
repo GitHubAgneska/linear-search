@@ -149,28 +149,10 @@ export const RecipeModule = (function() {
             search(recipes, currentSearchTerm); // launch search for term in recipes list
         }
     }
-
-     // when an array of suggestions for the search term is ready to be displayed in UI
-    function processSearchSuggestions(searchterm, suggestions){
-        console.log('searchterm==', searchterm, 'suggestions==', suggestions);
-
-    }
     
-    function initSuggestionsWrapper(){
-
-        let parentWhereSuggestionsWrapperGoes = document.querySelector('.form-outline');
-        // create a DIV element that will contain the suggestions
-        let suggestionsWrapper = document.createElement('div');
-        suggestionsWrapper.setAttribute('id', 'main-suggestions');
-        suggestionsWrapper.setAttribute('class', 'main-suggestions');
-
-        // append div to parent
-        parentWhereSuggestionsWrapperGoes.appendChild(suggestionsWrapper);
-    }
 
     // for each new found suggestion, generate list item in suggestions wrapper
     function addSuggestionInList(suggestion){
-
         let newSuggestion = document.createElement('p');
         let newSuggestedWord = document.createTextNode(suggestion);
         newSuggestion.appendChild(newSuggestedWord);
@@ -180,29 +162,31 @@ export const RecipeModule = (function() {
     }
 
     // suggestions list should be updated at each new keystroke
-    function resetSuggestions(suggestionsWrapper){
-        let parent = suggestionsWrapper;
+    function resetSuggestions(parent){
+        parent = document.querySelector('#main-suggestions');
         while (parent.firstChild) { parent.removeChild(parent.firstChild); }
         return parent;
     }
     
+    function resetSearch(arr){ // arr = resultsList or/and suggestions
+        if (arr) {
+            while( arr.length > 0  ) { arr.pop(); } // remove arr items
+        } else { return; }
+    }
+
+
+
+
+    // when an array of suggestions for the search term is ready to be displayed in UI
+    function processSearchSuggestions(searchterm, suggestions){
+        console.log('searchterm==', searchterm, 'suggestions==', suggestions);
+
+    }
     // when an array of recipes search results is ready to be displayed in UI
     function processSearchResults(resultsList){
         console.log('resultsList==', resultsList);
         // resetSearch(resultsList);
     }
-    
-
-
-    
-    function resetSearch(arr){ // arr = resultsList or/and suggestions
-        if (arr) {
-            while( arr.length > 0  ) { arr.pop(); } // remove arr items
-        }
-        else { return; }
-    }
-    
-
     // when user uses searchbar icon to confirm search start
     // meaning search has actually been done already (as user was typing in)
     function launchMainSearch(currentSearchTerm){
@@ -214,7 +198,6 @@ export const RecipeModule = (function() {
         processCurrentMainSearch: processCurrentMainSearch,
         launchMainSearch: launchMainSearch,
         processSearchResults: processSearchResults,
-        initSuggestionsWrapper: initSuggestionsWrapper,
         addSuggestionInList: addSuggestionInList,
         resetSuggestions:resetSuggestions,
         resetSearch: resetSearch

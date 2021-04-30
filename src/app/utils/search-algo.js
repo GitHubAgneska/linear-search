@@ -11,7 +11,7 @@ let suggestions = []; // list of suggested words matching search
 // search term in recipes list
 export function search(recipes, searchterm) {
     resultsList = [];suggestions = []; // reset these 2 at every new keystroke
-    RecipeModule.resetSuggestions(parent);
+    RecipeModule.resetSuggestions(); // reset displayed suggestions list
 
     recipes.forEach( recipe => {
         searchInName(recipe, recipe.name, searchterm); // search term in each recipe name
@@ -40,8 +40,6 @@ function searchInName(recipe, name, searchterm){
         // ex : searchterm = 'soup' - => should match 'soupe' in [ 'soupe', 'de', 'concombre' ]
             if (word.includes(searchterm)) { 
                 console.log(' search is ==', searchterm, 'word matching is==', word);
-
-                RecipeModule.initSuggestionsWrapper();
 
                 // (if not there already) store suggestion in array : all words beginning with these letters
                 if ( !suggestions.includes(word)) { 
