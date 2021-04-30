@@ -16,11 +16,11 @@ export function search(recipes, searchterm) {
     recipes.forEach( recipe => {
         searchInName(recipe, recipe.name, searchterm); // search term in each recipe name
     });
-    console.log('results=====',resultsList );
+    // console.log('results=====',resultsList );
     console.log('CURRENT suggestions for word ==', suggestions);
 
     if (resultsList.length > 0) {
-        RecipeModule.processSearchResults(resultsList); // return updated results array tp Module
+        RecipeModule.retrieveSearchResults(resultsList); // return updated results array to Module
     } else {
         console.log('NO RESULTS FOUND IN RECIPES NAMES');
         // searchInDescription(recipe.description, searchterm){}

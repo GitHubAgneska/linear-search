@@ -13,5 +13,8 @@
     position: absolute; z-index:6;top: 40px;
     width: 500px;
     p { 
-        height: 30px;padding:2%; }
+        padding:2%;
+        &:hover,
+        &:focus { background-color: pink;}
+    }
 }

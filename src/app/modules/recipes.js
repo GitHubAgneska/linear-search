@@ -26,6 +26,8 @@ export const RecipeModule = (function() {
     let appliancesList = [];
     let ustensilsList = [];
 
+    let storedResults = [];
+
     // fetch all recipes
     fetch(localUrl)
     .then(response => {
@@ -60,7 +62,7 @@ export const RecipeModule = (function() {
     // each recipe contains an ingredients array, an appliance string, an ustensils array 
     function initData(recipes) {
         let recipeFactory = new RecipeFactory();
-        let ingredientFactory = new IngredientFactory();
+        // let ingredientFactory = new IngredientFactory();
 
         // for each recipe of data, cast recipe into new recipe object
         recipes.forEach( recipe => {
@@ -142,6 +144,8 @@ export const RecipeModule = (function() {
         root.insertBefore(advancedSearchWrapper, recipesListWrapper);
     }
 
+
+    // SEARCH FUNCTIONALITY : MAIN SEARCH ==================================================================================================
     function processCurrentMainSearch(currentSearchTerm) {
         console.log(currentSearchTerm);
         if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
@@ -149,8 +153,16 @@ export const RecipeModule = (function() {
             search(recipes, currentSearchTerm); // launch search for term in recipes list
         }
     }
-    
 
+    // used to store results in the module, until display method needs them
+    function retrieveSearchResults(resultsList){
+        // console.log('resultsList==', resultsList);
+        storedResults = resultsList;
+        console.log('storedResults==', storedResults);
+        return storedResults;
+    }
+
+    
     // for each new found suggestion, generate list item in suggestions wrapper
     function addSuggestionInList(suggestion){
         let newSuggestion = document.createElement('p');
@@ -162,22 +174,26 @@ export const RecipeModule = (function() {
 
         // handle selection of suggested word (both click and keydown)
         newSuggestion.addEventListener('click', function(event){ handleSelectSuggestedWord(event); }, false);
-        newSuggestion.addEventListener('click', function(event){ handleSelectSuggestedWord(event); }, false);
+        newSuggestion.addEventListener('keydown', function(event){ handleSelectSuggestedWord(event); }, false);
     }
 
+    // when a list of suggestions is displayed, user can select a word => 
+    // word is then 'sent'/displayed in input field
+    // this automatically updates the list of recipes displayed on the page
     function handleSelectSuggestedWord(event) {
         let word = event.target.innerText; // text inside <p> element where event occurs
-        console.log('word is==', word);
-        let currentSearchInput = document.querySelector('#main-search-input').value; // what is current search in input field
-        console.log('currentSearchInput===', currentSearchInput);
+        // console.log('word is==', word);
+        // let currentSearchInput = document.querySelector('#main-search-input').value; // what is the current search in input field
+        // console.log('currentSearchInput===', currentSearchInput);
         let inputField = document.querySelector('#main-search-input');
         inputField.value = word; // make selected suggested word the current search word of input field
         // reset / close suggestion list
         resetSuggestions();
-        
+        // order display of list results for this word
+        displaySearchResults();
     }
 
-    // suggestions list should be updated at each new keystroke
+    // suggestions list should be reset at each new keystroke
     function resetSuggestions(parent){
         parent = document.querySelector('#main-suggestions');
         while (parent.firstChild) { parent.removeChild(parent.firstChild); }
@@ -190,19 +206,28 @@ export const RecipeModule = (function() {
         } else { return; }
     }
 
+    // when an array of results for the search term is ready to be displayed in UI
+        // 'ready' means: a suggestion has been selected
+        // OR : user presses 'enter' or clicks 'submit' icon
+    function displaySearchResults(results) {
+        
+        console.log(results);
+        if ( !results ) { 
+            results = retrieveSearchResults();
+            console.log('HERE====', results);
+        }
 
+        // reset current list of recipes
+        let recipesListWrapper = document.querySelector('#recipes-list');
+        while (recipesListWrapper.firstChild) { recipesListWrapper.removeChild(recipesListWrapper.firstChild); }
 
-
-    // when an array of suggestions for the search term is ready to be displayed in UI
-    function processSearchSuggestions(searchterm, suggestions){
-        console.log('searchterm==', searchterm, 'suggestions==', suggestions);
-
+        results.forEach(recipe => { 
+            generateRecipeCard(recipe);
+        });
     }
-    // when an array of recipes search results is ready to be displayed in UI
-    function processSearchResults(resultsList){
-        console.log('resultsList==', resultsList);
-        // resetSearch(resultsList);
-    }
+
+
+
     // when user uses searchbar icon to confirm search start
     // meaning search has actually been done already (as user was typing in)
     function launchMainSearch(currentSearchTerm){
@@ -213,7 +238,7 @@ export const RecipeModule = (function() {
     return {
         processCurrentMainSearch: processCurrentMainSearch,
         launchMainSearch: launchMainSearch,
-        processSearchResults: processSearchResults,
+        retrieveSearchResults: retrieveSearchResults,
         addSuggestionInList: addSuggestionInList,
         resetSuggestions:resetSuggestions,
         resetSearch: resetSearch
