@@ -49,12 +49,13 @@ export class SearchBar extends HTMLElement {
 
         
 
-        // case where user deletes chars until field = empty
+        // case where user deletes chars until field = empty or deletes the whole searchterm
         // when input has been touched + searchterm is empty + focus still on input
         function handleManualSearchReset(){
             if ( inputFieldTouched && !currentSearchTerm && mainInputSearch == document.activeElement ){
                 console.log('NEW SEARCH PENDING');
                 RecipeModule.resetSearch();
+                RecipeModule.resetSuggestions();
             }
         }
         

@@ -159,6 +159,22 @@ export const RecipeModule = (function() {
 
         let suggestionsWrapper = document.querySelector('#main-suggestions');
         suggestionsWrapper.appendChild(newSuggestion);
+
+        // handle selection of suggested word (both click and keydown)
+        newSuggestion.addEventListener('click', function(event){ handleSelectSuggestedWord(event); }, false);
+        newSuggestion.addEventListener('click', function(event){ handleSelectSuggestedWord(event); }, false);
+    }
+
+    function handleSelectSuggestedWord(event) {
+        let word = event.target.innerText; // text inside <p> element where event occurs
+        console.log('word is==', word);
+        let currentSearchInput = document.querySelector('#main-search-input').value; // what is current search in input field
+        console.log('currentSearchInput===', currentSearchInput);
+        let inputField = document.querySelector('#main-search-input');
+        inputField.value = word; // make selected suggested word the current search word of input field
+        // reset / close suggestion list
+        resetSuggestions();
+        
     }
 
     // suggestions list should be updated at each new keystroke
