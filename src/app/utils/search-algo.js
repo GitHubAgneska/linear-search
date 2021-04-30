@@ -20,7 +20,8 @@ export function search(recipes, searchterm) {
     console.log('CURRENT suggestions for word ==', suggestions);
 
     if (resultsList.length > 0) {
-        RecipeModule.retrieveSearchResults(resultsList); // return updated results array to Module
+        RecipeModule.setResults(resultsList); // return updated results array to Module
+        RecipeModule.storeSearchResults(resultsList); // return updated results array to Module
     } else {
         console.log('NO RESULTS FOUND IN RECIPES NAMES');
         // searchInDescription(recipe.description, searchterm){}

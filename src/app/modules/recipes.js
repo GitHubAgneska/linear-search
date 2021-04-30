@@ -154,15 +154,16 @@ export const RecipeModule = (function() {
         }
     }
 
+    let setResults = function(results) { storedResults = results; };
+    let getResults = function() { return storedResults;  };
+
     // used to store results in the module, until display method needs them
-    function retrieveSearchResults(resultsList){
-        // console.log('resultsList==', resultsList);
-        storedResults = resultsList;
-        console.log('storedResults==', storedResults);
-        return storedResults;
+    function storeSearchResults(resultsList) {
+        console.log('resultsList==', resultsList);
+        return resultsList;
     }
 
-    
+    // HANDLE SUGGESTIONS ---------------
     // for each new found suggestion, generate list item in suggestions wrapper
     function addSuggestionInList(suggestion){
         let newSuggestion = document.createElement('p');
@@ -187,6 +188,8 @@ export const RecipeModule = (function() {
         // console.log('currentSearchInput===', currentSearchInput);
         let inputField = document.querySelector('#main-search-input');
         inputField.value = word; // make selected suggested word the current search word of input field
+        // search(recipes, inputField.value); // launch search again for this current term ---- ?
+
         // reset / close suggestion list
         resetSuggestions();
         // order display of list results for this word
@@ -206,17 +209,13 @@ export const RecipeModule = (function() {
         } else { return; }
     }
 
+    // DISPLAY RECIPE LIST BY SEARCH TERM ---------------
     // when an array of results for the search term is ready to be displayed in UI
         // 'ready' means: a suggestion has been selected
         // OR : user presses 'enter' or clicks 'submit' icon
     function displaySearchResults(results) {
-        
-        console.log(results);
-        if ( !results ) { 
-            results = retrieveSearchResults();
-            console.log('HERE====', results);
-        }
-
+        results = getResults();
+        console.log('get results == ', results);
         // reset current list of recipes
         let recipesListWrapper = document.querySelector('#recipes-list');
         while (recipesListWrapper.firstChild) { recipesListWrapper.removeChild(recipesListWrapper.firstChild); }
@@ -238,10 +237,11 @@ export const RecipeModule = (function() {
     return {
         processCurrentMainSearch: processCurrentMainSearch,
         launchMainSearch: launchMainSearch,
-        retrieveSearchResults: retrieveSearchResults,
+        storeSearchResults: storeSearchResults,
         addSuggestionInList: addSuggestionInList,
         resetSuggestions:resetSuggestions,
-        resetSearch: resetSearch
+        resetSearch: resetSearch,
+        setResults: setResults
     };
     
 
