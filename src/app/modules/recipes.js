@@ -188,7 +188,7 @@ export const RecipeModule = (function() {
         // console.log('currentSearchInput===', currentSearchInput);
         let inputField = document.querySelector('#main-search-input');
         inputField.value = word; // make selected suggested word the current search word of input field
-        // search(recipes, inputField.value); // launch search again for this current term ---- ?
+        search(recipes, inputField.value); // launch search again for this current term ---- ?
 
         // reset / close suggestion list
         resetSuggestions();
