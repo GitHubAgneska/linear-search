@@ -15,7 +15,8 @@ export function search(recipes, searchterm) {
 
     recipes.forEach( recipe => {
         searchInName(recipe, recipe.name, searchterm); // search term in each recipe name
-        searchInDescription(recipe, recipe.description, searchterm);
+        searchInDescription(recipe, recipe.description, searchterm); // search term in each recipe description
+        searchInIngredients(recipe, recipe.ingredients, searchterm); // search term in each recipe ingredients
     });
 
     console.log('results=====',resultsList );
@@ -26,14 +27,11 @@ export function search(recipes, searchterm) {
         // RecipeModule.storeSearchResults(resultsList); // return updated results array to Module
     } else {
         console.log('NO RESULTS FOUND IN RECIPES NAMES');
-        // searchInDescription(recipe.description, searchterm){}
-        // searchInIngredients(recipe.ingredients, searchterm) {}
     }
 }
 
 // search in each recipe name
 function searchInName(recipe, name, searchterm){
-
 
     let arrayFromName = name.toLowerCase().split(' ');  // 'Soupe de concombre' => [ 'soupe', 'de', 'concombre' ]
     
@@ -76,7 +74,7 @@ function searchInDescription(recipe, description, searchterm){
 
         // identify verbs to skip ( words ending with 'er' or 'ez' + eventually comma/period )
         let isAverbRegex = /e(z|r)+(\.?|,?)$/i;
-        // identify terms ending with comma/period NOT to skip
+        // identify words ending with comma/period = NOT to skip
         let endsWithCommaOrPeriodRegex = /\.|,$/i;
 
         // if part of a word in array matches current searchterm 
@@ -103,6 +101,36 @@ function searchInDescription(recipe, description, searchterm){
             // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
             if ( !resultsList.includes(recipe)){
                 resultsList.push(recipe); // store recipes in array: all recipes whose description contain serach term
+            }
+        }
+    });
+    return resultsList;
+}
+
+
+function searchInIngredients(recipe, recipeIngredients, searchterm){
+
+    // recipe ingredients is an array of objects
+    // match search occurs in 1st key/value of each object (ignoring rest of ingredients key/values : 'unit' and 'quantity')  
+    // ex : recipe.ingredients :[ { 'ingredient':'concombre'}, { 'ingredient':'citron'} ]
+    recipeIngredients.forEach( item => {
+        if (item.key === 'ingredient') {
+            let ingredientName = item.value;
+
+            // ingredientName can be one word or several words
+
+            if ( ingredientName.includes(searchterm) ) {
+                if ( !suggestions.includes(ingredientName)) {
+                    // CASE ONE - suggest word : search 'lait' will not suggest 'chocolat au lait' 
+                    suggestions.push(ingredientName);
+    
+                    // delegate suggestion to module to display it
+                    RecipeModule.addSuggestionInList(ingredientName);
+                }
+                // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
+                if ( !resultsList.includes(recipe)){
+                    resultsList.push(recipe); // store recipes in array: all recipes whose description contain serach term
+                }
             }
         }
     });
