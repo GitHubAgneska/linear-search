@@ -64,16 +64,34 @@ function searchInName(recipe, name, searchterm){
     return resultsList;
 }
 
+// in description, we need to retrieve matching ingredients, and skip verbs
+// ex : 'poi' => should find 'poivre' and skip 'poivrez'
+// + skip ',' in 'poivre,'
 function searchInDescription(recipe, description, searchterm){
 
-    let arrayFromDesc = description.toLowerCase().split(' ');  // 'Eplucher les concombres' => [ 'eplucher', 'les', 'concombres' ]
+    let arrayFromDesc = description.toLowerCase().split(' ');  // 'Eplucher les concombres, poivrez, ' => [ 'eplucher', 'les', 'concombres', 'poivrez,' ,  ]
 
     // search match in each word of the description
     arrayFromDesc.filter(word => {
+
+        // identify verbs to skip ( words ending with 'er' or 'ez' + eventually comma/period )
+        let isAverbRegex = /e(z|r)+(\.?|,?)$/i;
+        // identify terms ending with comma/period NOT to skip
+        let endsWithCommaOrPeriodRegex = /\.|,$/i;
+
         // if part of a word in array matches current searchterm 
         // ex : searchterm = 'concomb' - => should match 'concombre' in [ 'eplucher', 'les', 'concombres' ]
-        if (word.includes(searchterm)) {
+        
+        // if word includes searchterm and is not a verb
+        if ( word.includes(searchterm) && !(isAverbRegex.test(word))) {
+            
             console.log(' searching for ==', searchterm, 'match in description is==', word);
+
+            // if matching word ends with comma/period : remove them ()
+            if ( endsWithCommaOrPeriodRegex.test(word) ) {
+                // console.log('should be corrected: ', word);
+                return word.substring(0, word.length-1); 
+            }
             // (if not there already) store suggestion in array : all words beginning with these letters
             if ( !suggestions.includes(word)) {
                 // CASE ONE - suggest word : search 'soup' will suggest 'soupe', not 'soupe de concombre' 
