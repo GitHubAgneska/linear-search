@@ -60,12 +60,19 @@ export class SearchBar extends HTMLElement {
         }
         
         
-        // case where user confirm searchterm manually
+        // case where user confirm searchterm manually instead of choosing a word in suggestions
+        // then all current results list for all suggested words is displayed
+        // + first word in suggestions is 'sent' to input field
         searchIcon.addEventListener('click', function(event, currentSearchTerm ){
             currentSearchTerm = mainInputSearch.value;
             console.log('currentSearchTerm==', currentSearchTerm);
             if (currentSearchTerm && currentSearchTerm !== null) {
-                RecipeModule.launchMainSearch(currentSearchTerm);
+                RecipeModule.resetSuggestions();
+                RecipeModule.displaySearchResults();
+                // display 1st suggestion by default
+                let firstSuggestion = RecipeModule.retrieveFirstSuggestion();
+                let inputField = document.querySelector('#main-search-input');
+                inputField.value = firstSuggestion;
             }
         }, false);
 

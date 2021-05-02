@@ -26,7 +26,8 @@ export const RecipeModule = (function() {
     let appliancesList = [];
     let ustensilsList = [];
 
-    let storedResults = [];
+    let storedResults = [];  // local storage of results
+    let storedSuggestions = []; // local storage of suggestions
 
     // fetch all recipes
     fetch(localUrl)
@@ -154,14 +155,14 @@ export const RecipeModule = (function() {
         }
     }
 
+    // used to store results in the module, until display method needs them
     let setResults = function(results) { storedResults = results; };
-    let getResults = function() { return storedResults;  };
+    let getResults = function() { return storedResults; };
 
     // used to store results in the module, until display method needs them
-    function storeSearchResults(resultsList) {
-        console.log('resultsList==', resultsList);
-        return resultsList;
-    }
+    let setSuggestions = function(suggestions) { storedSuggestions = suggestions; };
+    let getSuggestions = function() { return storedSuggestions; };
+
 
     // HANDLE SUGGESTIONS ---------------
     // for each new found suggestion, generate list item in suggestions wrapper
@@ -188,7 +189,7 @@ export const RecipeModule = (function() {
         // console.log('currentSearchInput===', currentSearchInput);
         let inputField = document.querySelector('#main-search-input');
         inputField.value = word; // make selected suggested word the current search word of input field
-        search(recipes, inputField.value); // launch search again for this current term ---- ?
+        search(recipes, inputField.value); // launch search again for this one current term
 
         // reset / close suggestion list
         resetSuggestions();
@@ -201,6 +202,14 @@ export const RecipeModule = (function() {
         parent = document.querySelector('#main-suggestions');
         while (parent.firstChild) { parent.removeChild(parent.firstChild); }
         return parent;
+    }
+
+    // retrieve first word in suggestions list 
+    // (for click event on search icon to update current search term to first suggestion)
+    function retrieveFirstSuggestion() {
+        let suggestionsList = getSuggestions();
+        let firstSuggestion = suggestionsList[0];
+        return firstSuggestion;
     }
     
     function resetSearch(arr){ // arr = resultsList or/and suggestions
@@ -237,13 +246,13 @@ export const RecipeModule = (function() {
     return {
         processCurrentMainSearch: processCurrentMainSearch,
         launchMainSearch: launchMainSearch,
-        storeSearchResults: storeSearchResults,
         addSuggestionInList: addSuggestionInList,
         resetSuggestions:resetSuggestions,
         resetSearch: resetSearch,
-        setResults: setResults
+        setResults: setResults,
+        setSuggestions: setSuggestions,
+        retrieveFirstSuggestion: retrieveFirstSuggestion,
+        displaySearchResults: displaySearchResults
     };
     
-
-
 }());

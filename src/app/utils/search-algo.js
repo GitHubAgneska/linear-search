@@ -24,9 +24,14 @@ export function search(recipes, searchterm) {
 
     if (resultsList.length > 0) {
         RecipeModule.setResults(resultsList); // return updated results array to Module
-        // RecipeModule.storeSearchResults(resultsList); // return updated results array to Module
     } else {
-        console.log('NO RESULTS FOUND IN RECIPES NAMES');
+        console.log('NO RESULTS FOUND');
+    }
+
+    if (suggestions.length > 0 ) { 
+        RecipeModule.setSuggestions(suggestions); // return updated suggestions list array to Module
+    } else {
+        console.log('NO SUGGESTIONS FOUND');
     }
 }
 
@@ -74,7 +79,7 @@ function searchInDescription(recipe, description, searchterm){
 
         // identify verbs to skip ( words ending with 'er' or 'ez' + eventually comma/period )
         let isAverbRegex = /e(z|r)+(\.?|,?)$/i;
-        // identify words ending with comma/period = NOT to skip
+        // identify other words ending with comma/period = NOT to skip
         let endsWithCommaOrPeriodRegex = /\.|,$/i;
 
         // if part of a word in array matches current searchterm 
@@ -113,23 +118,27 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
     // recipe ingredients is an array of objects
     // match search occurs in 1st key/value of each object (ignoring rest of ingredients key/values : 'unit' and 'quantity')  
     // ex : recipe.ingredients :[ { 'ingredient':'concombre'}, { 'ingredient':'citron'} ]
-    recipeIngredients.forEach( item => {
-        if (item.key === 'ingredient') {
-            let ingredientName = item.value;
+    recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array
+        
+        for (const [key, value] of Object.entries(item) ) { // for each key:value of ingredient object
+            
+            if (key === 'ingredient') {
+                let ingredientName = value.toLowerCase();
 
-            // ingredientName can be one word or several words
-
-            if ( ingredientName.includes(searchterm) ) {
-                if ( !suggestions.includes(ingredientName)) {
-                    // CASE ONE - suggest word : search 'lait' will not suggest 'chocolat au lait' 
-                    suggestions.push(ingredientName);
+                // ingredientName can be one word or several words
     
-                    // delegate suggestion to module to display it
-                    RecipeModule.addSuggestionInList(ingredientName);
-                }
-                // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
-                if ( !resultsList.includes(recipe)){
-                    resultsList.push(recipe); // store recipes in array: all recipes whose description contain serach term
+                if ( ingredientName.includes(searchterm) ) {
+                    if ( !suggestions.includes(ingredientName)) {
+                        // CASE ONE - suggest word : search 'lait' will not suggest 'chocolat au lait' 
+                        suggestions.push(ingredientName);
+        
+                        // delegate suggestion to module to display it
+                        RecipeModule.addSuggestionInList(ingredientName);
+                    }
+                    // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
+                    if ( !resultsList.includes(recipe)){
+                        resultsList.push(recipe); // store recipes in array: all recipes whose description contain serach term
+                    }
                 }
             }
         }
