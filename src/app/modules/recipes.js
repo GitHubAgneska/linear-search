@@ -1,6 +1,5 @@
 
-import {RecipeFactory, IngredientFactory} from '../utils/recipe-factory';
-import {Recipe, Ingredient} from '../utils/recipe-model';
+import {RecipeFactory} from '../utils/recipe-factory';
 import {SearchBar} from '../components/bootstrap-search-bar';
 import {CollapsingMenu} from '../components/advanced-search-menu';
 // import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
@@ -25,6 +24,7 @@ export const RecipeModule = (function() {
     let ingredientsList = [];
     let appliancesList = [];
     let ustensilsList = [];
+    let arrayOfCategoryElements = []; // to store the 3 previous lists
 
     let storedResults = [];  // local storage of results
     let storedSuggestions = []; // local storage of suggestions
@@ -77,37 +77,33 @@ export const RecipeModule = (function() {
                 recipe.appliance,
                 recipe.ustensils
                 );
-                
-            // take advantage of this loop to retrieve category elements
-            if (!appliancesList.includes(recipe.appliance)) { appliancesList.push(recipe.appliance); }
-
-            const recipeUst = recipe.ustensils;
-            recipeUst.forEach(ust => {
-                if ( !ustensilsList.includes(ust) ) // skip if already in list
-                ustensilsList.push(ust);
-            });
-
+            
+            // set up CATEGORY MENU LISTS : DEFAULT ( = all recipes ) ========================
+            // retrieve category elements : all ingredients
             const recipeIngr = recipe.ingredients;
             recipeIngr.forEach( ingre => {
                 if ( !ingredientsList.includes(ingre) ) // skip if already in list
                 ingredientsList.push(ingre.ingredient);
             });
-
-
-            // for each ingredient of recipe's ingredients array, cast ingredient into new ingredient object (UI display purposes)
-            /* recipe.ingredients.forEach(ingredient => {
-                let newIngredient = ingredientFactory.create(
-                    ingredient.ingredient,
-                    ingredient.quantity,
-                    ingredient.unit
-                );
-                recipe.ingredients.push(newIngredient);
-            }); */
-            generateRecipeCard(recipe); // generate view for recipe
-
-            recipesList.push(newRecipe); // all recipes casted, ordered as coming from api (default)
+            
+            // retrieve category elements : all appliances
+            if (!appliancesList.includes(recipe.appliance)) { appliancesList.push(recipe.appliance); }
+            
+            // retrieve category elements : all ustensils
+            const recipeUst = recipe.ustensils;
+            recipeUst.forEach(ust => {
+                if ( !ustensilsList.includes(ust) ) // skip if already in list
+                ustensilsList.push(ust);
+            });
+            
+            // generate view for recipe
+            generateRecipeCard(recipe);
+            
+            // all recipes casted, ordered as coming from api (default)
+            recipesList.push(newRecipe);
         });
-        setUpAdvancedSearchView(ingredientsList, appliancesList, ustensilsList);
+        arrayOfCategoryElements.push(ingredientsList,appliancesList, ustensilsList );
+        setUpAdvancedSearchView(arrayOfCategoryElements); // default == all recipes (= array of arrays [appliancesList, ustensilsList, ingredientsList])
     }
 
     const recipesListWrapper = document.createElement('section');
@@ -121,11 +117,45 @@ export const RecipeModule = (function() {
     }
 
 
-    // ADVANCED SEARCH = based on DEFAULT OR SORTED LIST of recipes 
+    // when search term in main search produces a list of recipes,
+    // the categories menus lists are updated with corresponding recipes ingredients/applainces/ustensils
+    function updateCategoryLists(recipes) {
+        // first, reset menus lists from default data
+        ingredientsList = [];
+        appliancesList = [];
+        ustensilsList = [];
+        arrayOfCategoryElements = [];
+
+        // then for each recipe of results, retrieve elements for each category
+        recipes.forEach( recipe => {
+
+            const recipeIngr = recipe.ingredients;
+            recipeIngr.forEach( ingre => {
+                if ( !ingredientsList.includes(ingre) ) // skip if already in list
+                ingredientsList.push(ingre.ingredient);
+            });
+
+            if (!appliancesList.includes(recipe.appliance)) { appliancesList.push(recipe.appliance); }
+    
+            const recipeUst = recipe.ustensils;
+            recipeUst.forEach(ust => {
+                if ( !ustensilsList.includes(ust) ) // skip if already in list
+                ustensilsList.push(ust);
+            });
+    
+        });
+        arrayOfCategoryElements.push(ingredientsList,appliancesList, ustensilsList );
+        return arrayOfCategoryElements;
+    }
+
+
+    // ADVANCED SEARCH = based on DEFAULT OR SORTED LIST of recipes  =======================================================================
     // components are generated accordingly
-    function setUpAdvancedSearchView(ingredientsList, appliancesList, ustensilsList){
-        // console.log('ingredientsList, appliancesList, ustensilsList===', ingredientsList, appliancesList, ustensilsList);
-        let categories = [ingredientsList, appliancesList, ustensilsList];
+    function setUpAdvancedSearchView(arrayOfCategoryElements){
+        
+        // arrayOfCategoryElements = [ingredientsList, appliancesList, ustensilsList]
+        console.log('===>arrayOfCategoryElements==', arrayOfCategoryElements);
+        // let categories = [ingredientsList, appliancesList, ustensilsList];
         const categoryNames = [ 'ingredients', 'appareils', 'ustensils'];
         
         // set up wrapper for all 3 collapsing menus
@@ -135,10 +165,10 @@ export const RecipeModule = (function() {
         advancedSearchWrapper.classList.add('m-0');
 
         // generate advanced search : button + menu CONTAINER for each category
-        categories.forEach( (category, index) => {
+        arrayOfCategoryElements.forEach( (category, index) => {
             let catName = categoryNames[index];
             // generate menu container for each category
-            let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu     
+            let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu component   
 
             advancedSearchWrapper.appendChild(catComponent);
         });
@@ -218,34 +248,32 @@ export const RecipeModule = (function() {
         } else { return; }
     }
 
-    // DISPLAY RECIPE LIST BY SEARCH TERM ---------------
+    // DISPLAY RECIPE LIST BY SEARCH TERM ==================================================================================================
     // when an array of results for the search term is ready to be displayed in UI
         // 'ready' means: a suggestion has been selected
         // OR : user presses 'enter' or clicks 'submit' icon
     function displaySearchResults(results) {
+
         results = getResults();
-        console.log('get results == ', results);
         // reset current list of recipes
         let recipesListWrapper = document.querySelector('#recipes-list');
+        //reset recipes list wrapper
         while (recipesListWrapper.firstChild) { recipesListWrapper.removeChild(recipesListWrapper.firstChild); }
-
+        // generate recipe elements to display based on new results
         results.forEach(recipe => { 
             generateRecipeCard(recipe);
         });
+        
+        // set categories elements based on new results
+        arrayOfCategoryElements = updateCategoryLists(results); // order advanced search menus update;
+        // display categories elements in menus
+        setUpAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
     }
 
-
-
-    // when user uses searchbar icon to confirm search start
-    // meaning search has actually been done already (as user was typing in)
-    function launchMainSearch(currentSearchTerm){
-        console.log('SEARCHING FOR: ', currentSearchTerm);
-    }
 
     
     return {
         processCurrentMainSearch: processCurrentMainSearch,
-        launchMainSearch: launchMainSearch,
         addSuggestionInList: addSuggestionInList,
         resetSuggestions:resetSuggestions,
         resetSearch: resetSearch,
