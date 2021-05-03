@@ -2,7 +2,7 @@
 import {RecipeFactory} from '../utils/recipe-factory';
 import {SearchBar} from '../components/bootstrap-search-bar';
 import {CollapsingMenu} from '../components/advanced-search-menu';
-// import {CollapsingMenu} from '../components/bootstrap-collapseMenu';
+import {MenuListItem} from '../components/menu-listItem';
 import {CardTemplate} from '../components/bootstrap-card';
 import {HeaderBaseTemplate} from '../components/header';
 import {search} from '../utils/search-algo';
@@ -63,7 +63,6 @@ export const RecipeModule = (function() {
     // each recipe contains an ingredients array, an appliance string, an ustensils array 
     function initData(recipes) {
         let recipeFactory = new RecipeFactory();
-        // let ingredientFactory = new IngredientFactory();
 
         // for each recipe of data, cast recipe into new recipe object
         recipes.forEach( recipe => {
@@ -103,9 +102,11 @@ export const RecipeModule = (function() {
             recipesList.push(newRecipe);
         });
         arrayOfCategoryElements.push(ingredientsList,appliancesList, ustensilsList );
+        initAdvancedSearchSection();
         setUpAdvancedSearchView(arrayOfCategoryElements); // default == all recipes (= array of arrays [appliancesList, ustensilsList, ingredientsList])
     }
 
+    // generate recipes list section
     const recipesListWrapper = document.createElement('section');
     recipesListWrapper.setAttribute('id', 'recipes-list');
     recipesListWrapper.setAttribute('class', 'row');
@@ -118,7 +119,7 @@ export const RecipeModule = (function() {
 
 
     // when search term in main search produces a list of recipes,
-    // the categories menus lists are updated with corresponding recipes ingredients/applainces/ustensils
+    // the categories menus lists are updated with corresponding recipes ingredients/appliances/ustensils
     function updateCategoryLists(recipes) {
         // first, reset menus lists from default data
         ingredientsList = [];
@@ -151,28 +152,58 @@ export const RecipeModule = (function() {
 
     // ADVANCED SEARCH = based on DEFAULT OR SORTED LIST of recipes  =======================================================================
     // components are generated accordingly
-    function setUpAdvancedSearchView(arrayOfCategoryElements){
-        
-        // arrayOfCategoryElements = [ingredientsList, appliancesList, ustensilsList]
-        console.log('===>arrayOfCategoryElements==', arrayOfCategoryElements);
-        // let categories = [ingredientsList, appliancesList, ustensilsList];
-        const categoryNames = [ 'ingredients', 'appareils', 'ustensils'];
-        
+
+    // set up host section for advanced search
+    function initAdvancedSearchSection() {
         // set up wrapper for all 3 collapsing menus
         const advancedSearchWrapper = document.createElement('section');
         advancedSearchWrapper.setAttribute('class', 'adv-search-wrapper');
         advancedSearchWrapper.classList.add('row');
         advancedSearchWrapper.classList.add('m-0');
+        root.insertBefore(advancedSearchWrapper, recipesListWrapper);
+    }
 
+    // set up advanced search fixed content (dynamic menus DEFAULT content (all recipes) is set up inside CollapsingMenu component)
+    function setUpAdvancedSearchView(arrayOfCategoryElements){
+        // ( arrayOfCategoryElements = [ingredientsList, appliancesList, ustensilsList] )
+        // console.log('===>arrayOfCategoryElements==', arrayOfCategoryElements);
+        const categoryNames = [ 'ingredients', 'appareils', 'ustensils'];
+        const advancedSearchWrapper = document.querySelector('.adv-search-wrapper');
         // generate advanced search : button + menu CONTAINER for each category
         arrayOfCategoryElements.forEach( (category, index) => {
             let catName = categoryNames[index];
             // generate menu container for each category
-            let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu component   
-
+            let catComponent = new CollapsingMenu(catName, category); // population of each menu container = done inside CollapsingMenu component
             advancedSearchWrapper.appendChild(catComponent);
         });
-        root.insertBefore(advancedSearchWrapper, recipesListWrapper);
+    }
+
+    function updateAdvancedSearchView(arrayOfCategoryElements) { // ( arrayOfCategoryElements = [ingredientsList, appliancesList, ustensilsList] )
+        // get each category menu list to update
+        const ingredientsListElement = document.querySelector('#ingredients-list');
+        const appliancesListElement = document.querySelector('#appareils-list');
+        const ustensilsListElement = document.querySelector('#ustensils-list');
+
+        // destroy (reset) their current content
+        const allMenus = [ ingredientsListElement, appliancesListElement, ustensilsListElement];
+        allMenus.forEach(el => { 
+            while (el.firstChild) { el.removeChild(el.firstChild); }
+        });
+        // inject new content : ingredients list
+        arrayOfCategoryElements[0].forEach(el => { 
+            let listELement = new MenuListItem(el);
+            ingredientsListElement.appendChild(listELement);
+        });
+        // inject new content : ingredients list
+        arrayOfCategoryElements[1].forEach(el => { 
+            let listELement = new MenuListItem(el);
+            appliancesListElement.appendChild(listELement);
+        });
+        // inject new content : ingredients list
+        arrayOfCategoryElements[2].forEach(el => { 
+            let listELement = new MenuListItem(el);
+            ustensilsListElement.appendChild(listELement);
+        });
     }
 
 
@@ -267,7 +298,7 @@ export const RecipeModule = (function() {
         // set categories elements based on new results
         arrayOfCategoryElements = updateCategoryLists(results); // order advanced search menus update;
         // display categories elements in menus
-        setUpAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
+        updateAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
     }
 
 

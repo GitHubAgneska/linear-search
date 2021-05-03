@@ -33,7 +33,7 @@ export class CollapsingMenu extends HTMLElement{
         // get UL container for category items 
         const categoryUl = this.querySelector('#' + categoryName + '-list');
         
-        // populate each menu container with category list items
+        // populate each menu container with category list items (passed in as param)
         categoryElements.forEach(el => {
             // generate li item element for each item of each category
             let listELement = new MenuListItem(el);
