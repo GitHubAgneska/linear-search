@@ -63,13 +63,152 @@ export class CollapsingMenu extends HTMLElement{
         const allMenus = this.querySelectorAll('#menu-' + categoryName);
 
 
-        // By default, click event = on whole menu Header to OPEN
-        menuHeader.addEventListener('click', function(event){ openMenu(event); }, false);
+        // By default, click event = on whole menu Header to OPEN ONLY
+        // ( cannot use a TOGGLE method here, for open/close events are passed through different elements
+        menuHeader.addEventListener('click', function(event){ menuOpen(event); }, false);
+        let menuIsOpen = false;
+        
+        function menuOpen(event) {
+            menuHeader = event.currentTarget;
+            event.stopPropagation();
+            console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget); // element that handles event
+            
+            let isMenuActive = menuHeader.getAttribute('isActive');
+            
+            if (isMenuActive === 'false' ) {
+
+                    menuHeader.removeEventListener('click',function(event){ menuOpen(event); }, false);
+                    menuHeader.removeAttribute('isActive', 'false');
+                    menuHeader.setAttribute('isActive', 'true');
+
+                    menuToOpen.style.display = 'flex'; // show list
+                    // replace btn > caret right away (open > close)
+                    caretDown.replaceWith(caretUp);
+                    caretUp.addEventListener('click',function(event){ menuClose(event); }, false);
+
+
+                    // add click on category name btn for activating field input
+                    btn.addEventListener('click', function(event){ activateInputField(event), false; }); // add click on btn to ACTIVATE INPUT FIELD
+                    btnCategoryName = 'rechercher un ' + btnCategoryName; // modify btn text
+
+
+            }
+            else { return; }
+        }
+
+        // this event occurs when a menu is open, and its category name btn is clicked : btn then becomes an input field
+        function activateInputField(event){
+            let isMenuActive = menuHeader.getAttribute('isActive');
+            if (isMenuActive === 'true' ) {
+                btn = event.currentTarget;
+                event.stopPropagation();
+
+                btn.style.display = 'none';
+                menuHeader.appendChild(searchInputField); // add input field
+
+                menuHeader.appendChild(caretUp); // + caret ( for the other one went away with btn)
+                caretUp.addEventListener('click',function(event){ menuClose(event); }, false);
+            }
+        }
+
+
+        function menuClose(event) {
+            event.stopPropagation();
+            caretUp = event.currentTarget;
+            console.log('event.currentTarget when CLOSING - 2======',event.currentTarget); // element that handles event
+
+            let isMenuActive = menuHeader.getAttribute('isActive');
+
+            if (isMenuActive === 'true' ) {
+
+                // remove click on btn to ACTIVATE INPUT FIELD  
+                btn.removeEventListener('click', function(){ activateInputField(), false; });
+
+                menuToOpen.style.display = 'none'; // hide list
+                menuHeader.removeAttribute('isActive', 'true');
+                menuHeader.setAttribute('isActive', 'false');
+
+                // replace btn > caret right away (up -> down)
+                caretUp.replaceWith(caretDown); 
+                
+                // remove input field
+                if (menuHeader.contains(searchInputField)) {menuHeader.removeChild(searchInputField);}
+                // put back category name
+                btnCategoryName = btnCategoryName + categoryName;
+                
+                // put back event on menu header
+                menuHeader.addEventListener('click',function(event){ menuOpen(event); }, false);
+                
+
+            } else { return; }
+        }
+
+
+        function setMenuIsOpenEvents() {
+            // remove initial event from menu header
+            // menuHeader.removeEventListener('click',function(event){ openMenu(event); }, false);
+            menuHeader.removeEventListener('click',function(){ toggleMenu(); }, false);
+            
+            // replace btn > caret right away (open > close)
+            btn.replaceChild(caretUp, caretDown);
+            // add click on caret UP to CLOSE MENU ≠ caret DOWN does NOT have the event for OPENING (which is on parent div)
+            // caretUp.addEventListener('click', function(event){ closeMenu(event); }, false);
+            caretUp.addEventListener('click', function(){ toggleMenu(); }, false);
+
+            // add click on category name btn for activating field input
+            btn.addEventListener('click', function(event){ activateInputField(event), false; }); // add click on btn to ACTIVATE INPUT FIELD
+            btnCategoryName = 'rechercher un ' + btnCategoryName; // modify btn text
+
+            // DOM ELEMENTS CHANGES
+            parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
+            let collapsingMenu = menuHeader.parentNode; // = this whole component
+            collapsingMenu.classList.replace('col', 'col-6'); // menu width expands
+            
+            menuHeader.setAttribute('isActive', 'true');
+            
+            // SHOW list
+            menuToOpen.style.display = 'flex'; // show list
+            menuToOpen.setAttribute('isOpen', 'true');
+        }
+
+
+        function setMenuIsClosedEvents() {
+
+            // replace btn > caret right away (close > open)
+            caretUp.replaceWith(caretDown);
+            
+            // remove click on btn to ACTIVATE INPUT FIELD  
+            btn.removeEventListener('click', function(){ activateInputField(), false; });
+            
+            // open menu event is back on menu header
+            if (menuHeader.contains(searchInputField)) {menuHeader.removeChild(searchInputField);}
+            // menuHeader.addEventListener('click',function(event){ openMenu(event); }, false); // put back initial event on menu header
+            menuHeader.addEventListener('click',function(){ toggleMenu(); }, false); // put back initial event on menu header
+            menuHeader.removeAttribute('isActive', 'true');
+            menuHeader.setAttribute('isActive', 'false');
+            
+
+            // DOM ELEMENTS CHANGES
+            let menuList = document.getElementById('menu-'+ categoryName);
+            menuList.style.display = 'none';
+
+            parentAdvancedSearchWrapper.classList.replace('col-12', 'col-16'); // parent shrinks back
+            let collapsingMenu = menuHeader.parentNode; // = this whole component
+            collapsingMenu.classList.replace('col-6', 'col'); // menu width shrinks back
+            
+            btn.setAttribute('aria-expanded', 'false');
+            btnCategoryName = btnCategoryName + categoryName; // put back category name
+            menuToOpen.setAttribute('isOpen', 'false');
+        }
+
 
         function openMenu(event){
-            
+
+            console.log('MENU OPENING!');
+
+            menuIsOpen = true;
             menuHeader = event.currentTarget; // element that handles event
-            
+
             menuHeader.removeEventListener('click',function(event){ openMenu(event); }, false); // remove initial event from menu header
 
             // replace btn caret right away (open > close)
@@ -87,12 +226,14 @@ export class CollapsingMenu extends HTMLElement{
             menuToOpen.style.display = 'flex'; // show list
             menuToOpen.setAttribute('isOpen', 'true');
             btnCategoryName = 'rechercher un ' + btnCategoryName; // modify btn text
-            
-            // set up menu STATE & EVENTS when opened
         }
 
         function closeMenu(event){
 
+            menuIsOpen = false;
+            console.log('MENU CLOSING!');
+
+            event.stopPropagation();
             caretUp = event.target; // element on which event occurs
             let caretParentBtn = caretUp.parentNode;
 
@@ -100,10 +241,11 @@ export class CollapsingMenu extends HTMLElement{
             btn.removeEventListener('click', function(){ activateInputField(event), false; }); // remove click on btn to ACTIVATE INPUT FIELD 
             menuHeader.addEventListener('click',function(event){ openMenu(event); }, false); // put back initial event on menu header
 
-            // caretUp.removeEventListener('click', function(event){ closeMenu(event); }, false); // remove click event close on caret
+            caretUp.removeEventListener('click', function(event){ closeMenu(event); }, false); // remove click event close on caret
 
             menuHeader.removeAttribute('isActive', 'true');
             menuHeader.setAttribute('isActive', 'false');
+            if (menuHeader.hasChildNodes(searchInputField)) {menuHeader.removeChild(searchInputField);}
 
             let menuList = document.getElementById('menu-'+ categoryName);
             menuList.style.display = 'none';
@@ -115,16 +257,9 @@ export class CollapsingMenu extends HTMLElement{
             btn.setAttribute('aria-expanded', 'false');
             btnCategoryName = btnCategoryName + categoryName; // put back category name
             menuToOpen.setAttribute('isOpen', 'false');
-            
         }
         
-        function activateInputField(event){  
-            btn = event.currentTarget;
-            btn.style.display = 'none';
-            menuHeader.appendChild(searchInputField); // add input field
-            menuHeader.appendChild(caretUp); // + caret ( for the other one went away with btn)
-            // caretUp.addEventListener('click', function(event){ closeMenu(event); }, false); // add click on caret to CLOSE MENU
-        }
+   
 
 
         // check : only one menu can be open at the time - otherwise close it before opening one
