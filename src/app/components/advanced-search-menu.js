@@ -26,9 +26,12 @@ export class CollapsingMenu extends HTMLElement{
             </div>
         `;
 
-        if (categoryName === 'ingredients') {
-            this.setAttribute('class', 'col-6');
-        } else { this.setAttribute('class', 'col-3'); }
+        // parent wrapper ('section .adv-search-wrapper') containing all 3 collapsing menus must be 
+        // of width col-6 when menus are closed (50% parent) => each menu : col
+        // of width col-12 if a menu is open (100% parent) => open menu: col-6 / others: col-2 ( + empty col-2)
+        const parentAdvancedSearchWrapper = document.querySelector('.adv-search-wrapper');
+        this.setAttribute('class', 'col'); // each menu : col
+
 
         // get UL container for category items 
         const categoryUl = this.querySelector('#' + categoryName + '-list');
@@ -64,10 +67,15 @@ export class CollapsingMenu extends HTMLElement{
 
         function openMenu(event){
             menuHeader = event.currentTarget; // element that handles event
+
+            let collapsingMenu = menuHeader.parentNode; // = this whole component
             menuHeader.setAttribute('isActive', 'true');
             // first check no other menu is open already (close it eventually)
             checkWhosOpen();
             // set up menu DEFAULT STATE when first opened
+            parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12');
+            collapsingMenu.classList.replace('col', 'col-6');
+
             menuToOpen.style.display = 'block'; // show list
             menuToOpen.setAttribute('isOpen', 'true');
             btnCategoryName = 'rechercher un ' + btnCategoryName; // modify btn text

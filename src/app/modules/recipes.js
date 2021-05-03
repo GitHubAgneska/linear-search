@@ -160,6 +160,7 @@ export const RecipeModule = (function() {
         advancedSearchWrapper.setAttribute('class', 'adv-search-wrapper');
         advancedSearchWrapper.classList.add('row');
         advancedSearchWrapper.classList.add('m-0');
+        advancedSearchWrapper.classList.add('col-6'); // col-6 = default width: when all menus closed
         root.insertBefore(advancedSearchWrapper, recipesListWrapper);
     }
 
