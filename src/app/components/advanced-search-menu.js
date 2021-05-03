@@ -2,6 +2,7 @@
 /* TEMPLATE FOR A SEARCH MENU : button + collapsible menu body  */
 /* ================================================== */
 import {MenuListItem} from '../components/menu-listItem';
+import {RecipeModule} from '../modules/recipes';
 
 export class CollapsingMenu extends HTMLElement{
     constructor(categoryName, categoryElements){
@@ -36,10 +37,11 @@ export class CollapsingMenu extends HTMLElement{
         // get UL container for category items 
         const categoryUl = this.querySelector('#' + categoryName + '-list');
         
-        // populate each menu container with category list items
+        // populate each menu container with category list items - DEFAULT VIEW : all recipes categories
         categoryElements.forEach(el => {
             // generate li item element for each item of each category
             let listELement = new MenuListItem(el);
+            listELement.addEventListener('click', function(event){selectItemInList(event) }, false);
             categoryUl.appendChild(listELement);
         });
 
@@ -162,16 +164,61 @@ export class CollapsingMenu extends HTMLElement{
         }
 
 
+
+
         let searchTerm = '';
+
+        // handle select item in list
+        function selectItemInList(event) {
+            let word = event.target.innerText; // text inside <p> element where event occurs
+            let inputField = document.querySelector('#searchInto-'+ categoryName);
+            inputField.value = word; // make selected word the current search word of input field
+
+            
+        }
+
+        // handle manual typing in input field
         searchInputField.addEventListener('input', function(event){
             searchTerm = event.target.value;
-            processSearchInput(searchTerm);
+
         });
 
+        // create WRAPPER FOR TAGS to come
+        let tagsWrapper = document.createElement('div');
+        tagsWrapper.setAttribute('id', 'tagsWrapper');
+        tagsWrapper.setAttribute('class', 'tagsWrapper');
+        let parentSectionfirstChild = parentAdvancedSearchWrapper.firstChild;
+        parentAdvancedSearchWrapper.insertBefore(parentSectionfirstChild, tagsWrapper);
 
-        function processSearchInput(searchTerm){
-            console.log('searchTerm==', searchTerm);
+
+        // when user has selected an item in category or typed it in in INPUT FIELD 
+        // and then confirm choice by pressing ENTER:
+        // a new tag with search word is generated above menus
+        searchInputField.addEventListener('keydown', function(event){
+            searchTerm = event.target.value;
+            if ( event.key === 'Enter') {
+
+                let searchItemTag = document.createElement('div');
+                searchItemTag.setAttribute('class', 'searchTag');
+                searchItemTag.setAttribute('id', 'searchTag-' + searchTerm );
+                let tagCloseIcon = document.createElement('i');
+                tagCloseIcon.setAttribute('class', 'fa fa-times-circle-o');
+                let tagText = document.createTextNode(searchTerm);
+                searchItemTag.appendChild(tagText);
+                searchItemTag.appendChild(tagCloseIcon);
+                tagCloseIcon.addEventListener('click', function(event) { removeTag(event, 'searchTag-' + searchTerm );}, false);
+
+                
+                parentAdvancedSearchWrapper.appendChild(searchItemTag);
+
+            }
+
+        });
+
+        function removeTag(event, id) {
+
         }
+
 
     }
 }

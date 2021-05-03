@@ -208,6 +208,7 @@ export const RecipeModule = (function() {
     }
 
 
+
     // SEARCH FUNCTIONALITY : MAIN SEARCH ==================================================================================================
     function processCurrentMainSearch(currentSearchTerm) {
         console.log(currentSearchTerm);
@@ -275,8 +276,7 @@ export const RecipeModule = (function() {
     }
     
     function resetSearch(arr){ // arr = resultsList or/and suggestions
-        if (arr) {
-            while( arr.length > 0  ) { arr.pop(); } // remove arr items
+        if (arr) { while( arr.length > 0  ) { arr.pop(); } // remove arr items
         } else { return; }
     }
 
@@ -301,6 +301,9 @@ export const RecipeModule = (function() {
         // display categories elements in menus
         updateAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
     }
+
+    // ADVANCED SEARCH   =======================================================================
+    
 
 
     

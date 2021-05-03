@@ -1,6 +1,11 @@
 // Advanced search menus
 .adv-search-wrapper {
-    height: 50px;
+
+    .tagsWrapper {
+        height:20px;
+        .searchTag { height:100%; background-color: $primary !important;
+            color: $white;}
+    }
 
     collapsing-menu-component {z-index: 5;} // search menus pos when toggled open
     // override bootstrap col settings
@@ -10,6 +15,7 @@
         background-color: $primary !important;
         color: $white;
     }
+
     .menu-header { // = visible buttons
 
         height: 70px;

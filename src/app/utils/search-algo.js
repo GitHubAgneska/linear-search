@@ -147,4 +147,13 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
 }
 
 
+// after a search via main search bar is completed and a list of recipes is displayed
+// the advanced search in the 3 categories will apply a new search, 
+// but this time on the current list of results, and in the results category only
+
+export function processAdvancedSearch(searchTerm) {
+
+}
+
+
 
