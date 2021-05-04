@@ -65,12 +65,14 @@ export class CollapsingMenu extends HTMLElement{
         const allMenus = this.querySelectorAll('#menu-' + categoryName);
 
 
+        // COLLAPSING MENUS METHODS ================================================================
+
         // By default, click event = on whole menu Header to OPEN ONLY
         // ( cannot use a TOGGLE method here, for open/close events are passed through different elements
         menuHeader.addEventListener('click', function(event){ menuOpen(event); }, false);
         
         function menuOpen(event) {
-            menuHeader = event.currentTarget;
+            menuHeader = event.currentTarget; // element that handles event
             event.stopPropagation();
             console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget); // element that handles event
             let isMenuActive = menuHeader.getAttribute('isActive');
@@ -86,7 +88,6 @@ export class CollapsingMenu extends HTMLElement{
                     caretDown.replaceWith(caretUp);
                     caretUp.addEventListener('click',function(event){ menuClose(event); }, false);
 
-
                     // add click on category name btn for activating field input
                     btn.addEventListener('click', function(event){ activateInputField(event), false; }); // add click on btn to ACTIVATE INPUT FIELD
                     btnCategoryName = 'rechercher un ' + btnCategoryName; // modify btn text
@@ -94,12 +95,11 @@ export class CollapsingMenu extends HTMLElement{
                     parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
                     let collapsingMenu = menuHeader.parentNode; // = this whole component
                     collapsingMenu.classList.replace('col', 'col-6'); // menu width expands
-
             }
             else { return; }
         }
 
-        // this event occurs when a menu is open, and its category name btn is clicked : btn then becomes an input field
+        // this event occurs when a menu is open, and its category name btn is clicked : btn then is replaced by an input field
         function activateInputField(event){
             let isMenuActive = menuHeader.getAttribute('isActive');
             if (isMenuActive === 'true' ) {
@@ -149,7 +149,6 @@ export class CollapsingMenu extends HTMLElement{
             } else { return; }
         }
 
-
         // check : only one menu can be open at the time - otherwise close it before opening one
         function checkWhosOpen(){
             allMenus.forEach(menu => { 
@@ -164,8 +163,7 @@ export class CollapsingMenu extends HTMLElement{
         }
 
 
-
-
+        // HANDLE SEARCH OF ADVANCED SEARCH ==================================================
         let searchTerm = '';
 
         // handle select item in list
@@ -173,53 +171,63 @@ export class CollapsingMenu extends HTMLElement{
             let word = event.target.innerText; // text inside <p> element where event occurs
             let inputField = document.querySelector('#searchInto-'+ categoryName);
             inputField.value = word; // make selected word the current search word of input field
-
-            
+            menuClose();
         }
 
         // handle manual typing in input field
         searchInputField.addEventListener('input', function(event){
             searchTerm = event.target.value;
-
         });
 
-        // create WRAPPER FOR TAGS to come
-        let tagsWrapper = document.createElement('div');
-        tagsWrapper.setAttribute('id', 'tagsWrapper');
-        tagsWrapper.setAttribute('class', 'tagsWrapper');
-        let parentSectionfirstChild = parentAdvancedSearchWrapper.firstChild;
-        parentAdvancedSearchWrapper.insertBefore(parentSectionfirstChild, tagsWrapper);
-
-
         // when user has selected an item in category or typed it in in INPUT FIELD 
-        // and then confirm choice by pressing ENTER:
+        // and then CONFIRM CHOICE by pressing ENTER:
         // a new tag with search word is generated above menus
         searchInputField.addEventListener('keydown', function(event){
             searchTerm = event.target.value;
             if ( event.key === 'Enter') {
-
-                let searchItemTag = document.createElement('div');
-                searchItemTag.setAttribute('class', 'searchTag');
-                searchItemTag.setAttribute('id', 'searchTag-' + searchTerm );
-                let tagCloseIcon = document.createElement('i');
-                tagCloseIcon.setAttribute('class', 'fa fa-times-circle-o');
-                let tagText = document.createTextNode(searchTerm);
-                searchItemTag.appendChild(tagText);
-                searchItemTag.appendChild(tagCloseIcon);
-                tagCloseIcon.addEventListener('click', function(event) { removeTag(event, 'searchTag-' + searchTerm );}, false);
-
-                
-                parentAdvancedSearchWrapper.appendChild(searchItemTag);
-
+                let searchItemTag = createTag(searchTerm);
+                let tagsWrapper = document.querySelector('#tagsWrapper');
+                if (!tagsWrapper) { initTagsWrapper(); }
+                tagsWrapper.appendChild(searchItemTag);
             }
-
         });
+        
+        // handle suggestions for manual typing
 
-        function removeTag(event, id) {
 
+
+        // create WRAPPER FOR TAGS to come : happens ONCE with 1st list item selection or typed word
+        function initTagsWrapper() {
+            let tagsWrapper = document.createElement('div');
+            tagsWrapper.setAttribute('id', 'tagsWrapper');
+            tagsWrapper.setAttribute('class', 'tagsWrapper');
+            parentAdvancedSearchWrapper.prepend(tagsWrapper); // insert in 1st position
+        }
+
+        // create new tag
+        function createTag(searchTerm) { 
+            let searchItemTag = document.createElement('div');
+            searchItemTag.setAttribute('class', 'searchTag');
+            searchItemTag.setAttribute('id', 'searchTag-' + searchTerm );
+            let tagCloseIcon = document.createElement('i');
+            tagCloseIcon.setAttribute('class', 'fa fa-times-circle-o');
+            tagCloseIcon.setAttribute('id', 'close-'+ searchTerm);
+            let tagText = document.createTextNode(searchTerm);
+            searchItemTag.appendChild(tagText);
+            searchItemTag.appendChild(tagCloseIcon);
+            let searchItemTagId = 'searchTag-' + searchTerm;
+            tagCloseIcon.addEventListener('click', function(event) { removeTag(event, searchItemTagId );}, false);
+            return searchItemTag;
         }
 
 
+        function removeTag(event, searchItemTagId) {
+            let closeIcon = document.querySelector('#close-'+ searchTerm);
+            closeIcon = event.currentTarget;
+            let tagsWrapper = document.querySelector('#tagsWrapper');
+            let tagToRemove = document.querySelector('#'+ searchItemTagId);
+            tagsWrapper.removeChild(tagToRemove);
+        }
     }
 }
 
