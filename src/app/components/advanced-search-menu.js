@@ -63,7 +63,7 @@ export class CollapsingMenu extends HTMLElement{
         searchInputField.setAttribute('placeholder', 'rechercher un ' + categoryName );
         
         const allMenus = this.querySelectorAll('#menu-' + categoryName);
-
+        let currentTags = [];
 
         // COLLAPSING MENUS METHODS ================================================================
 
@@ -77,6 +77,10 @@ export class CollapsingMenu extends HTMLElement{
             console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget); // element that handles event
             let isMenuActive = menuHeader.getAttribute('isActive');
             
+            if (btn.contains(searchInputField)) { searchInputField.replaceWith(caretDown);}
+            if (menuHeader.contains(caretUp)) { menuHeader.removeChild(caretUp);}
+
+
             if (isMenuActive === 'false' ) {
 
                     menuHeader.removeEventListener('click',function(event){ menuOpen(event); }, false);
@@ -116,6 +120,7 @@ export class CollapsingMenu extends HTMLElement{
 
 
         function menuClose(event) {
+
             event.stopPropagation();
             caretUp = event.currentTarget;
 
@@ -134,6 +139,8 @@ export class CollapsingMenu extends HTMLElement{
                 
                 // remove input field
                 if (menuHeader.contains(searchInputField)) {menuHeader.removeChild(searchInputField);}
+                if (menuHeader.contains(caretUp)) { menuHeader.removeChild(caretUp);}
+                if (btn.contains(searchInputField)) {btn.removeChild(searchInputField);}
                 // put back btn with category name
                 btn.style.display = 'flex';
                 btnCategoryName = btnCategoryName + categoryName;
@@ -169,39 +176,53 @@ export class CollapsingMenu extends HTMLElement{
         // handle select item in list
         function selectItemInList(event) {
             let word = event.target.innerText; // text inside <p> element where event occurs
+            // activate field input via btn
+            btn.click(event); 
             let inputField = document.querySelector('#searchInto-'+ categoryName);
             inputField.value = word; // make selected word the current search word of input field
-            menuClose();
         }
 
         // handle manual typing in input field
-        searchInputField.addEventListener('input', function(event){
+     /*    searchInputField.addEventListener('input', function(event){
             searchTerm = event.target.value;
-        });
+        }); */
 
         // when user has selected an item in category or typed it in in INPUT FIELD 
-        // and then CONFIRM CHOICE by pressing ENTER:
-        // a new tag with search word is generated above menus
         searchInputField.addEventListener('keydown', function(event){
             searchTerm = event.target.value;
+            searchInputField = event.target;
+            // and then CONFIRM CHOICE by pressing ENTER:
             if ( event.key === 'Enter') {
-                let searchItemTag = createTag(searchTerm);
-                let tagsWrapper = document.querySelector('#tagsWrapper');
-                if (!tagsWrapper) { initTagsWrapper(); }
-                tagsWrapper.appendChild(searchItemTag);
+                // a new tag with search word is generated above menus
+                // check first if exists already
+                let currentTags = getTagsList();
+                if ( !currentTags.includes(searchTerm) ) {
+                    let searchItemTag = createTag(searchTerm);
+                    initTagsWrapper();
+                    let tagsWrapper = document.querySelector('#tagsWrapper');
+                    tagsWrapper.appendChild(searchItemTag);
+                    setTagsList(searchTerm);
+                }
             }
         });
-        
+
+        // keep track of tags to prevent displaying the same one more than once
+        let setTagsList = function(tag) { currentTags.push(tag); };
+        let getTagsList = function() { return currentTags; };
+
         // handle suggestions for manual typing
 
 
 
         // create WRAPPER FOR TAGS to come : happens ONCE with 1st list item selection or typed word
         function initTagsWrapper() {
-            let tagsWrapper = document.createElement('div');
-            tagsWrapper.setAttribute('id', 'tagsWrapper');
-            tagsWrapper.setAttribute('class', 'tagsWrapper');
-            parentAdvancedSearchWrapper.prepend(tagsWrapper); // insert in 1st position
+            if (!parentAdvancedSearchWrapper.contains(document.querySelector('#tagsWrapper'))) {
+                let tagsWrapper = document.createElement('div');
+                tagsWrapper.setAttribute('id', 'tagsWrapper');
+                tagsWrapper.setAttribute('class', 'tagsWrapper');
+                parentAdvancedSearchWrapper.prepend(tagsWrapper); // insert in 1st position
+            }
+            else { return; }
         }
 
         // create new tag
@@ -215,17 +236,17 @@ export class CollapsingMenu extends HTMLElement{
             let tagText = document.createTextNode(searchTerm);
             searchItemTag.appendChild(tagText);
             searchItemTag.appendChild(tagCloseIcon);
-            let searchItemTagId = 'searchTag-' + searchTerm;
-            tagCloseIcon.addEventListener('click', function(event) { removeTag(event, searchItemTagId );}, false);
+            tagCloseIcon.addEventListener('click', function(event) { removeTag(event);}, false);
             return searchItemTag;
         }
 
 
-        function removeTag(event, searchItemTagId) {
+        function removeTag(event) {
+            event.stopPropagation();
             let closeIcon = document.querySelector('#close-'+ searchTerm);
             closeIcon = event.currentTarget;
+            let tagToRemove = closeIcon.parentNode;
             let tagsWrapper = document.querySelector('#tagsWrapper');
-            let tagToRemove = document.querySelector('#'+ searchItemTagId);
             tagsWrapper.removeChild(tagToRemove);
         }
     }
