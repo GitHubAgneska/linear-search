@@ -244,6 +244,7 @@ export const RecipeModule = (function() {
             advancedSearchWrapper.appendChild(catComponent);
         });
     }
+
     // UPDATE CATEGORY LIST ELEMENTS AFTER SEARCH IN MAIN SEARCH
     // when search term in main search produces a list of recipes,
     // the categories menus lists are updated with corresponding recipes ingredients/appliances/ustensils
@@ -275,6 +276,7 @@ export const RecipeModule = (function() {
         arrayOfCategoryElements.push(ingredientsList,appliancesList, ustensilsList );
         return arrayOfCategoryElements;
     }
+
     // DISPLAY UPDATED CATEGORY LIST ELEMENTS
     function updateAdvancedSearchView(arrayOfCategoryElements) { // ( arrayOfCategoryElements = [ingredientsList, appliancesList, ustensilsList] )
         // get each category menu list to update
@@ -291,18 +293,39 @@ export const RecipeModule = (function() {
         arrayOfCategoryElements[0].forEach(el => { 
             let listELement = new MenuListItem(el);
             ingredientsListElement.appendChild(listELement);
+            let categoryName = 'ingredients';
+            listELement.addEventListener('click', function(event){ selectItemInList(event, categoryName); }, false);
         });
         // inject new content : ingredients list
         arrayOfCategoryElements[1].forEach(el => { 
             let listELement = new MenuListItem(el);
             appliancesListElement.appendChild(listELement);
+            let categoryName = 'appliances';
+            listELement.addEventListener('click', function(event){ selectItemInList(event, categoryName); }, false);
         });
         // inject new content : ingredients list
         arrayOfCategoryElements[2].forEach(el => { 
             let listELement = new MenuListItem(el);
             ustensilsListElement.appendChild(listELement);
+            let categoryName = 'ustensils';
+            listELement.addEventListener('click', function(event){ selectItemInList(event, categoryName); }, false);
         });
     }
+
+
+    //  ======== !! TO REVIEW : REDEFINITION OD EXISTING METHOD in CollapsingMenu component : 
+    // ISSUE = init categories lists items DEFAULT = done in component, BUT UPDATING categories lists items = done here in MODULE  ========= TO REVIEW 
+    // handle select item in list : send it into input field
+    function selectItemInList(event, categoryName) { console.log('categoryName===', categoryName);
+        let word = event.target.innerText; // text inside <p> element where event occurs
+        // activate field input 'artificially' via btn
+        let btn = document.querySelector('button').getAttribute('aria-controls' === categoryName);
+        btn.click(event); 
+        let inputField = document.querySelector('#searchInto-'+ categoryName);
+        inputField.value = word; // make selected word the current search word of input field
+    }
+
+
 
 
     
