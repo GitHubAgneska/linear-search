@@ -151,9 +151,26 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
 // the advanced search in the 3 categories will apply a new search, 
 // but this time on the current list of results, and in the results category only
 
-export function processAdvancedSearch(searchTerm) {
+let advancedSearchResults = [];
+
+export function processAdvancedSearch(searchTerm, categoryName) {
+
+    let category = categoryName;
+
+    // here, results come either from a sorted list or default api recipes list
+    let currentListofResults = RecipeModule.getResults();
+
+    console.log('currentListofResults IS ====', currentListofResults);
+
+
+/*     currentListofResults.forEach( recipe => {
+        if( category === 'ingredients') 
+        
+    }); */
 
 }
+
+
 
 
 

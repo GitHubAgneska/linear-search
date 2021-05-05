@@ -3,6 +3,7 @@
 /* ================================================== */
 import {MenuListItem} from '../components/menu-listItem';
 import {RecipeModule} from '../modules/recipes';
+import {processAdvancedSearch} from '../utils/search-algo';
 
 export class CollapsingMenu extends HTMLElement{
     constructor(categoryName, categoryElements){
@@ -41,7 +42,8 @@ export class CollapsingMenu extends HTMLElement{
         categoryElements.forEach(el => {
             // generate li item element for each item of each category
             let listELement = new MenuListItem(el);
-            listELement.addEventListener('click', function(event){selectItemInList(event) }, false);
+            // add select event on each item
+            listELement.addEventListener('click', function(event){selectItemInList(event); }, false);
             categoryUl.appendChild(listELement);
         });
 
@@ -66,7 +68,6 @@ export class CollapsingMenu extends HTMLElement{
         let currentTags = [];
 
         // COLLAPSING MENUS METHODS ================================================================
-
         // By default, click event = on whole menu Header to OPEN ONLY
         // ( cannot use a TOGGLE method here, for open/close events are passed through different elements
         menuHeader.addEventListener('click', function(event){ menuOpen(event); }, false);
@@ -77,6 +78,7 @@ export class CollapsingMenu extends HTMLElement{
             console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget); // element that handles event
             let isMenuActive = menuHeader.getAttribute('isActive');
             
+            //  eventually remove remaining elements
             if (btn.contains(searchInputField)) { searchInputField.replaceWith(caretDown);}
             if (menuHeader.contains(caretUp)) { menuHeader.removeChild(caretUp);}
 
@@ -137,9 +139,9 @@ export class CollapsingMenu extends HTMLElement{
                 menuHeader.removeAttribute('isActive', 'true');
                 menuHeader.setAttribute('isActive', 'false');
                 
-                // remove input field
+                // remove input field  + eventually remaining elements
                 if (menuHeader.contains(searchInputField)) {menuHeader.removeChild(searchInputField);}
-                if (menuHeader.contains(caretUp)) { menuHeader.removeChild(caretUp);}
+                if (btn.contains(caretUp)) { caretUp.replaceWith(caretDown);}
                 if (btn.contains(searchInputField)) {btn.removeChild(searchInputField);}
                 // put back btn with category name
                 btn.style.display = 'flex';
@@ -173,28 +175,36 @@ export class CollapsingMenu extends HTMLElement{
         // HANDLE SEARCH OF ADVANCED SEARCH ==================================================
         let searchTerm = '';
 
-        // handle select item in list
+        // handle select item in list : send it into input field
         function selectItemInList(event) {
             let word = event.target.innerText; // text inside <p> element where event occurs
-            // activate field input via btn
+            // activate field input 'artificially' via btn
             btn.click(event); 
             let inputField = document.querySelector('#searchInto-'+ categoryName);
             inputField.value = word; // make selected word the current search word of input field
         }
 
-        // handle manual typing in input field
-     /*    searchInputField.addEventListener('input', function(event){
-            searchTerm = event.target.value;
-        }); */
 
         // when user has selected an item in category or typed it in in INPUT FIELD 
         searchInputField.addEventListener('keydown', function(event){
             searchTerm = event.target.value;
             searchInputField = event.target;
+
+            // retrieve current category from input id  ( ex '#searchInto-ingredients')
+            let currentCategoryName = searchInputField.getAttribute('id');
+            currentCategoryName = currentCategoryName.slice(11, currentCategoryName.length);
+            console.log('currentCategoryName', currentCategoryName);
+
+            // init suggestions from list ( = search in existing items of CURRENT CATEGORY)
+            if ( searchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
+                console.log('searchTerm is 3 chars long');
+                processAdvancedSearch(searchTerm, currentCategoryName); // launch search for term in current results
+            }
+
             // and then CONFIRM CHOICE by pressing ENTER:
             if ( event.key === 'Enter') {
-                // a new tag with search word is generated above menus
-                // check first if exists already
+                // a new tag for search word is generated above menus
+                // ( check first if exists already )
                 let currentTags = getTagsList();
                 if ( !currentTags.includes(searchTerm) ) {
                     let searchItemTag = createTag(searchTerm);
@@ -211,7 +221,6 @@ export class CollapsingMenu extends HTMLElement{
         let getTagsList = function() { return currentTags; };
 
         // handle suggestions for manual typing
-
 
 
         // create WRAPPER FOR TAGS to come : happens ONCE with 1st list item selection or typed word
@@ -240,7 +249,7 @@ export class CollapsingMenu extends HTMLElement{
             return searchItemTag;
         }
 
-
+        // delete tag (via icon)
         function removeTag(event) {
             event.stopPropagation();
             let closeIcon = document.querySelector('#close-'+ searchTerm);
