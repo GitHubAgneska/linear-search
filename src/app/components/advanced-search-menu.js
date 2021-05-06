@@ -11,7 +11,8 @@ export class CollapsingMenu extends HTMLElement{
         this.innerHTML = `
             
             <div class="menu-header" id="menu-header-${categoryName}" isActive="false">
-                <button class="btn" 
+                <button class="btn"
+                        id="btn-${categoryName}" 
                         type="button" 
                         data-bs-toggle="collapse" 
                         data-bs-target="#${categoryName}"
@@ -184,7 +185,7 @@ export class CollapsingMenu extends HTMLElement{
             inputField.value = word; // make selected word the current search word of input field
         }
 
-
+        // let advancedSearchResults = [];
         // when user has selected an item in category or typed it in in INPUT FIELD 
         searchInputField.addEventListener('keydown', function(event){
             searchTerm = event.target.value;
@@ -198,7 +199,6 @@ export class CollapsingMenu extends HTMLElement{
             // init suggestions from list ( = search in existing items of CURRENT CATEGORY)
             if ( searchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
                 console.log('searchTerm is 3 chars long');
-                processAdvancedSearch(searchTerm, currentCategoryName); // launch search for term in current results
             }
 
             // and then CONFIRM CHOICE by pressing ENTER:
@@ -213,10 +213,14 @@ export class CollapsingMenu extends HTMLElement{
                     tagsWrapper.appendChild(searchItemTag);
                     setTagsList(searchTerm);
                 }
+                // launch search for term in current results
+                RecipeModule.processAdvancedSearch(searchTerm, currentCategoryName);
+
             }
         });
 
         // keep track of tags to prevent displaying the same one more than once
+        // AND is used by search method that needs an up-to-date array of
         let setTagsList = function(tag) { currentTags.push(tag); };
         let getTagsList = function() { return currentTags; };
 

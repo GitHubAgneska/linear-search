@@ -6,6 +6,7 @@ import {MenuListItem} from '../components/menu-listItem';
 import {CardTemplate} from '../components/bootstrap-card';
 import {HeaderBaseTemplate} from '../components/header';
 import {search} from '../utils/search-algo';
+import {advancedSearch} from '../utils/search-algo';
 
 /* ================================================== */
 /* MODULE IN CHARGE OF ALL COMPONENTS + LOGIC */
@@ -28,6 +29,9 @@ export const RecipeModule = (function() {
 
     let storedResults = [];  // local storage of results
     let storedSuggestions = []; // local storage of suggestions
+
+    let advancedSearchRecipes = [];
+    let advancedSearchResults = [];
 
     // fetch all recipes
     fetch(localUrl)
@@ -201,6 +205,9 @@ export const RecipeModule = (function() {
     function displaySearchResults(results) {
 
         results = getResults();
+        // store current list for advanced search to search into
+        advancedSearchRecipes = getResults();
+
         // reset current list of recipes
         let recipesListWrapper = document.querySelector('#recipes-list');
         //reset recipes list wrapper
@@ -300,7 +307,7 @@ export const RecipeModule = (function() {
         arrayOfCategoryElements[1].forEach(el => { 
             let listELement = new MenuListItem(el);
             appliancesListElement.appendChild(listELement);
-            let categoryName = 'appliances';
+            let categoryName = 'appareils';
             listELement.addEventListener('click', function(event){ selectItemInList(event, categoryName); }, false);
         });
         // inject new content : ingredients list
@@ -318,17 +325,32 @@ export const RecipeModule = (function() {
     // handle select item in list : send it into input field
     function selectItemInList(event, categoryName) { console.log('categoryName===', categoryName);
         let word = event.target.innerText; // text inside <p> element where event occurs
+        let btn = document.querySelector('#btn-'+categoryName);
         // activate field input 'artificially' via btn
-        let btn = document.querySelector('button').getAttribute('aria-controls' === categoryName);
         btn.click(event); 
         let inputField = document.querySelector('#searchInto-'+ categoryName);
         inputField.value = word; // make selected word the current search word of input field
     }
 
+    function processAdvancedSearch(searchTerm, currentCategoryName) {
 
-
-
+        console.log('category==', currentCategoryName);
+        console.log('searchTerm==', searchTerm);
     
+        // here, results come either from a sorted list (current results) or default api recipes list
+        advancedSearchRecipes = RecipeModule.getResults();
+        console.log('currentListofResults IS ====', advancedSearchRecipes);
+    
+        advancedSearch(advancedSearchRecipes, searchTerm, currentCategoryName);
+
+        
+        
+    }
+
+
+
+
+    // PUBLIC PART OF MODULE
     return {
         processCurrentMainSearch: processCurrentMainSearch,
         addSuggestionInList: addSuggestionInList,
@@ -340,6 +362,7 @@ export const RecipeModule = (function() {
         setSuggestions: setSuggestions,
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,
+        processAdvancedSearch:processAdvancedSearch
         
     };
     

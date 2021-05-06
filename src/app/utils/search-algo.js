@@ -7,10 +7,88 @@ import {RecipeModule} from '../modules/recipes';
 
 let resultsList = []; // list of recipes matching search
 let suggestions = []; // list of suggested words matching search
+let advancedSearchResults = []; // list of recipes matching advanced search
+
+
+export function advancedSearch(currentResults,searchTerm, currentCategoryName){
+
+    advancedSearchResults = []; // reset results
+
+    console.log('currentResults where to search===', currentResults);
+    console.log('searchterm advanced===', searchTerm);
+    console.log('currentCategoryName===', currentCategoryName);
+    if (currentCategoryName === 'appareils') { currentCategoryName = 'appliance'; }
+
+    // in the array of current recults, 
+    currentResults.forEach( currentRecipe => {
+        for (const key of Object.keys(currentRecipe)) { // iterate over each key of recipe object
+
+            if (key === currentCategoryName ) {   //  find the category current searchterm comes from
+                console.log('currently SEARCHING IN ===', key);
+
+                // SEARCH IN INGREDIENTS  = array of objects
+                if (key === 'ingredients') {
+                    let recipeIngredients = currentRecipe.ingredients;
+                    
+                    recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array
+        
+                        for (const [key, value] of Object.entries(item) ) { // for each key:value of ingredient object
+                            
+                            if (key === 'ingredient') { console.log('key====', key );
+                                let ingredientName = value.toLowerCase();  console.log('value====', ingredientName ); console.log('searchTerm====', searchTerm );
+                                    
+                                if ( ingredientName === searchTerm.toLowerCase()  || ingredientName.includes(searchTerm.toLowerCase())  ) {
+
+                                    console.log('MATCH!!!!!');
+                                    
+                                    // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
+                                    if ( !advancedSearchResults.includes(currentRecipe)){
+                                        advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    return advancedSearchResults;
+                }
+
+                // SEARCH IN APPLIANCES = strings
+                if (key === 'appliance') {
+                    let recipeAppliance = currentRecipe.appliance;
+                    console.log('appliance VALUE ==', recipeAppliance);
+
+                    if ( recipeAppliance.toLowerCase() === searchTerm.toLowerCase() || recipeAppliance.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        if ( !advancedSearchResults.includes(currentRecipe)){
+                            advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
+                        }
+                    }
+                    return advancedSearchResults;
+                }
+
+                // SEARCH IN USTENSILS = array of strings
+                if (key === 'ustensils') {
+                    let recipeUstensils = currentRecipe.ustensils;
+                    console.log('ustensil VALUE ==', recipeUstensils);
+                    recipeUstensils.forEach( item => {  // for each ustensil string of ustensils array
+                        if ( item.toLowerCase() === searchTerm.toLowerCase() || item.toLowerCase().includes(searchTerm.toLowerCase())){
+                            if ( !advancedSearchResults.includes(currentRecipe)){
+                                advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
+                            }
+                        }
+                    });
+                    return advancedSearchResults;
+                }
+            }
+        }
+    });
+    console.log('results of ADVANCED SEARCH =====',advancedSearchResults );
+
+}
 
 // search term in recipes list
 export function search(recipes, searchterm) {
     resultsList = [];suggestions = []; // reset these 2 at every new keystroke
+
     RecipeModule.resetSuggestions(); // reset displayed suggestions list
 
     recipes.forEach( recipe => {
@@ -147,28 +225,16 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
 }
 
 
-// after a search via main search bar is completed and a list of recipes is displayed
-// the advanced search in the 3 categories will apply a new search, 
-// but this time on the current list of results, and in the results category only
+// after a search via main search bar is completed and a list of recipes is displayed OR main search was not used so displayed list = all recipes,
+// the advanced search in the 3 categories will apply a NEW SEARCH but this time ON THE CURRENT LIST of results
 
-let advancedSearchResults = [];
-
-export function processAdvancedSearch(searchTerm, categoryName) {
-
-    let category = categoryName;
-
-    // here, results come either from a sorted list or default api recipes list
-    let currentListofResults = RecipeModule.getResults();
-
-    console.log('currentListofResults IS ====', currentListofResults);
+// - ex : main search was 'chocolat' => results = all recipes containing 'chocolat'  => categories display: results' category elements 
+// THEN:  user selects 'fraise' in the ingredients category => 'fraise' is then searched within the current results list of recipes
+// BUT : here, match needs to accept several words
+// => UI displays only recipes containing both 'chocolat' and 'fraise'
+// THEN: everytime user selects a new word in the remaining elements of catogories => a new search occurs on the current list of results
 
 
-/*     currentListofResults.forEach( recipe => {
-        if( category === 'ingredients') 
-        
-    }); */
-
-}
 
 
 
