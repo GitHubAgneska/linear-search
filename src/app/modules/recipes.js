@@ -124,7 +124,6 @@ export const RecipeModule = (function() {
     }
 
 
-
     // SEARCH FUNCTIONALITY : MAIN SEARCH ==================================================================================================
     // RETRIEVE current search term and call search method
     function processCurrentMainSearch(currentSearchTerm) {
@@ -320,7 +319,7 @@ export const RecipeModule = (function() {
     }
 
 
-    //  ======== !! TO REVIEW : REDEFINITION OD EXISTING METHOD in CollapsingMenu component : 
+    //  ======== !! TO REVIEW : REDEFINITION OF EXISTING METHOD in CollapsingMenu component : 
     // ISSUE = init categories lists items DEFAULT = done in component, BUT UPDATING categories lists items = done here in MODULE  ========= TO REVIEW 
     // handle select item in list : send it into input field
     function selectItemInList(event, categoryName) { console.log('categoryName===', categoryName);
@@ -333,20 +332,15 @@ export const RecipeModule = (function() {
     }
 
     function processAdvancedSearch(searchTerm, currentCategoryName) {
-
-        console.log('category==', currentCategoryName);
-        console.log('searchTerm==', searchTerm);
     
         // here, results come either from a sorted list (current results) or default api recipes list
         advancedSearchRecipes = RecipeModule.getResults();
-        console.log('currentListofResults IS ====', advancedSearchRecipes);
-    
+        //console.log('currentListofResults IS ====', advancedSearchRecipes);
         advancedSearch(advancedSearchRecipes, searchTerm, currentCategoryName);
+        advancedSearchResults = RecipeModule.getResults();
+        displaySearchResults(advancedSearchResults);
 
-        
-        
     }
-
 
 
 
@@ -358,12 +352,10 @@ export const RecipeModule = (function() {
         resetSearch: resetSearch,
         setResults: setResults,
         getResults: getResults,
-
         setSuggestions: setSuggestions,
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,
-        processAdvancedSearch:processAdvancedSearch
-        
+        processAdvancedSearch: processAdvancedSearch
     };
     
 }());

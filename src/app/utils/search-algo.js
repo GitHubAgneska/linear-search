@@ -9,82 +9,7 @@ let resultsList = []; // list of recipes matching search
 let suggestions = []; // list of suggested words matching search
 let advancedSearchResults = []; // list of recipes matching advanced search
 
-
-export function advancedSearch(currentResults,searchTerm, currentCategoryName){
-
-    advancedSearchResults = []; // reset results
-
-    console.log('currentResults where to search===', currentResults);
-    console.log('searchterm advanced===', searchTerm);
-    console.log('currentCategoryName===', currentCategoryName);
-    if (currentCategoryName === 'appareils') { currentCategoryName = 'appliance'; }
-
-    // in the array of current recults, 
-    currentResults.forEach( currentRecipe => {
-        for (const key of Object.keys(currentRecipe)) { // iterate over each key of recipe object
-
-            if (key === currentCategoryName ) {   //  find the category current searchterm comes from
-                console.log('currently SEARCHING IN ===', key);
-
-                // SEARCH IN INGREDIENTS  = array of objects
-                if (key === 'ingredients') {
-                    let recipeIngredients = currentRecipe.ingredients;
-                    
-                    recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array
-        
-                        for (const [key, value] of Object.entries(item) ) { // for each key:value of ingredient object
-                            
-                            if (key === 'ingredient') { console.log('key====', key );
-                                let ingredientName = value.toLowerCase();  console.log('value====', ingredientName ); console.log('searchTerm====', searchTerm );
-                                    
-                                if ( ingredientName === searchTerm.toLowerCase()  || ingredientName.includes(searchTerm.toLowerCase())  ) {
-
-                                    console.log('MATCH!!!!!');
-                                    
-                                    // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
-                                    if ( !advancedSearchResults.includes(currentRecipe)){
-                                        advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    return advancedSearchResults;
-                }
-
-                // SEARCH IN APPLIANCES = strings
-                if (key === 'appliance') {
-                    let recipeAppliance = currentRecipe.appliance;
-                    console.log('appliance VALUE ==', recipeAppliance);
-
-                    if ( recipeAppliance.toLowerCase() === searchTerm.toLowerCase() || recipeAppliance.toLowerCase().includes(searchTerm.toLowerCase())) {
-                        if ( !advancedSearchResults.includes(currentRecipe)){
-                            advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
-                        }
-                    }
-                    return advancedSearchResults;
-                }
-
-                // SEARCH IN USTENSILS = array of strings
-                if (key === 'ustensils') {
-                    let recipeUstensils = currentRecipe.ustensils;
-                    console.log('ustensil VALUE ==', recipeUstensils);
-                    recipeUstensils.forEach( item => {  // for each ustensil string of ustensils array
-                        if ( item.toLowerCase() === searchTerm.toLowerCase() || item.toLowerCase().includes(searchTerm.toLowerCase())){
-                            if ( !advancedSearchResults.includes(currentRecipe)){
-                                advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
-                            }
-                        }
-                    });
-                    return advancedSearchResults;
-                }
-            }
-        }
-    });
-    console.log('results of ADVANCED SEARCH =====',advancedSearchResults );
-
-}
-
+// MAIN SEARCH ======================================================================================================
 // search term in recipes list
 export function search(recipes, searchterm) {
     resultsList = [];suggestions = []; // reset these 2 at every new keystroke
@@ -224,6 +149,7 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
     return resultsList;
 }
 
+// ADVANCED SEARCH ======================================================================================================
 
 // after a search via main search bar is completed and a list of recipes is displayed OR main search was not used so displayed list = all recipes,
 // the advanced search in the 3 categories will apply a NEW SEARCH but this time ON THE CURRENT LIST of results
@@ -233,6 +159,83 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
 // BUT : here, match needs to accept several words
 // => UI displays only recipes containing both 'chocolat' and 'fraise'
 // THEN: everytime user selects a new word in the remaining elements of catogories => a new search occurs on the current list of results
+
+
+export function advancedSearch(currentResults,searchTerm, currentCategoryName){
+
+    advancedSearchResults = []; // reset results
+
+    console.log('currentResults where to search===', currentResults);
+    console.log('searchterm advanced===', searchTerm);
+    console.log('currentCategoryName===', currentCategoryName);
+    if (currentCategoryName === 'appareils') { currentCategoryName = 'appliance'; }
+
+    // in the array of current recults, 
+    currentResults.forEach( currentRecipe => {
+        for (const key of Object.keys(currentRecipe)) { // iterate over each key of recipe object
+
+            if (key === currentCategoryName ) {   //  find the category current searchterm comes from
+                console.log('currently SEARCHING IN ===', key);
+
+                // SEARCH IN INGREDIENTS  = array of objects
+                if (key === 'ingredients') {
+                    let recipeIngredients = currentRecipe.ingredients;
+                    
+                    recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array
+        
+                        for (const [key, value] of Object.entries(item) ) { // for each key:value of ingredient object
+                            
+                            if (key === 'ingredient') { console.log('key====', key );
+                                let ingredientName = value.toLowerCase();  console.log('value====', ingredientName ); console.log('searchTerm====', searchTerm );
+                                    
+                                if ( ingredientName === searchTerm.toLowerCase()  || ingredientName.includes(searchTerm.toLowerCase())  ) {
+
+                                    console.log('MATCH!!!!!');
+                                    
+                                    // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
+                                    if ( !advancedSearchResults.includes(currentRecipe)){
+                                        advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    return advancedSearchResults;
+                }
+
+                // SEARCH IN APPLIANCES = strings
+                if (key === 'appliance') {
+                    let recipeAppliance = currentRecipe.appliance;
+                    console.log('appliance VALUE ==', recipeAppliance);
+
+                    if ( recipeAppliance.toLowerCase() === searchTerm.toLowerCase() || recipeAppliance.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        if ( !advancedSearchResults.includes(currentRecipe)){
+                            advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
+                        }
+                    }
+                    return advancedSearchResults;
+                }
+
+                // SEARCH IN USTENSILS = array of strings
+                if (key === 'ustensils') {
+                    let recipeUstensils = currentRecipe.ustensils;
+                    console.log('ustensil VALUE ==', recipeUstensils);
+                    recipeUstensils.forEach( item => {  // for each ustensil string of ustensils array
+                        if ( item.toLowerCase() === searchTerm.toLowerCase() || item.toLowerCase().includes(searchTerm.toLowerCase())){
+                            if ( !advancedSearchResults.includes(currentRecipe)){
+                                advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
+                            }
+                        }
+                    });
+                    return advancedSearchResults;
+                }
+            }
+        }
+    });
+    console.log('results of ADVANCED SEARCH =====',advancedSearchResults );
+    RecipeModule.setResults(advancedSearchResults);
+}
+
 
 
 
