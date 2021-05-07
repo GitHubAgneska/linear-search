@@ -13,11 +13,9 @@ export class CollapsingMenu extends HTMLElement{
                 <button class="btn"
                         id="btn-${categoryName}" 
                         type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#${categoryName}"
                         aria-expanded="false"
                         aria-controls="${categoryName}">${categoryName}
-                        </button>
+                </button>
                 <i id="caret-down" class="fas fa-angle-down"></i>
             </div>
             <div class="collapse multi-collapse category-menu" id="menu-${categoryName}" isOpen="false">
@@ -28,6 +26,8 @@ export class CollapsingMenu extends HTMLElement{
             </div>
         `;
 
+        this.setAttribute('isActive', 'false');
+        let currentSibling = this;
         // parent wrapper ('section .adv-search-wrapper') containing all 3 collapsing menus must be 
         // of width col-6 when menus are closed (50% parent) => each menu : col
         // of width col-12 if a menu is open (100% parent) => open menu: col-6 / others: col-2 ( + empty col-2)
@@ -48,9 +48,15 @@ export class CollapsingMenu extends HTMLElement{
 
         let menuHeader = this.querySelector('#menu-header-' + categoryName);
         let menuToOpen = this.querySelector('#menu-'+ categoryName);
+        let allMenus = [];
 
         let btn = this.querySelector('button');
-        let btnCategoryName = btn.textContent;
+        let btnCategoryName = btn.textContent; // retrieve current text btn
+        let btnCategoryNameLength = btnCategoryName.length;
+        let btnCategoryNameSingular = btnCategoryName.slice(0, btnCategoryNameLength-1);   // ------------------ TO REVIEW
+        let btnCategoryNameActive = 'rechercher un ' + btnCategoryNameSingular; // modify btn text
+
+
         let caretDown = this.querySelector('#caret-down');
         let caretUp = document.createElement('i');
         caretUp.setAttribute('class', 'fas fa-angle-up');
@@ -62,8 +68,9 @@ export class CollapsingMenu extends HTMLElement{
         searchInputField.setAttribute('class', 'searchInput');
         searchInputField.setAttribute('placeholder', 'rechercher un ' + categoryName );
         
-        const allMenus = this.querySelectorAll('#menu-' + categoryName);
         let currentTags = [];
+
+        let activeSibling = [];
 
         // COLLAPSING MENUS METHODS ================================================================
         // By default, click event = on whole menu Header to OPEN ONLY
@@ -73,14 +80,10 @@ export class CollapsingMenu extends HTMLElement{
         function menuOpen(event) {
             menuHeader = event.currentTarget; // element that handles event
             event.stopPropagation();
-            console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget);
+            checkWhosOpen();
+                    
+            // console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget);
             let isMenuActive = menuHeader.getAttribute('isActive');
-            
-            //  eventually remove remaining elements left after previous closing ---- ...
-            if (btn.contains(searchInputField)) { searchInputField.replaceWith(caretDown);}
-            if (menuHeader.contains(caretUp)) { menuHeader.removeChild(caretUp);}
-
-
             if (isMenuActive === 'false' ) {
 
                     // remove  OPEN event on whole menu header
@@ -88,19 +91,24 @@ export class CollapsingMenu extends HTMLElement{
                     menuHeader.removeAttribute('isActive', 'false');
                     menuHeader.setAttribute('isActive', 'true');
 
+                    // activeSibling.push(currentSibling);
+                    currentSibling.setAttribute('isActive', 'true');
+                    
                     menuToOpen.style.display = 'flex'; // show list
                     // replace btn > caret right away (open > close) + add CLOSE event
                     caretDown.replaceWith(caretUp);
-                    caretUp.addEventListener('click',function(event){ menuClose(event); }, false);
+                    caretUp.addEventListener('click',function(event){ menuClose(event); }, false);                                
 
                     // add click on btn to ACTIVATE INPUT FIELD + change its name ( + remove 's' )
-
-                    btn.textContent = 'rechercher un ' + btnCategoryName; // modify btn text
+                    btn.textContent = btn.textContent.replace(btn.textContent, btnCategoryNameActive);
+                    btn.style.opacity = 0.7;
                     btn.addEventListener('click', function(event){ activateInputField(event), false; }); 
 
                     parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
                     let collapsingMenu = menuHeader.parentNode; // = this whole component
                     collapsingMenu.classList.replace('col', 'col-6'); // menu width expands
+
+                    // return activeSibling;
             }
             else { return; }
         }
@@ -114,7 +122,7 @@ export class CollapsingMenu extends HTMLElement{
                 event.stopPropagation();
 
                 btn.style.display = 'none';
-                menuHeader.appendChild(searchInputField); // add input field in place of btn
+                menuHeader.prepend(searchInputField); // add input field in place of btn
                 menuHeader.appendChild(caretUp); // + add caret ( for the other one went away with btn)
                 caretUp.addEventListener('click',function(event){ menuClose(event); }, false);
 
@@ -127,7 +135,7 @@ export class CollapsingMenu extends HTMLElement{
             event.stopPropagation();
             caretUp = event.currentTarget; // element that handles event
             caretUp.replaceWith(caretDown);
-            console.log('event.currentTarget when CLOSING - 2======',event.currentTarget);
+            // console.log('event.currentTarget when CLOSING - 2======',event.currentTarget);
 
             let isMenuActive = menuHeader.getAttribute('isActive');
 
@@ -140,36 +148,36 @@ export class CollapsingMenu extends HTMLElement{
                 menuHeader.removeAttribute('isActive', 'true');
                 menuHeader.setAttribute('isActive', 'false');
                 
+                
                 // remove input field  + eventually remaining elements
                 if (menuHeader.contains(searchInputField)) {menuHeader.removeChild(searchInputField);}
-                // if (btn.contains(caretUp)) { caretUp.replaceWith(caretDown);}
                 if (btn.contains(searchInputField)) {btn.removeChild(searchInputField);}
                 // put back btn with category name
                 btn.style.display = 'flex';
-                btnCategoryName = btnCategoryName + categoryName;
-                // btn.appendChild(caretDown);
+                btn.textContent = btn.textContent.replace(btnCategoryNameActive, btnCategoryName);
+                btn.style.opacity = 1;
                 
                 // put back event on menu header
                 menuHeader.addEventListener('click',function(event){ menuOpen(event); }, false);
 
-                parentAdvancedSearchWrapper.classList.replace('col-12', 'col-16'); // parent shrinks back
+                parentAdvancedSearchWrapper.classList.replace('col-12', 'col-6'); // parent shrinks back
                 let collapsingMenu = menuHeader.parentNode; // = this whole component
                 collapsingMenu.classList.replace('col-6', 'col'); // menu width shrinks back
                 
             } else { return; }
         }
 
-        // check : only one menu can be open at the time - otherwise close it before opening one
         function checkWhosOpen(){
-            allMenus.forEach(menu => { 
-                let isOpen = menu.getAttribute('isActive');
-                //let idOfOpenMenu = isOpen.getAttribute('id');
+            const parentSection = document.querySelector('.adv-search-wrapper');
+            let siblings = parentSection.childNodes;
+            siblings.forEach(sibling => {
 
-                if ( isOpen ) { 
-                    // return idOfOpenMenu;
-                    // closeMenu(idOfOpenMenu);
-                } else { return;  }
+                if(sibling.getAttribute('isActive')){
+                    activeSibling.push(sibling);
+                }
+                return activeSibling;
             });
+            console.log('activeSibling', activeSibling);
         }
 
 

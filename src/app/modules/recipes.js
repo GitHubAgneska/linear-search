@@ -230,7 +230,7 @@ export const RecipeModule = (function() {
         const advancedSearchWrapper = document.createElement('section');
         advancedSearchWrapper.setAttribute('class', 'adv-search-wrapper');
         advancedSearchWrapper.classList.add('row');
-        advancedSearchWrapper.classList.add('m-0');
+        //advancedSearchWrapper.classList.add('m-0');
         advancedSearchWrapper.classList.add('col-6'); // col-6 = default width: when all menus closed
         root.insertBefore(advancedSearchWrapper, recipesListWrapper);
     }
@@ -355,7 +355,6 @@ export const RecipeModule = (function() {
         setSuggestions: setSuggestions,
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,
-        processAdvancedSearch: processAdvancedSearch
-    };
+        processAdvancedSearch: processAdvancedSearch    };
     
 }());
