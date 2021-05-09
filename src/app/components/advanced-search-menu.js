@@ -71,12 +71,10 @@ export class CollapsingMenu extends HTMLElement{
             menuHeaderClose = event.currentTarget; // element that handles event
             event.stopPropagation();
             
-            RecipeModule.checkWhosOpen();
-            // RecipeModule.closePreviousMenu(event);
+            RecipeModule.checkWhosOpen(); // checks if any other menu is open already
 
             currentSibling.removeAttribute('isActive', 'false'); 
             currentSibling.setAttribute('isActive', 'true');// mark collapsing menu as active (for module to avoid multiple openings)
-            
             
             menuHeaderClose.style.display = 'none';
             menuHeaderOpen.style.display = 'flex';

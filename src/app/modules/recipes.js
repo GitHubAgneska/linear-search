@@ -85,8 +85,8 @@ export const RecipeModule = (function() {
             // retrieve category elements : all ingredients
             const recipeIngr = recipe.ingredients;
             recipeIngr.forEach( ingre => {
-                if ( !ingredientsList.includes(ingre) ) // skip if already in list
-                ingredientsList.push(ingre.ingredient);
+                if ( !ingredientsList.includes(ingre.ingredient.toLowerCase()) ) // skip if already in list
+                ingredientsList.push(ingre.ingredient.toLowerCase());
             });
             
             // retrieve category elements : all appliances
@@ -95,8 +95,8 @@ export const RecipeModule = (function() {
             // retrieve category elements : all ustensils
             const recipeUst = recipe.ustensils;
             recipeUst.forEach(ust => {
-                if ( !ustensilsList.includes(ust) ) // skip if already in list
-                ustensilsList.push(ust);
+                if ( !ustensilsList.includes(ust.toLowerCase()) ) // skip if already in list
+                ustensilsList.push(ust.toLowerCase());
             });
             
             // generate view for recipe
