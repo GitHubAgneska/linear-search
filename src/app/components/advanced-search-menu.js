@@ -43,7 +43,6 @@ export class CollapsingMenu extends HTMLElement{
 
         // get UL container for category items 
         const categoryUl = this.querySelector('#' + categoryName + '-list');
-        
         // populate each menu container with category list items - DEFAULT VIEW : all recipes categories
         categoryElements.forEach(el => {
             // generate li item element for each item of each category
@@ -52,15 +51,12 @@ export class CollapsingMenu extends HTMLElement{
             listELement.addEventListener('click', function(event){ selectItemInList(event); }, false);
             categoryUl.appendChild(listELement);
         });
-
+        
         let menuHeaderClose = this.querySelector('#menu-header-close-' + categoryName);
         let menuHeaderOpen = this.querySelector('#menu-header-open-' + categoryName);
         menuHeaderOpen.style.display = 'none'; // defaut =  not displayed
         let menuToOpen = this.querySelector('#menu-'+ categoryName);
 
-        let btn = this.querySelector('button');
-
-        let caretDown = this.querySelector('#caret-down');
         let caretUp = this.querySelector('#caret-up');
         
         let currentTags = [];
@@ -72,12 +68,15 @@ export class CollapsingMenu extends HTMLElement{
         
         function menuOpen(event) {
 
-            currentSibling = event.currentTarget; // element that handles event = 'this' collapsing menu component
+            menuHeaderClose = event.currentTarget; // element that handles event
             event.stopPropagation();
+            
+            RecipeModule.checkWhosOpen();
+            // RecipeModule.closePreviousMenu(event);
 
-            RecipeModule.checkWhosOpen(); 
-            RecipeModule.closePreviousMenu(event);
-            currentSibling.setAttribute('isActive', 'true');
+            currentSibling.removeAttribute('isActive', 'false'); 
+            currentSibling.setAttribute('isActive', 'true');// mark collapsing menu as active (for module to avoid multiple openings)
+            
             
             menuHeaderClose.style.display = 'none';
             menuHeaderOpen.style.display = 'flex';
@@ -87,7 +86,7 @@ export class CollapsingMenu extends HTMLElement{
             caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);    
 
             parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
-            this.classList.replace('col', 'col-6'); // menu width expands
+            currentSibling.classList.replace('col', 'col-6'); // menu width expands
         }
 
         function menuClose(event) {
@@ -99,9 +98,12 @@ export class CollapsingMenu extends HTMLElement{
             menuHeaderClose.style.display = 'flex';
 
             menuToOpen.style.display = 'none'; // hide list
-
+            currentSibling.removeAttribute('isActive', 'true');
+            
             parentAdvancedSearchWrapper.classList.replace('col-12', 'col-6'); // parent shrinks back
-            this.classList.replace('col-6', 'col'); // menu width shrinks back
+            currentSibling.classList.replace('col-6', 'col'); // menu width shrinks back
+            
+            currentSibling.setAttribute('isActive', 'false');
         }
 
 
@@ -111,20 +113,17 @@ export class CollapsingMenu extends HTMLElement{
         // handle select item in list : send it into input field
         function selectItemInList(event) {
             let word = event.target.innerText; // text inside <p> element where event occurs
-            // activate field input 'artificially' via btn
-            btn.click(event);
             let inputField = document.querySelector('#searchInto-'+ categoryName);
             inputField.value = word; // make selected word the current search word of input field
         }
+
         let searchInputField = this.querySelector('#searchInto-'+ categoryName);
         // let advancedSearchResults = [];
         // when user has selected an item in category or typed it in in INPUT FIELD 
         searchInputField.addEventListener('keydown', function(event){ handleSelectItemInput(event); }, false);
         searchInputField.addEventListener('input', function(event){ handleSelectItemInput(event); }, false);
-        // searchInputField.addEventListener('keydown', function(event){ handleInput(event); }, false);
         
         function handleSelectItemInput(event) {
-            
             searchTerm = event.target.value;
             searchInputField = event.target;
     
@@ -154,7 +153,7 @@ export class CollapsingMenu extends HTMLElement{
         }
 
         // keep track of tags to prevent displaying the same one more than once
-        // AND is used by search method that needs an up-to-date array of
+        // AND is used by search method that needs an up-to-date array of tags
         let setTagsList = function(tag) { currentTags.push(tag); };
         let getTagsList = function() { return currentTags; };
 

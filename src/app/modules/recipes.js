@@ -344,47 +344,19 @@ export const RecipeModule = (function() {
     }
 
     // method used to close a menu if another one is called to open
-    // everytime user clicks a menu open, the parent of all 3 menus checks if any other menu is open already,
-    // and calls close if needed
-    let activeSibling;
-    
+    // everytime user clicks a menu open, checks if any other menu is open already,
+    // and calls close if needed    
     function checkWhosOpen(){
+        let allmenus = document.querySelectorAll('collapsing-menu-component');
 
-        const parentSection = document.querySelector('.adv-search-wrapper');
-        let siblingsToObserve = parentSection.childNodes;
-
-        const observer = new MutationObserver(function(){
-    
-            siblingsToObserve.forEach(sibling => {
-    
-                if ( sibling.getAttribute('isActive') === 'true' ){
-                    activeSibling = sibling;                    
-                } else { return; }
-            });
+        allmenus.forEach(menu => { 
+            if (menu.getAttribute('isActive') === 'true'){
+                let activeSibling = menu;
+                let menuToCloseBtnClose = activeSibling.querySelector('#caret-up');
+                menuToCloseBtnClose.click();
+            }
         });
-        observer.observe(parentSection, { subtree: true, childList: true });
-        return activeSibling;
     }
-
-
-    function closePreviousMenu(event) {
-        event.stopPropagation();
-
-        let activeSibling = checkWhosOpen();
-
-        if ( activeSibling ) {
-            let menuToCloseBtnClose = activeSibling.firstElementChild.lastElementChild;
-            console.log('BTN IS==',menuToCloseBtnClose );
-            menuToCloseBtnClose.click(event, {once:true});
-            activeSibling = undefined;
-
-        } else { return; }
-    }
-
-
-
-
-
 
     // PUBLIC PART OF MODULE
     return {
@@ -398,8 +370,7 @@ export const RecipeModule = (function() {
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,
         processAdvancedSearch: processAdvancedSearch,
-        checkWhosOpen:checkWhosOpen,
-        closePreviousMenu:closePreviousMenu
+        checkWhosOpen:checkWhosOpen
         };
     
 }());
