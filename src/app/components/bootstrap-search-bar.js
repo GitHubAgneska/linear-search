@@ -33,10 +33,8 @@ export class SearchBar extends HTMLElement {
         // append div to parent
         suggestionsWrapperParent.appendChild(suggestionsWrapper);
 
-
         let currentSearchTerm = '';
         let inputFieldTouched = false;
-
 
         mainInputSearch.addEventListener('input', function(event){
             currentSearchTerm = event.target.value;

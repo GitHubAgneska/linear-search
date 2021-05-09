@@ -29,6 +29,10 @@ export class CollapsingMenu extends HTMLElement{
                     <ul id="${categoryName}-list" class="list flex-column">
                     </ul>
                 </div>
+                <div id="${categoryName}-input-suggestions">
+                    <ul id="${categoryName}-suggestions-list" class="suggestions-list">
+                    </ul>
+                </div>
             </div>
         `;
 
@@ -51,6 +55,10 @@ export class CollapsingMenu extends HTMLElement{
             listELement.addEventListener('click', function(event){ selectItemInList(event); }, false);
             categoryUl.appendChild(listELement);
         });
+
+        // default : suggestions = not visible
+        const suggestionsWrapper = this.querySelector('#'+categoryName+'-input-suggestions');
+        suggestionsWrapper.style.display = 'none';
         
         let menuHeaderClose = this.querySelector('#menu-header-close-' + categoryName);
         let menuHeaderOpen = this.querySelector('#menu-header-open-' + categoryName);
@@ -67,7 +75,6 @@ export class CollapsingMenu extends HTMLElement{
         menuHeaderClose.addEventListener('click', function(event){ menuOpen(event),{ once: true }; }, false);
         
         function menuOpen(event) {
-
             menuHeaderClose = event.currentTarget; // element that handles event
             event.stopPropagation();
             
@@ -88,7 +95,6 @@ export class CollapsingMenu extends HTMLElement{
         }
 
         function menuClose(event) {
-
             caretUp = event.currentTarget; // element that handles event
             event.stopPropagation();
 
@@ -106,7 +112,15 @@ export class CollapsingMenu extends HTMLElement{
 
 
         // HANDLE SEARCH OF ADVANCED SEARCH ==================================================
+        let searchInputField = this.querySelector('#searchInto-'+ categoryName);
         let searchTerm = '';
+        let inputFieldTouched = false;
+        
+        // handle manual typing in input field : activated at first keystroke
+        searchInputField.addEventListener('input', function(event){ handleManualInput(event); }, false);
+
+        // press ENTER to confirm selected list item or typed in word to search
+        searchInputField.addEventListener('keydown', function(event){ handleSelectItemInput(event); }, false);
 
         // handle select item in list : send it into input field
         function selectItemInList(event) {
@@ -115,24 +129,14 @@ export class CollapsingMenu extends HTMLElement{
             inputField.value = word; // make selected word the current search word of input field
         }
 
-        let searchInputField = this.querySelector('#searchInto-'+ categoryName);
-        // let advancedSearchResults = [];
-        // when user has selected an item in category or typed it in in INPUT FIELD 
-        searchInputField.addEventListener('keydown', function(event){ handleSelectItemInput(event); }, false);
-        searchInputField.addEventListener('input', function(event){ handleSelectItemInput(event); }, false);
-        
         function handleSelectItemInput(event) {
             searchTerm = event.target.value;
             searchInputField = event.target;
-    
             // retrieve current category from input id  ( ex '#searchInto-ingredients')
             let currentCategoryName = searchInputField.getAttribute('id');
             currentCategoryName = currentCategoryName.slice(11, currentCategoryName.length);
-            console.log('currentCategoryName', currentCategoryName);
-    
-            // init suggestions from list ( = search in existing items of CURRENT CATEGORY)
-            
-    
+            // console.log('currentCategoryName', currentCategoryName);
+            inputFieldTouched = true;
             // and then CONFIRM CHOICE by pressing ENTER:
             if ( event.key === 'Enter') {
                 // a new tag for search word is generated above menus
@@ -149,6 +153,70 @@ export class CollapsingMenu extends HTMLElement{
                 RecipeModule.processAdvancedSearch(searchTerm, currentCategoryName);
             }
         }
+
+        function handleManualInput(event) {
+            searchTerm = event.target.value;
+            searchInputField = event.target;
+            let currentCategoryName = searchInputField.getAttribute('id');
+            if (searchTerm.length > 3) {
+                processManualInputSearchIntoCurrentList(searchTerm, currentCategoryName);
+            }
+            // process input as it enters field = init match search
+            inputFieldTouched = true;
+            handleManualSearchReset();
+        }
+
+        function processManualInputSearchIntoCurrentList(searchTerm, currentCategoryName) {
+
+            // retrieve current items of category
+            let currentItems = [];
+            let parentList = document.querySelector('#ingredients-list');
+            // let parentList = document.querySelector('#' + currentCategoryName +'-list');
+            let currentList = parentList.querySelectorAll('a');
+            currentList.forEach( anchorTag => { currentItems.push(anchorTag.innerText); });
+            console.log('currentItems==',currentItems);
+            
+            let currentSuggestions = currentItems.filter(item => { item.toLowerCase().includes(searchTerm.toLowerCase()); });
+
+            console.log('currentSuggestions==', currentSuggestions);
+            displayCurrentSuggestions(currentSuggestions) ;         
+        }
+
+        function displayCurrentSuggestions(currentSuggestions) {
+            // first, hide the whole current list
+            categoryUl.style.visibility = 'hidden';
+
+            // suggestions wrapper becomes visible
+            suggestionsWrapper.style.display = 'flex';
+
+            // populate each menu container with category list items - DEFAULT VIEW : all recipes categories
+            currentSuggestions.forEach(el => {
+                // generate li item element for each item of each category
+                let listELement = new MenuListItem(el);
+                // add select event on each item
+                listELement.addEventListener('click', function(event){ selectItemInList(event); }, false);
+                suggestionsWrapper.appendChild(listELement);
+            });
+
+
+        }
+
+
+        // case where user deletes chars until field = empty or deletes the whole searchterm
+        // when input has been touched + searchterm is empty + focus still on input
+        function handleManualSearchReset(){
+            if ( inputFieldTouched && !searchTerm && searchInputField == document.activeElement ){
+                console.log('NEW SEARCH PENDING');
+                RecipeModule.resetSearch();
+                RecipeModule.resetSuggestions();
+            }
+        }
+
+
+
+
+
+
 
         // keep track of tags to prevent displaying the same one more than once
         // AND is used by search method that needs an up-to-date array of tags

@@ -333,7 +333,6 @@ export const RecipeModule = (function() {
     }
 
     function processAdvancedSearch(searchTerm, currentCategoryName) {
-    
         // here, results come either from a sorted list (current results) or default api recipes list
         advancedSearchRecipes = RecipeModule.getResults();
         //console.log('currentListofResults IS ====', advancedSearchRecipes);
