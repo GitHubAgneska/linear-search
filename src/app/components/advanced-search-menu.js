@@ -33,6 +33,7 @@ export class CollapsingMenu extends HTMLElement{
         `;
 
         this.setAttribute('isActive', 'false'); // default component state
+        this.setAttribute('id', 'collapsing-'+ categoryName); // default component state
         let currentSibling = this;
         // parent wrapper ('section .adv-search-wrapper') containing all 3 collapsing menus must be 
         // of width col-6 when menus are closed (50% parent) => each menu : col
