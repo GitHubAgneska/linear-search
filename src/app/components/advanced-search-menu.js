@@ -42,13 +42,12 @@ export class CollapsingMenu extends HTMLElement{
             // generate li item element for each item of each category
             let listELement = new MenuListItem(el);
             // add select event on each item
-            listELement.addEventListener('click', function(event){selectItemInList(event); }, false);
+            listELement.addEventListener('click', function(event){ selectItemInList(event); }, false);
             categoryUl.appendChild(listELement);
         });
 
         let menuHeader = this.querySelector('#menu-header-' + categoryName);
         let menuToOpen = this.querySelector('#menu-'+ categoryName);
-        let allMenus = [];
 
         let btn = this.querySelector('button');
         let btnCategoryName = btn.textContent; // retrieve current text btn
@@ -70,17 +69,17 @@ export class CollapsingMenu extends HTMLElement{
         
         let currentTags = [];
 
-        let activeSibling = [];
-
         // COLLAPSING MENUS METHODS ================================================================
         // By default, click event = on whole menu Header to OPEN ONLY
         // ( cannot use a TOGGLE method here, for open/close events are passed through different elements
-        menuHeader.addEventListener('click', function(event){ menuOpen(event); }, false);
+        menuHeader.addEventListener('click', function(event){ menuOpen(event),{ once: true }; }, false);
         
         function menuOpen(event) {
             menuHeader = event.currentTarget; // element that handles event
             event.stopPropagation();
-            checkWhosOpen();
+            currentSibling.setAttribute('isActive', 'true');
+
+            RecipeModule.checkWhosOpen(); RecipeModule.closePreviousMenu(event);
                     
             // console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget);
             let isMenuActive = menuHeader.getAttribute('isActive');
@@ -97,12 +96,12 @@ export class CollapsingMenu extends HTMLElement{
                     menuToOpen.style.display = 'flex'; // show list
                     // replace btn > caret right away (open > close) + add CLOSE event
                     caretDown.replaceWith(caretUp);
-                    caretUp.addEventListener('click',function(event){ menuClose(event); }, false);                                
+                    caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);                                
 
                     // add click on btn to ACTIVATE INPUT FIELD + change its name ( + remove 's' )
                     btn.textContent = btn.textContent.replace(btn.textContent, btnCategoryNameActive);
                     btn.style.opacity = 0.7;
-                    btn.addEventListener('click', function(event){ activateInputField(event), false; }); 
+                    btn.addEventListener('click', function(event){ activateInputField(event); }, false ); 
 
                     parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
                     let collapsingMenu = menuHeader.parentNode; // = this whole component
@@ -120,11 +119,17 @@ export class CollapsingMenu extends HTMLElement{
                 menuHeader.removeEventListener('click', function(event){ menuOpen(event); }, false);
                 btn = event.currentTarget;
                 event.stopPropagation();
+                btn.removeEventListener('click', function(event){ activateInputField(event); }, false ); 
 
                 btn.style.display = 'none';
                 menuHeader.prepend(searchInputField); // add input field in place of btn
+                searchInputField.addEventListener('input', function(event){
+                    if ( searchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
+                        console.log('searchTerm is 3 chars long');
+                    }
+                }, false);
                 menuHeader.appendChild(caretUp); // + add caret ( for the other one went away with btn)
-                caretUp.addEventListener('click',function(event){ menuClose(event); }, false);
+                caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);
 
             } else { return; }
         }
@@ -132,8 +137,8 @@ export class CollapsingMenu extends HTMLElement{
 
         function menuClose(event) {
 
-            event.stopPropagation();
             caretUp = event.currentTarget; // element that handles event
+            event.stopPropagation();
             caretUp.replaceWith(caretDown);
             // console.log('event.currentTarget when CLOSING - 2======',event.currentTarget);
 
@@ -148,7 +153,6 @@ export class CollapsingMenu extends HTMLElement{
                 menuHeader.removeAttribute('isActive', 'true');
                 menuHeader.setAttribute('isActive', 'false');
                 
-                
                 // remove input field  + eventually remaining elements
                 if (menuHeader.contains(searchInputField)) {menuHeader.removeChild(searchInputField);}
                 if (btn.contains(searchInputField)) {btn.removeChild(searchInputField);}
@@ -158,26 +162,15 @@ export class CollapsingMenu extends HTMLElement{
                 btn.style.opacity = 1;
                 
                 // put back event on menu header
-                menuHeader.addEventListener('click',function(event){ menuOpen(event); }, false);
+                menuHeader.addEventListener('click',function(event){ menuOpen(event), { once: true}; }, false);
 
                 parentAdvancedSearchWrapper.classList.replace('col-12', 'col-6'); // parent shrinks back
                 let collapsingMenu = menuHeader.parentNode; // = this whole component
                 collapsingMenu.classList.replace('col-6', 'col'); // menu width shrinks back
+
+                currentSibling.setAttribute('isActive', 'false');
                 
             } else { return; }
-        }
-
-        function checkWhosOpen(){
-            const parentSection = document.querySelector('.adv-search-wrapper');
-            let siblings = parentSection.childNodes;
-            siblings.forEach(sibling => {
-
-                if(sibling.getAttribute('isActive')){
-                    activeSibling.push(sibling);
-                }
-                return activeSibling;
-            });
-            console.log('activeSibling', activeSibling);
         }
 
 
@@ -188,27 +181,30 @@ export class CollapsingMenu extends HTMLElement{
         function selectItemInList(event) {
             let word = event.target.innerText; // text inside <p> element where event occurs
             // activate field input 'artificially' via btn
-            btn.click(event); 
+            btn.click(event);
             let inputField = document.querySelector('#searchInto-'+ categoryName);
             inputField.value = word; // make selected word the current search word of input field
         }
 
         // let advancedSearchResults = [];
         // when user has selected an item in category or typed it in in INPUT FIELD 
-        searchInputField.addEventListener('keydown', function(event){
+        searchInputField.addEventListener('keydown', function(event){ handleSelectItemInput(event); }, false);
+        searchInputField.addEventListener('input', function(event){ handleSelectItemInput(event); }, false);
+        // searchInputField.addEventListener('keydown', function(event){ handleInput(event); }, false);
+        
+        function handleSelectItemInput(event) {
+            
             searchTerm = event.target.value;
             searchInputField = event.target;
-
+    
             // retrieve current category from input id  ( ex '#searchInto-ingredients')
             let currentCategoryName = searchInputField.getAttribute('id');
             currentCategoryName = currentCategoryName.slice(11, currentCategoryName.length);
             console.log('currentCategoryName', currentCategoryName);
-
+    
             // init suggestions from list ( = search in existing items of CURRENT CATEGORY)
-            if ( searchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
-                console.log('searchTerm is 3 chars long');
-            }
-
+            
+    
             // and then CONFIRM CHOICE by pressing ENTER:
             if ( event.key === 'Enter') {
                 // a new tag for search word is generated above menus
@@ -223,9 +219,8 @@ export class CollapsingMenu extends HTMLElement{
                 }
                 // launch search for term in current results
                 RecipeModule.processAdvancedSearch(searchTerm, currentCategoryName);
-
             }
-        });
+        }
 
         // keep track of tags to prevent displaying the same one more than once
         // AND is used by search method that needs an up-to-date array of

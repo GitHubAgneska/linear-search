@@ -322,7 +322,8 @@ export const RecipeModule = (function() {
     //  ======== !! TO REVIEW : REDEFINITION OF EXISTING METHOD in CollapsingMenu component : 
     // ISSUE = init categories lists items DEFAULT = done in component, BUT UPDATING categories lists items = done here in MODULE  ========= TO REVIEW 
     // handle select item in list : send it into input field
-    function selectItemInList(event, categoryName) { console.log('categoryName===', categoryName);
+    function selectItemInList(event, categoryName) { 
+        console.log('categoryName===', categoryName);
         let word = event.target.innerText; // text inside <p> element where event occurs
         let btn = document.querySelector('#btn-'+categoryName);
         // activate field input 'artificially' via btn
@@ -342,6 +343,46 @@ export const RecipeModule = (function() {
 
     }
 
+    // method used to close a menu if another one is called to open
+    // everytime user clicks a menu open, the parent of all 3 menus checks if any other menu is open already,
+    // and calls close if needed
+    let activeSibling;
+    
+    function checkWhosOpen(){
+
+        const parentSection = document.querySelector('.adv-search-wrapper');
+        let siblingsToObserve = parentSection.childNodes;
+
+        const observer = new MutationObserver(function(){
+    
+            siblingsToObserve.forEach(sibling => {
+    
+                if ( sibling.getAttribute('isActive') === 'true' ){
+                    activeSibling = sibling;                    
+                } else { return; }
+            });
+        });
+        observer.observe(parentSection, { subtree: true, childList: true });
+        return activeSibling;
+    }
+
+
+    function closePreviousMenu(event) {
+        event.stopPropagation();
+
+        let activeSibling = checkWhosOpen();
+
+        if ( activeSibling ) {
+            let menuToCloseBtnClose = activeSibling.firstElementChild.lastElementChild;
+            console.log('BTN IS==',menuToCloseBtnClose );
+            menuToCloseBtnClose.click(event, {once:true});
+
+        } else { return; }
+    }
+
+
+
+
 
 
     // PUBLIC PART OF MODULE
@@ -355,6 +396,9 @@ export const RecipeModule = (function() {
         setSuggestions: setSuggestions,
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,
-        processAdvancedSearch: processAdvancedSearch    };
+        processAdvancedSearch: processAdvancedSearch,
+        checkWhosOpen:checkWhosOpen,
+        closePreviousMenu:closePreviousMenu
+        };
     
 }());
