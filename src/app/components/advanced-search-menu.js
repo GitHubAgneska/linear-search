@@ -9,7 +9,7 @@ export class CollapsingMenu extends HTMLElement{
         super();
         this.innerHTML = `
             
-            <div class="menu-header" id="menu-header-${categoryName}" isActive="false">
+            <div class="menu-header close" id="menu-header-close-${categoryName}" isActive="false">
                 <button class="btn"
                         id="btn-${categoryName}" 
                         type="button" 
@@ -18,6 +18,12 @@ export class CollapsingMenu extends HTMLElement{
                 </button>
                 <i id="caret-down" class="fas fa-angle-down"></i>
             </div>
+
+            <div class="menu-header open" id="menu-header-open-${categoryName}" isActive="true">
+                <input id="searchInto-${categoryName}" class="searchInput" placeholder="rechercher un ${categoryName}">
+                <i id="caret-up" class="fas fa-angle-up"></i>
+            </div>
+
             <div class="collapse multi-collapse category-menu" id="menu-${categoryName}" isOpen="false">
                 <div class="card card-body">
                     <ul id="${categoryName}-list" class="list flex-column">
@@ -26,7 +32,7 @@ export class CollapsingMenu extends HTMLElement{
             </div>
         `;
 
-        this.setAttribute('isActive', 'false');
+        this.setAttribute('isActive', 'false'); // default component state
         let currentSibling = this;
         // parent wrapper ('section .adv-search-wrapper') containing all 3 collapsing menus must be 
         // of width col-6 when menus are closed (50% parent) => each menu : col
@@ -46,131 +52,55 @@ export class CollapsingMenu extends HTMLElement{
             categoryUl.appendChild(listELement);
         });
 
-        let menuHeader = this.querySelector('#menu-header-' + categoryName);
+        let menuHeaderClose = this.querySelector('#menu-header-close-' + categoryName);
+        let menuHeaderOpen = this.querySelector('#menu-header-open-' + categoryName);
+        menuHeaderOpen.style.display = 'none'; // defaut =  not displayed
         let menuToOpen = this.querySelector('#menu-'+ categoryName);
 
         let btn = this.querySelector('button');
-        let btnCategoryName = btn.textContent; // retrieve current text btn
-        let btnCategoryNameLength = btnCategoryName.length;
-        let btnCategoryNameSingular = btnCategoryName.slice(0, btnCategoryNameLength-1);   // ------------------ TO REVIEW
-        let btnCategoryNameActive = 'rechercher un ' + btnCategoryNameSingular; // modify btn text
-
 
         let caretDown = this.querySelector('#caret-down');
-        let caretUp = document.createElement('i');
-        caretUp.setAttribute('class', 'fas fa-angle-up');
-        caretUp.setAttribute('id', 'caret-up');
-
-        // set up input field that replaces category name inside btn when menu = open
-        let searchInputField = document.createElement('input');
-        searchInputField.setAttribute('id', 'searchInto-'+ categoryName);
-        searchInputField.setAttribute('class', 'searchInput');
-        searchInputField.setAttribute('placeholder', 'rechercher un ' + categoryName );
+        let caretUp = this.querySelector('#caret-up');
         
         let currentTags = [];
 
         // COLLAPSING MENUS METHODS ================================================================
         // By default, click event = on whole menu Header to OPEN ONLY
         // ( cannot use a TOGGLE method here, for open/close events are passed through different elements
-        menuHeader.addEventListener('click', function(event){ menuOpen(event),{ once: true }; }, false);
+        menuHeaderClose.addEventListener('click', function(event){ menuOpen(event),{ once: true }; }, false);
         
         function menuOpen(event) {
-            menuHeader = event.currentTarget; // element that handles event
+
+            currentSibling = event.currentTarget; // element that handles event = 'this' collapsing menu component
             event.stopPropagation();
+
+            RecipeModule.checkWhosOpen(); 
+            RecipeModule.closePreviousMenu(event);
             currentSibling.setAttribute('isActive', 'true');
+            
+            menuHeaderClose.style.display = 'none';
+            menuHeaderOpen.style.display = 'flex';
 
-            RecipeModule.checkWhosOpen(); RecipeModule.closePreviousMenu(event);
-                    
-            // console.log('event.currentTarget when OPENING - 1 ======',event.currentTarget);
-            let isMenuActive = menuHeader.getAttribute('isActive');
-            if (isMenuActive === 'false' ) {
+            menuToOpen.style.display = 'flex'; // show list
 
-                    // remove  OPEN event on whole menu header
-                    menuHeader.removeEventListener('click',function(event){ menuOpen(event); }, false);
-                    menuHeader.removeAttribute('isActive', 'false');
-                    menuHeader.setAttribute('isActive', 'true');
+            caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);    
 
-                    // activeSibling.push(currentSibling);
-                    currentSibling.setAttribute('isActive', 'true');
-                    
-                    menuToOpen.style.display = 'flex'; // show list
-                    // replace btn > caret right away (open > close) + add CLOSE event
-                    caretDown.replaceWith(caretUp);
-                    caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);                                
-
-                    // add click on btn to ACTIVATE INPUT FIELD + change its name ( + remove 's' )
-                    btn.textContent = btn.textContent.replace(btn.textContent, btnCategoryNameActive);
-                    btn.style.opacity = 0.7;
-                    btn.addEventListener('click', function(event){ activateInputField(event); }, false ); 
-
-                    parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
-                    let collapsingMenu = menuHeader.parentNode; // = this whole component
-                    collapsingMenu.classList.replace('col', 'col-6'); // menu width expands
-
-                    // return activeSibling;
-            }
-            else { return; }
+            parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
+            this.classList.replace('col', 'col-6'); // menu width expands
         }
-
-        // this event occurs when a menu is open, and its category name btn is clicked : btn is then replaced by an input field
-        function activateInputField(event){
-            let isMenuActive = menuHeader.getAttribute('isActive');
-            if (isMenuActive === 'true' ) {
-                menuHeader.removeEventListener('click', function(event){ menuOpen(event); }, false);
-                btn = event.currentTarget;
-                event.stopPropagation();
-                btn.removeEventListener('click', function(event){ activateInputField(event); }, false ); 
-
-                btn.style.display = 'none';
-                menuHeader.prepend(searchInputField); // add input field in place of btn
-                searchInputField.addEventListener('input', function(event){
-                    if ( searchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
-                        console.log('searchTerm is 3 chars long');
-                    }
-                }, false);
-                menuHeader.appendChild(caretUp); // + add caret ( for the other one went away with btn)
-                caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);
-
-            } else { return; }
-        }
-
 
         function menuClose(event) {
 
             caretUp = event.currentTarget; // element that handles event
             event.stopPropagation();
-            caretUp.replaceWith(caretDown);
-            // console.log('event.currentTarget when CLOSING - 2======',event.currentTarget);
 
-            let isMenuActive = menuHeader.getAttribute('isActive');
+            menuHeaderOpen.style.display = 'none';
+            menuHeaderClose.style.display = 'flex';
 
-            if ( isMenuActive === 'true' ) {
+            menuToOpen.style.display = 'none'; // hide list
 
-                // remove click on btn that ACTIVATES INPUT FIELD  
-                btn.removeEventListener('click', function(){ activateInputField(), false; });
-
-                menuToOpen.style.display = 'none'; // hide list
-                menuHeader.removeAttribute('isActive', 'true');
-                menuHeader.setAttribute('isActive', 'false');
-                
-                // remove input field  + eventually remaining elements
-                if (menuHeader.contains(searchInputField)) {menuHeader.removeChild(searchInputField);}
-                if (btn.contains(searchInputField)) {btn.removeChild(searchInputField);}
-                // put back btn with category name
-                btn.style.display = 'flex';
-                btn.textContent = btn.textContent.replace(btnCategoryNameActive, btnCategoryName);
-                btn.style.opacity = 1;
-                
-                // put back event on menu header
-                menuHeader.addEventListener('click',function(event){ menuOpen(event), { once: true}; }, false);
-
-                parentAdvancedSearchWrapper.classList.replace('col-12', 'col-6'); // parent shrinks back
-                let collapsingMenu = menuHeader.parentNode; // = this whole component
-                collapsingMenu.classList.replace('col-6', 'col'); // menu width shrinks back
-
-                currentSibling.setAttribute('isActive', 'false');
-                
-            } else { return; }
+            parentAdvancedSearchWrapper.classList.replace('col-12', 'col-6'); // parent shrinks back
+            this.classList.replace('col-6', 'col'); // menu width shrinks back
         }
 
 
@@ -185,7 +115,7 @@ export class CollapsingMenu extends HTMLElement{
             let inputField = document.querySelector('#searchInto-'+ categoryName);
             inputField.value = word; // make selected word the current search word of input field
         }
-
+        let searchInputField = this.querySelector('#searchInto-'+ categoryName);
         // let advancedSearchResults = [];
         // when user has selected an item in category or typed it in in INPUT FIELD 
         searchInputField.addEventListener('keydown', function(event){ handleSelectItemInput(event); }, false);

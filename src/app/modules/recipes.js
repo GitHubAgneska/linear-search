@@ -376,6 +376,7 @@ export const RecipeModule = (function() {
             let menuToCloseBtnClose = activeSibling.firstElementChild.lastElementChild;
             console.log('BTN IS==',menuToCloseBtnClose );
             menuToCloseBtnClose.click(event, {once:true});
+            activeSibling = undefined;
 
         } else { return; }
     }
