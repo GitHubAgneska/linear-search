@@ -3,6 +3,7 @@
 /* ================================================== */
 import {MenuListItem} from '../components/menu-listItem';
 import {RecipeModule} from '../modules/recipes';
+import {searchIntoCurrentList} from '../utils/search-algo';
 
 export class CollapsingMenu extends HTMLElement{
     constructor(categoryName, categoryElements){
@@ -157,7 +158,12 @@ export class CollapsingMenu extends HTMLElement{
         function handleManualInput(event) {
             searchTerm = event.target.value;
             searchInputField = event.target;
+
             let currentCategoryName = searchInputField.getAttribute('id');
+            currentCategoryName = currentCategoryName.slice(11, currentCategoryName.length);
+        
+            console.log('currentCategoryName==',currentCategoryName);
+
             if (searchTerm.length > 3) {
                 processManualInputSearchIntoCurrentList(searchTerm, currentCategoryName);
             }
@@ -166,26 +172,30 @@ export class CollapsingMenu extends HTMLElement{
             handleManualSearchReset();
         }
 
+
         function processManualInputSearchIntoCurrentList(searchTerm, currentCategoryName) {
 
-            // retrieve current items of category
+            let currentSuggestions = [];
             let currentItems = [];
-            let parentList = document.querySelector('#ingredients-list');
-            // let parentList = document.querySelector('#' + currentCategoryName +'-list');
+            if (currentCategoryName === 'appliance') { currentCategoryName = 'appareils'; }
+            // locate list items in dom
+            let parentList = document.querySelector('#' + currentCategoryName + '-list');        
             let currentList = parentList.querySelectorAll('a');
-            currentList.forEach( anchorTag => { currentItems.push(anchorTag.innerText); });
-            console.log('currentItems==',currentItems);
-            
-            let currentSuggestions = currentItems.filter(item => { item.toLowerCase().includes(searchTerm.toLowerCase()); });
 
+            // retrieve items from list (textcontent of each <a> tag)
+            currentList.forEach( anchorTag => { currentItems.push(anchorTag.innerText); });
+
+            currentSuggestions = searchIntoCurrentList(searchTerm, currentCategoryName, currentItems);
             console.log('currentSuggestions==', currentSuggestions);
-            displayCurrentSuggestions(currentSuggestions) ;         
+
+            displayCurrentSuggestions(currentSuggestions);
+            handleManualSearchReset(currentSuggestions);         
         }
+
 
         function displayCurrentSuggestions(currentSuggestions) {
             // first, hide the whole current list
             categoryUl.style.visibility = 'hidden';
-
             // suggestions wrapper becomes visible
             suggestionsWrapper.style.display = 'flex';
 
@@ -197,24 +207,21 @@ export class CollapsingMenu extends HTMLElement{
                 listELement.addEventListener('click', function(event){ selectItemInList(event); }, false);
                 suggestionsWrapper.appendChild(listELement);
             });
-
-
         }
 
 
         // case where user deletes chars until field = empty or deletes the whole searchterm
         // when input has been touched + searchterm is empty + focus still on input
-        function handleManualSearchReset(){
+        function handleManualSearchReset(currentSuggestions){
             if ( inputFieldTouched && !searchTerm && searchInputField == document.activeElement ){
-                console.log('NEW SEARCH PENDING');
-                RecipeModule.resetSearch();
-                RecipeModule.resetSuggestions();
+                currentSuggestions = [];
+                RecipeModule.resetSuggestions(currentSuggestions); // remove dom suggestions
+                // hide suggestions wrapper
+                suggestionsWrapper.style.display = 'none';
+                // if input field empty, show default list elements again
+                categoryUl.style.visibility = 'visible';
             }
         }
-
-
-
-
 
 
 

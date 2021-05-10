@@ -161,7 +161,7 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
 // THEN: everytime user selects a new word in the remaining elements of catogories => a new search occurs on the current list of results
 
 
-export function advancedSearch(currentResults,searchTerm, currentCategoryName){
+export function advancedSearch(currentResults, searchTerm, currentCategoryName){
 
     advancedSearchResults = []; // reset results
 
@@ -236,6 +236,32 @@ export function advancedSearch(currentResults,searchTerm, currentCategoryName){
     RecipeModule.setResults(advancedSearchResults);
 }
 
+
+
+// ADVANCED SEARCH - MANUAL INPUT : search in current category items to make suggestions
+// this methods takes as arguments : a list of currently displayed list items / category name / search term
+export function searchIntoCurrentList(searchTerm, currentCategoryName, currentItems) {
+    let currentSuggestions = []; // reset
+    // identify list items ending with comma/period
+    let endsWithCommaOrPeriodRegex = /\.|,$/i;
+
+    currentItems.forEach(item => {
+        
+        item = item.toLowerCase();console.log('ITEM==', item);
+        // if matching word ends with comma/period : remove them ()
+        if ( endsWithCommaOrPeriodRegex.test(item) ) {
+            // console.log('should be corrected: ', word);
+            return item.substring(0, item.length-1); 
+        }
+        if ( item.includes(searchTerm.toLowerCase()) ){
+
+            if ( !currentSuggestions.includes(item)) {
+                currentSuggestions.push(item);
+            }
+        }
+    });
+    return currentSuggestions;
+}
 
 
 

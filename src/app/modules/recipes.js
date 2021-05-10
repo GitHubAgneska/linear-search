@@ -89,8 +89,14 @@ export const RecipeModule = (function() {
                 ingredientsList.push(ingre.ingredient.toLowerCase());
             });
             
+            let endsWithCommaOrPeriodRegex = /\.|,$/i;
             // retrieve category elements : all appliances
-            if (!appliancesList.includes(recipe.appliance)) { appliancesList.push(recipe.appliance); }
+            const recipeAppl = recipe.appliance.toLowerCase();
+            if ( endsWithCommaOrPeriodRegex.test(recipeAppl) ) {
+                // console.log('should be corrected: ', word);
+                return recipeAppl.substring(0, recipeAppl.length-1); 
+            }
+            if (!appliancesList.includes(recipeAppl)) { appliancesList.push(recipeAppl); }
             
             // retrieve category elements : all ustensils
             const recipeUst = recipe.ustensils;
