@@ -2,8 +2,34 @@
 // Advanced search menus
 // =================================
 .adv-search-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background-color: pink;
     margin: 3% 0 0 0;
-    collapsing-menu-component { z-index: 5; color: white; } // search menus pos when toggled open
+
+    collapsing-menu-component {
+        margin: 0 !important;
+        padding: 0 !important; 
+        z-index: 5;// search menus pos when toggled open
+        color: white;
+    }
+  /*   collapsing-menu-component,
+    collapsing-menu-component .menu-header, 
+    collapsing-menu-component .category-menu {
+        @include max-992px {
+            // width:100%  !important;
+            @include m0-p0;
+        }
+    } */
+
+
+    .menu-header.close { 
+        @include max-992px {
+            width:100%  !important; 
+            margin: 0 !important;
+            padding: 0 !important;}}
+
 
     #collapsing-ingredients * { background-color: #174ab8 !important; }
     #collapsing-appareils * { background-color: #4bb9fe !important; }
@@ -53,6 +79,7 @@
         }
     }
     .category-menu {
+        width: 100%;
         height: 50vh;position: absolute;
         overflow: scroll;
         .list {

@@ -208,24 +208,20 @@ export const RecipeModule = (function() {
         // 'ready' means: a suggestion has been selected
         // OR : user presses 'enter' or clicks 'submit' icon
     function displaySearchResults(results) {
-
         results = getResults();
         // store current list for advanced search to search into
         advancedSearchRecipes = getResults();
-
         // reset current list of recipes
         let recipesListWrapper = document.querySelector('#recipes-list');
         //reset recipes list wrapper
         while (recipesListWrapper.firstChild) { recipesListWrapper.removeChild(recipesListWrapper.firstChild); }
         // generate recipe elements to display based on new results
         results.forEach(recipe => { generateRecipeCard(recipe); });
-        
         // set categories elements based on new results
         arrayOfCategoryElements = updateCategoryLists(results); // order advanced search menus update;
         // display categories elements in menus
         updateAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
     }
-
 
     // SEARCH FUNCTIONALITY : ADVANCED SEARCH ====================================================================================================================
     //  = based on DEFAULT OR SORTED LIST of recipes : components are generated accordingly
@@ -235,9 +231,6 @@ export const RecipeModule = (function() {
         // set up wrapper for all 3 collapsing menus
         const advancedSearchWrapper = document.createElement('section');
         advancedSearchWrapper.setAttribute('class', 'adv-search-wrapper');
-        advancedSearchWrapper.classList.add('row');
-        //advancedSearchWrapper.classList.add('m-0');
-        advancedSearchWrapper.classList.add('col-6'); // col-6 = default width: when all menus closed
         root.insertBefore(advancedSearchWrapper, recipesListWrapper);
     }
 

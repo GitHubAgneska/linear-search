@@ -40,12 +40,23 @@ export class CollapsingMenu extends HTMLElement{
         this.setAttribute('isActive', 'false'); // default component state
         this.setAttribute('id', 'collapsing-'+ categoryName); // default component state
         let currentSibling = this;
-        // parent wrapper ('section .adv-search-wrapper') containing all 3 collapsing menus must be 
-        // of width col-6 when menus are closed (50% parent) => each menu : col
-        // of width col-12 if a menu is open (100% parent) => open menu: col-6 / others: col-2 ( + empty col-2)
-        const parentAdvancedSearchWrapper = document.querySelector('.adv-search-wrapper');
-        this.setAttribute('class', 'col'); // each menu : col
 
+        let menuHeaderClose = this.querySelector('#menu-header-close-' + categoryName);
+        let menuHeaderOpen = this.querySelector('#menu-header-open-' + categoryName);
+        let menuToOpen = this.querySelector('#menu-'+ categoryName);
+        let caretUp = this.querySelector('#caret-up');
+        let currentTags = [];
+
+        // BOOTSTRAP RESPONSIVE =====================================================================
+        // parent wrapper ('section .adv-search-wrapper') = containing all 3 collapsing menus
+        const parentAdvancedSearchWrapper = document.querySelector('.adv-search-wrapper');
+        // MOBILE/DESKTOP default width : when all menus closed
+        parentAdvancedSearchWrapper.classList.add('row','col-12','col-lg-6');
+        // each menu closed = col (mobile: of W100% and desktop: of W50%)
+        this.setAttribute('class', 'col'); 
+
+
+        // CATEGORY POPULATION  =====================================================================
         // get UL container for category items 
         const categoryUl = this.querySelector('#' + categoryName + '-list');
         // populate each menu container with category list items - DEFAULT VIEW : all recipes categories
@@ -57,18 +68,13 @@ export class CollapsingMenu extends HTMLElement{
             categoryUl.appendChild(listELement);
         });
 
+
+        // default: hide menu header open version 
+        menuHeaderOpen.style.display = 'none'; 
         // default : suggestions = not visible
         const suggestionsWrapper = this.querySelector('#'+categoryName+'-input-suggestions');
         suggestionsWrapper.style.display = 'none';
         
-        let menuHeaderClose = this.querySelector('#menu-header-close-' + categoryName);
-        let menuHeaderOpen = this.querySelector('#menu-header-open-' + categoryName);
-        menuHeaderOpen.style.display = 'none'; // defaut =  not displayed
-        let menuToOpen = this.querySelector('#menu-'+ categoryName);
-
-        let caretUp = this.querySelector('#caret-up');
-        
-        let currentTags = [];
 
         // COLLAPSING MENUS METHODS ================================================================
         // By default, click event = on whole menu Header to OPEN ONLY
@@ -91,8 +97,10 @@ export class CollapsingMenu extends HTMLElement{
 
             caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);    
 
-            parentAdvancedSearchWrapper.classList.replace('col-6', 'col-12'); // parent expands to give space to menu
-            currentSibling.classList.replace('col', 'col-6'); // menu width expands
+            parentAdvancedSearchWrapper.classList.replace('col-lg-6', 'col-lg-10'); // parent expands to give space to menu
+            parentAdvancedSearchWrapper.classList.add('col-lg-offset-2'); // leave empty space at the end of the row
+            currentSibling.classList.replace('col', 'col-lg-6'); // DESTOP : menu width = W50%
+            currentSibling.classList.add('col-12'); // MOBILE : menu width = W100%
         }
 
         function menuClose(event) {
@@ -162,19 +170,16 @@ export class CollapsingMenu extends HTMLElement{
             let currentCategoryName = searchInputField.getAttribute('id');
             currentCategoryName = currentCategoryName.slice(11, currentCategoryName.length);
         
-            console.log('currentCategoryName==',currentCategoryName);
-
+            // console.log('currentCategoryName==',currentCategoryName);
             if (searchTerm.length > 3) {
                 processManualInputSearchIntoCurrentList(searchTerm, currentCategoryName);
             }
-            // process input as it enters field = init match search
             inputFieldTouched = true;
             handleManualSearchReset();
         }
 
 
         function processManualInputSearchIntoCurrentList(searchTerm, currentCategoryName) {
-
             let currentSuggestions = [];
             let currentItems = [];
             if (currentCategoryName === 'appliance') { currentCategoryName = 'appareils'; }
@@ -184,14 +189,12 @@ export class CollapsingMenu extends HTMLElement{
 
             // retrieve items from list (textcontent of each <a> tag)
             currentList.forEach( anchorTag => { currentItems.push(anchorTag.innerText); });
-
+            // search match in current items of category
             currentSuggestions = searchIntoCurrentList(searchTerm, currentCategoryName, currentItems);
             console.log('currentSuggestions==', currentSuggestions);
 
-            displayCurrentSuggestions(currentSuggestions);
-            handleManualSearchReset(currentSuggestions);         
+            displayCurrentSuggestions(currentSuggestions);       
         }
-
 
         function displayCurrentSuggestions(currentSuggestions) {
             // first, hide the whole current list
@@ -209,13 +212,20 @@ export class CollapsingMenu extends HTMLElement{
             });
         }
 
+        function resetSuggestions(currentSuggestions) {
+            if (currentSuggestions) { 
+                while( currentSuggestions.length > 0  ) { currentSuggestions.pop(); } // remove arr items
+            } else { return; }
+        }
+
 
         // case where user deletes chars until field = empty or deletes the whole searchterm
         // when input has been touched + searchterm is empty + focus still on input
         function handleManualSearchReset(currentSuggestions){
             if ( inputFieldTouched && !searchTerm && searchInputField == document.activeElement ){
-                currentSuggestions = [];
-                RecipeModule.resetSuggestions(currentSuggestions); // remove dom suggestions
+                currentSuggestions = []; // empty data
+                resetSuggestions(currentSuggestions);// remove dom suggestions
+
                 // hide suggestions wrapper
                 suggestionsWrapper.style.display = 'none';
                 // if input field empty, show default list elements again
@@ -224,13 +234,10 @@ export class CollapsingMenu extends HTMLElement{
         }
 
 
-
-        // keep track of tags to prevent displaying the same one more than once
-        // AND is used by search method that needs an up-to-date array of tags
-        let setTagsList = function(tag) { currentTags.push(tag); };
-        let getTagsList = function() { return currentTags; };
-
-        // handle suggestions for manual typing
+        // HANDLE TAGS OF ADVANCED SEARCH ==================================================
+        
+        let setTagsList = function(tag) { currentTags.push(tag); }; // keep track of tags to prevent displaying the same one more than once
+        let getTagsList = function() { return currentTags; }; // AND is used by search method that needs an up-to-date array of tags
 
 
         // create WRAPPER FOR TAGS to come : happens ONCE with 1st list item selection or typed word
