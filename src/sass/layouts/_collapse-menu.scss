@@ -14,17 +14,17 @@
         z-index: 5;// search menus pos when toggled open
         color: white;
     }
-  /*   collapsing-menu-component,
-    collapsing-menu-component .menu-header, 
-    collapsing-menu-component .category-menu {
+
+    collapsing-menu-component[isActive="true"] {
         @include max-992px {
-            // width:100%  !important;
-            @include m0-p0;
+            z-index: 10; // MOBILE : search menus pos when toggled open 
         }
-    } */
+    }
 
 
-    .menu-header.close { 
+
+    .menu-header.closed,
+    .menu-header.open { 
         @include max-992px {
             width:100%  !important; 
             margin: 0 !important;
@@ -56,6 +56,9 @@
         flex-direction: row;
         height: 70px;
         opacity: 1 !important;
+        width: 90%; // of col
+        .close {
+            float: none !important;}
 
         button.btn {
             width: 80%;

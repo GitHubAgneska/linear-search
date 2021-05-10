@@ -10,7 +10,7 @@ export class CollapsingMenu extends HTMLElement{
         super();
         this.innerHTML = `
             
-            <div class="menu-header close" id="menu-header-close-${categoryName}" isActive="false">
+            <div class="menu-header closed" id="menu-header-close-${categoryName}" isActive="false">
                 <button class="btn"
                         id="btn-${categoryName}" 
                         type="button" 
@@ -40,6 +40,7 @@ export class CollapsingMenu extends HTMLElement{
         this.setAttribute('isActive', 'false'); // default component state
         this.setAttribute('id', 'collapsing-'+ categoryName); // default component state
         let currentSibling = this;
+        let activeSibling;
 
         let menuHeaderClose = this.querySelector('#menu-header-close-' + categoryName);
         let menuHeaderOpen = this.querySelector('#menu-header-open-' + categoryName);
@@ -53,7 +54,21 @@ export class CollapsingMenu extends HTMLElement{
         // MOBILE/DESKTOP default width : when all menus closed
         parentAdvancedSearchWrapper.classList.add('row','col-12','col-lg-6');
         // each menu closed = col (mobile: of W100% and desktop: of W50%)
-        this.setAttribute('class', 'col'); 
+        currentSibling.setAttribute('class', 'col');
+
+        function setUpResponsiveWhenOpen(activeSibling) {
+            parentAdvancedSearchWrapper.classList.replace('col-lg-6', 'col-lg-10'); // parent expands to give space to menu
+            parentAdvancedSearchWrapper.classList.add('col-lg-offset-2'); // leave empty space at the end of the row
+            activeSibling.classList.add('col-12'); // MOBILE : menu width = W100%
+            activeSibling.classList.replace('col', 'col-lg-6'); // DESTOP : menu width = W50%
+        }
+
+        function setUpResponsiveWhenCLose() {
+            parentAdvancedSearchWrapper.classList.replace('col-lg-10', 'col-lg-6'); // parent shrinks bac
+            parentAdvancedSearchWrapper.classList.remove('col-lg-offset-2'); // leave empty space at the end of the row
+            currentSibling.classList.remove('col-12'); // MOBILE : menu width = W100%
+            currentSibling.classList.replace('col-lg-6','col'); // DESTOP : menu width = W50%
+        }
 
 
         // CATEGORY POPULATION  =====================================================================
@@ -89,18 +104,17 @@ export class CollapsingMenu extends HTMLElement{
 
             currentSibling.removeAttribute('isActive', 'false'); 
             currentSibling.setAttribute('isActive', 'true');// mark collapsing menu as active (for module to avoid multiple openings)
-            
+            activeSibling = currentSibling; // mark collapsing menu as active (for responsive method)
+
+            // switch menu header
             menuHeaderClose.style.display = 'none';
             menuHeaderOpen.style.display = 'flex';
-
-            menuToOpen.style.display = 'flex'; // show list
-
+            // show list
+            menuToOpen.style.display = 'flex';
+            // add close event on caret 
             caretUp.addEventListener('click',function(event){ menuClose(event), { once: true }; }, false);    
-
-            parentAdvancedSearchWrapper.classList.replace('col-lg-6', 'col-lg-10'); // parent expands to give space to menu
-            parentAdvancedSearchWrapper.classList.add('col-lg-offset-2'); // leave empty space at the end of the row
-            currentSibling.classList.replace('col', 'col-lg-6'); // DESTOP : menu width = W50%
-            currentSibling.classList.add('col-12'); // MOBILE : menu width = W100%
+            // set up responsive
+            setUpResponsiveWhenOpen(activeSibling);
         }
 
         function menuClose(event) {
@@ -112,11 +126,9 @@ export class CollapsingMenu extends HTMLElement{
 
             menuToOpen.style.display = 'none'; // hide list
             currentSibling.removeAttribute('isActive', 'true');
-            
-            parentAdvancedSearchWrapper.classList.replace('col-12', 'col-6'); // parent shrinks back
-            currentSibling.classList.replace('col-6', 'col'); // menu width shrinks back
-            
             currentSibling.setAttribute('isActive', 'false');
+            
+            setUpResponsiveWhenCLose();
         }
 
 
