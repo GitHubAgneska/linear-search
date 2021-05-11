@@ -89,7 +89,7 @@ export const RecipeModule = (function() {
                 ingredientsList.push(ingre.ingredient.toLowerCase());
             });
             
-            let endsWithCommaOrPeriodRegex = /\.|,$/i;
+            const endsWithCommaOrPeriodRegex = /\.|,$/i;
             // retrieve category elements : all appliances
             const recipeAppl = recipe.appliance.toLowerCase();
             if ( endsWithCommaOrPeriodRegex.test(recipeAppl) ) {

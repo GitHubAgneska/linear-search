@@ -4,7 +4,6 @@
 .adv-search-wrapper {
     margin: 0 !important;
     padding: 0 !important;
-
     background-color: pink;
     margin: 3% 0 0 0;
 
@@ -82,7 +81,8 @@
         }
     }
     .category-menu {
-        width: 100%;
+        @include max-992px{ width: 100%;}
+        @include min-992px{ width: 90%;}
         height: 50vh;position: absolute;
         overflow: scroll;
         .list {

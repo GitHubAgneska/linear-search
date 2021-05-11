@@ -4,6 +4,7 @@
 import {MenuListItem} from '../components/menu-listItem';
 import {RecipeModule} from '../modules/recipes';
 import {searchIntoCurrentList} from '../utils/search-algo';
+import {removeSpecialChars} from '../utils/remove-specialChars';
 
 export class CollapsingMenu extends HTMLElement{
     constructor(categoryName, categoryElements){
@@ -26,11 +27,11 @@ export class CollapsingMenu extends HTMLElement{
             </div>
 
             <div class="collapse multi-collapse category-menu" id="menu-${categoryName}" isOpen="false">
-                <div class="card card-body">
+                <div class="card card-body" id="body-items">
                     <ul id="${categoryName}-list" class="list flex-column">
                     </ul>
                 </div>
-                <div id="${categoryName}-input-suggestions">
+                <div class="card card-body" id="${categoryName}-input-suggestions">
                     <ul id="${categoryName}-suggestions-list" class="suggestions-list">
                     </ul>
                 </div>
@@ -47,6 +48,8 @@ export class CollapsingMenu extends HTMLElement{
         let menuToOpen = this.querySelector('#menu-'+ categoryName);
         let caretUp = this.querySelector('#caret-up');
         let currentTags = [];
+        let cardBodyList = this.querySelector('#body-items');
+        let cardBodySuggestions = this.querySelector('#'+ categoryName+ '-input-suggestions');
 
         // BOOTSTRAP RESPONSIVE =====================================================================
         // parent wrapper ('section .adv-search-wrapper') = containing all 3 collapsing menus
@@ -210,9 +213,9 @@ export class CollapsingMenu extends HTMLElement{
 
         function displayCurrentSuggestions(currentSuggestions) {
             // first, hide the whole current list
-            categoryUl.style.visibility = 'hidden';
+            cardBodyList.style.display = 'none';
             // suggestions wrapper becomes visible
-            suggestionsWrapper.style.display = 'flex';
+            cardBodySuggestions.style.display = 'flex';
 
             // populate each menu container with category list items - DEFAULT VIEW : all recipes categories
             currentSuggestions.forEach(el => {
@@ -235,22 +238,18 @@ export class CollapsingMenu extends HTMLElement{
         // when input has been touched + searchterm is empty + focus still on input
         function handleManualSearchReset(currentSuggestions){
             if ( inputFieldTouched && !searchTerm && searchInputField == document.activeElement ){
-                currentSuggestions = []; // empty data
+                currentSuggestions = []; // empty previous data
                 resetSuggestions(currentSuggestions);// remove dom suggestions
-
                 // hide suggestions wrapper
-                suggestionsWrapper.style.display = 'none';
+                cardBodySuggestions.style.display = 'none';
                 // if input field empty, show default list elements again
-                categoryUl.style.visibility = 'visible';
+                cardBodyList.style.display = 'flex';
             }
         }
 
-
         // HANDLE TAGS OF ADVANCED SEARCH ==================================================
-        
         let setTagsList = function(tag) { currentTags.push(tag); }; // keep track of tags to prevent displaying the same one more than once
         let getTagsList = function() { return currentTags; }; // AND is used by search method that needs an up-to-date array of tags
-
 
         // create WRAPPER FOR TAGS to come : happens ONCE with 1st list item selection or typed word
         function initTagsWrapper() {
@@ -267,10 +266,21 @@ export class CollapsingMenu extends HTMLElement{
         function createTag(searchTerm) { 
             let searchItemTag = document.createElement('div');
             searchItemTag.setAttribute('class', 'searchTag');
+
             searchItemTag.setAttribute('id', 'searchTag-' + searchTerm );
+
             let tagCloseIcon = document.createElement('i');
             tagCloseIcon.setAttribute('class', 'fa fa-times-circle-o');
             tagCloseIcon.setAttribute('id', 'close-'+ searchTerm);
+
+            const containsParenthesesRegex = /\((.*)\)/;
+
+            if ( containsParenthesesRegex.test(searchTerm) ){ 
+                console.log('contains parentheses');
+                removeSpecialChars(searchTerm);
+            }
+            
+            console.log('searchTerm after remove==', searchTerm);
             let tagText = document.createTextNode(searchTerm);
             searchItemTag.appendChild(tagText);
             searchItemTag.appendChild(tagCloseIcon);
