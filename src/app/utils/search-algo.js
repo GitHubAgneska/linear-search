@@ -1,9 +1,4 @@
-
-// search term can be one word or several words
-// but search starts when term >= 3 chars
-
 import {RecipeModule} from '../modules/recipes';
-
 
 let resultsList = []; // list of recipes matching search
 let suggestions = []; // list of suggested words matching search
@@ -21,17 +16,14 @@ export function search(recipes, searchterm) {
         searchInDescription(recipe, recipe.description, searchterm); // search term in each recipe description
         searchInIngredients(recipe, recipe.ingredients, searchterm); // search term in each recipe ingredients
     });
-
-    console.log('results=====',resultsList );
-    console.log('CURRENT suggestions for word ==', suggestions);
-
+    // console.log('results=====',resultsList );
+    // console.log('CURRENT suggestions for word ==', suggestions);
     if (resultsList.length > 0) {
         RecipeModule.setResults(resultsList); // return updated results array to Module
     } else {
         RecipeModule.displayNoResults();
         return; // stop search
     }
-
     if (suggestions.length > 0 ) { 
         RecipeModule.setSuggestions(suggestions); // return updated suggestions list array to Module
     } else {
@@ -43,7 +35,6 @@ export function search(recipes, searchterm) {
 function searchInName(recipe, name, searchterm){
 
     let arrayFromName = name.toLowerCase().split(' ');  // 'Soupe de concombre' => [ 'soupe', 'de', 'concombre' ]
-    
     // search match in each word of the name (or in word if name = one word)
     arrayFromName.filter(word => { 
         // if part of a word in array matches current searchterm 
@@ -62,7 +53,6 @@ function searchInName(recipe, name, searchterm){
                     // delegate suggestion to module to display it
                     RecipeModule.addSuggestionInList(word);
                 }
-
                 if ( !resultsList.includes(recipe)){  // prevents multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
                     resultsList.push(recipe); // store recipes in array: all recipes names  containing these letters
                 }
@@ -77,10 +67,8 @@ function searchInName(recipe, name, searchterm){
 function searchInDescription(recipe, description, searchterm){
 
     let arrayFromDesc = description.toLowerCase().split(' ');  // 'Eplucher les concombres, poivrez, ' => [ 'eplucher', 'les', 'concombres', 'poivrez,' ,  ]
-
     // search match in each word of the description
     arrayFromDesc.filter(word => {
-
         // identify verbs to skip ( words ending with 'er' or 'ez' + eventually comma/period )
         let isAverbRegex = /e(z|r)+(\.?|,?)$/i;
         // identify other words ending with comma/period = NOT to skip
@@ -91,9 +79,7 @@ function searchInDescription(recipe, description, searchterm){
         
         // if word includes searchterm and is not a verb
         if ( word.includes(searchterm) && !(isAverbRegex.test(word))) {
-            
-            console.log(' searching for ==', searchterm, 'match in description is==', word);
-
+            // console.log(' searching for ==', searchterm, 'match in description is==', word);
             // if matching word ends with comma/period : remove them ()
             if ( endsWithCommaOrPeriodRegex.test(word) ) {
                 // console.log('should be corrected: ', word);
@@ -103,7 +89,6 @@ function searchInDescription(recipe, description, searchterm){
             if ( !suggestions.includes(word)) {
                 // CASE ONE - suggest word : search 'soup' will suggest 'soupe', not 'soupe de concombre' 
                 suggestions.push(word);
-
                 // delegate suggestion to module to display it
                 RecipeModule.addSuggestionInList(word);
             }
@@ -116,26 +101,19 @@ function searchInDescription(recipe, description, searchterm){
     return resultsList;
 }
 
-
 function searchInIngredients(recipe, recipeIngredients, searchterm){
-
     // recipe ingredients is an array of objects
     // match search occurs in 1st key/value of each object (ignoring rest of ingredients key/values : 'unit' and 'quantity')  
     // ex : recipe.ingredients :[ { 'ingredient':'concombre'}, { 'ingredient':'citron'} ]
     recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array
-        
         for (const [key, value] of Object.entries(item) ) { // for each key:value of ingredient object
-            
             if (key === 'ingredient') {
                 let ingredientName = value.toLowerCase();
-
                 // ingredientName can be one word or several words
-    
                 if ( ingredientName.includes(searchterm) ) {
                     if ( !suggestions.includes(ingredientName)) {
                         // CASE ONE - suggest word : search 'lait' will not suggest 'chocolat au lait' 
                         suggestions.push(ingredientName);
-        
                         // delegate suggestion to module to display it
                         RecipeModule.addSuggestionInList(ingredientName);
                     }
@@ -161,38 +139,25 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
 // => UI displays only recipes containing both 'chocolat' and 'fraise'
 // THEN: everytime user selects a new word in the remaining elements of catogories => a new search occurs on the current list of results
 
-
 export function advancedSearch(currentResults, searchTerm, currentCategoryName){
-
     advancedSearchResults = []; // reset results
-
-    console.log('currentResults where to search===', currentResults);
-    console.log('searchterm advanced===', searchTerm);
-    console.log('currentCategoryName===', currentCategoryName);
+    // console.log('currentResults where to search===', currentResults);
+    // console.log('searchterm advanced===', searchTerm);
+    // console.log('currentCategoryName===', currentCategoryName);
     if (currentCategoryName === 'appareils') { currentCategoryName = 'appliance'; }
-
     // in the array of current recults, 
     currentResults.forEach( currentRecipe => {
         for (const key of Object.keys(currentRecipe)) { // iterate over each key of recipe object
-
             if (key === currentCategoryName ) {   //  find the category current searchterm comes from
-                console.log('currently SEARCHING IN ===', key);
-
+                // console.log('currently SEARCHING IN ===', key);
                 // SEARCH IN INGREDIENTS  = array of objects
                 if (key === 'ingredients') {
                     let recipeIngredients = currentRecipe.ingredients;
-                    
-                    recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array
-        
+                    recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array     
                         for (const [key, value] of Object.entries(item) ) { // for each key:value of ingredient object
-                            
                             if (key === 'ingredient') { console.log('key====', key );
-                                let ingredientName = value.toLowerCase();  console.log('value====', ingredientName ); console.log('searchTerm====', searchTerm );
-                                    
+                                let ingredientName = value.toLowerCase();  // console.log('value====', ingredientName ); console.log('searchTerm====', searchTerm );   
                                 if ( ingredientName === searchTerm.toLowerCase()  || ingredientName.includes(searchTerm.toLowerCase())  ) {
-
-                                    console.log('MATCH!!!!!');
-                                    
                                     // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
                                     if ( !advancedSearchResults.includes(currentRecipe)){
                                         advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
@@ -203,12 +168,10 @@ export function advancedSearch(currentResults, searchTerm, currentCategoryName){
                     });
                     return advancedSearchResults;
                 }
-
                 // SEARCH IN APPLIANCES = strings
                 if (key === 'appliance') {
                     let recipeAppliance = currentRecipe.appliance;
-                    console.log('appliance VALUE ==', recipeAppliance);
-
+                    // console.log('appliance VALUE ==', recipeAppliance);
                     if ( recipeAppliance.toLowerCase() === searchTerm.toLowerCase() || recipeAppliance.toLowerCase().includes(searchTerm.toLowerCase())) {
                         if ( !advancedSearchResults.includes(currentRecipe)){
                             advancedSearchResults.push(currentRecipe); // store recipes in array: all recipes whose description contain serach term
@@ -216,11 +179,10 @@ export function advancedSearch(currentResults, searchTerm, currentCategoryName){
                     }
                     return advancedSearchResults;
                 }
-
                 // SEARCH IN USTENSILS = array of strings
                 if (key === 'ustensils') {
                     let recipeUstensils = currentRecipe.ustensils;
-                    console.log('ustensil VALUE ==', recipeUstensils);
+                    // console.log('ustensil VALUE ==', recipeUstensils);
                     recipeUstensils.forEach( item => {  // for each ustensil string of ustensils array
                         if ( item.toLowerCase() === searchTerm.toLowerCase() || item.toLowerCase().includes(searchTerm.toLowerCase())){
                             if ( !advancedSearchResults.includes(currentRecipe)){
@@ -231,10 +193,9 @@ export function advancedSearch(currentResults, searchTerm, currentCategoryName){
                     return advancedSearchResults;
                 }
             }
-
         }
     });
-    console.log('results of ADVANCED SEARCH =====',advancedSearchResults );
+    // console.log('results of ADVANCED SEARCH =====',advancedSearchResults );
     RecipeModule.setResults(advancedSearchResults);
 }
 
@@ -247,15 +208,14 @@ export function searchIntoCurrentList(searchTerm, currentCategoryName, currentIt
     // identify list items ending with comma/period
     let endsWithCommaOrPeriodRegex = /\.|,$/i;
 
-    currentItems.forEach(item => {
-        
-        item = item.toLowerCase();console.log('ITEM==', item);
+    currentItems.forEach(item => {    
+        item = item.toLowerCase(); // console.log('ITEM==', item);
         // if matching word ends with comma/period : remove them ()
         if ( endsWithCommaOrPeriodRegex.test(item) ) {
             // console.log('should be corrected: ', word);
             return item.substring(0, item.length-1); 
         }
-        if ( item.includes(searchTerm.toLowerCase()) ){
+        if ( item.includes(searchTerm.toLowerCase()) ) {
 
             if ( !currentSuggestions.includes(item)) {
                 currentSuggestions.push(item);
