@@ -19,34 +19,44 @@
             z-index: 10; // MOBILE : search menus pos when toggled open 
         }
     }
+    
 
+    [id^=collapsing-][isActive="false"] * {border-radius:5px;}  // ^= indicates "starts with". Conversely, $= indicates "ends with".
+
+    .category-menu { border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }
+    .menu-header.open,  .menu-header.open > input {border-top-left-radius: 5px;}
+    .menu-header.open,  .menu-header.open > i {border-top-right-radius: 5px;}
 
 
     .menu-header.closed,
-    .menu-header.open { 
+    .menu-header.open {
         @include max-992px {
             width:100%  !important; 
             margin: 0 !important;
             padding: 0 !important;}}
 
 
-    #collapsing-ingredients * { background-color: #174ab8 !important; }
-    #collapsing-appareils * { background-color: #4bb9fe !important; }
-    #collapsing-ustensils * { background-color: #e83e8c !important; }
+    #collapsing-ingredients * { background-color: #174ab8; }
+    #collapsing-appareils * { background-color: #4bb9fe; }
+    #collapsing-ustensils * { background-color: #e83e8c; }
 
     .card.card-body { width:100%;}
 
     .tagsWrapper {
+        background-color: yellow;
         width: 100%;
         @include flex(row, wrap);
+        @include max-768px { justify-content: flex-start;}
         .searchTag {
-          //   height: 10%;
+            @include border-radius(5px);
+            font-size: 0.8em;
             background-color: $primary !important;
             color: $white;
-            padding: 2%;
-            margin: 2%;
+            padding: 1%;
+            margin: 1%;
             @include centered;
             i.fa.fa-times-circle-o { padding-left: 5px; }
+            @include max-600px {font-size:0.7em;}
         }
     }
 
@@ -78,6 +88,7 @@
             width: 80%;
             height: 100%;
             padding: 5%;
+            color:white;
         }
     }
     .category-menu {
@@ -86,15 +97,21 @@
         height: 50vh;position: absolute;
         overflow: scroll;
         .list {
+            display: flex;
+            flex-flow: row wrap;
+            menu-list-item-component {
+                @include max-992px { width: 50%; }
+                @include min-992px { width: 33%;}
+            }
             menu-list-item-component li {
-                &:hover,
-                &:active {
-                    background-color: red !important;
-                }
                 a {
-                    width: 30%;
+                    font-size: 0.8em;
+                    text-transform: capitalize;
                 }
             }
+            li:hover a,
+            li:active a { background-color: grey !important; }
+            
         }
     }
 }

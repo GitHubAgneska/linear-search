@@ -122,5 +122,13 @@ $breakpoints: (xs-mobile: 375px, mobile: 600px, tablet: 768px, laptop: 992px, de
     padding: 0 !important;
 }
 
+/* ======================================== */
+/* BORDER-RADIUS */
+/* ======================================== */
+
+@mixin border-radius($pixel...) {
+    border-radius: $pixel;
+}
+
 
 

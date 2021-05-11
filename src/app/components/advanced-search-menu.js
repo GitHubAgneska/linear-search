@@ -28,11 +28,11 @@ export class CollapsingMenu extends HTMLElement{
 
             <div class="collapse multi-collapse category-menu" id="menu-${categoryName}" isOpen="false">
                 <div class="card card-body" id="body-items">
-                    <ul id="${categoryName}-list" class="list flex-column">
+                    <ul id="${categoryName}-list" class="list">
                     </ul>
                 </div>
                 <div class="card card-body" id="${categoryName}-input-suggestions">
-                    <ul id="${categoryName}-suggestions-list" class="suggestions-list">
+                    <ul id="${categoryName}-suggestions-list" class="list suggestions-list">
                     </ul>
                 </div>
             </div>
@@ -63,14 +63,14 @@ export class CollapsingMenu extends HTMLElement{
             parentAdvancedSearchWrapper.classList.replace('col-lg-6', 'col-lg-10'); // parent expands to give space to menu
             parentAdvancedSearchWrapper.classList.add('col-lg-offset-2'); // leave empty space at the end of the row
             activeSibling.classList.add('col-12'); // MOBILE : menu width = W100%
-            activeSibling.classList.replace('col', 'col-lg-6'); // DESTOP : menu width = W50%
+            activeSibling.classList.replace('col', 'col-lg-8'); // DESTOP : menu width = W50%
         }
 
         function setUpResponsiveWhenCLose() {
             parentAdvancedSearchWrapper.classList.replace('col-lg-10', 'col-lg-6'); // parent shrinks bac
             parentAdvancedSearchWrapper.classList.remove('col-lg-offset-2'); // leave empty space at the end of the row
             currentSibling.classList.remove('col-12'); // MOBILE : menu width = W100%
-            currentSibling.classList.replace('col-lg-6','col'); // DESTOP : menu width = W50%
+            currentSibling.classList.replace('col-lg-8','col'); // DESTOP : menu width = W50%
         }
 
 
