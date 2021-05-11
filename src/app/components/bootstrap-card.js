@@ -36,11 +36,15 @@ export class CardTemplate extends HTMLElement {
                 let newListItem = document.createElement('li');
                 let newListItemContent = document.createTextNode(ingredient.ingredient);
                 if (ingredient.quantity) { newListItemContent.textContent+= ': ' + ingredient.quantity; }
-                if (ingredient.unit) { newListItemContent.textContent+= ' ' + ingredient.unit; }
+                if (ingredient.unit) {
+                    if (ingredient.unit === 'g') { // skip space if unit is 'grammes' / 'g'
+                        newListItemContent.textContent+= '' + ingredient.unit;
+                    } else {
+                        newListItemContent.textContent+= ' ' + ingredient.unit; }
+                    }
 
                 newListItem.appendChild(newListItemContent);
                 ingredientsList.appendChild(newListItem);
-
             });
     }
 }

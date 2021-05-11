@@ -7,6 +7,8 @@ import {CardTemplate} from '../components/bootstrap-card';
 import {HeaderBaseTemplate} from '../components/header';
 import {search} from '../utils/search-algo';
 import {advancedSearch} from '../utils/search-algo';
+// import {checkUnitType} from '../utils/process-api-data';
+import {treatUnits} from '../utils/process-api-data';
 
 /* ================================================== */
 /* MODULE IN CHARGE OF ALL COMPONENTS + LOGIC */
@@ -83,16 +85,18 @@ export const RecipeModule = (function() {
             
             // set up CATEGORY MENU LISTS : DEFAULT ( = all recipes ) ========================
             // retrieve category elements : all ingredients
-            const recipeIngr = recipe.ingredients;
-            recipeIngr.forEach( ingre => {
-                if ( !ingredientsList.includes(ingre.ingredient.toLowerCase()) ) // skip if already in list
-                ingredientsList.push(ingre.ingredient.toLowerCase());
+            const recipeIngr = recipe.ingredients; // is an array
+            recipeIngr.forEach( item => { // = object : { ingr / unit / quantity }
+                // checkUnitType(item); ---- to review : exceptions !
+                treatUnits(item);
+                if ( !ingredientsList.includes(item.ingredient.toLowerCase()) ) // skip if already in list
+                ingredientsList.push(item.ingredient.toLowerCase());
             });
             
             const endsWithCommaOrPeriodRegex = /\.|,$/i;
             // retrieve category elements : all appliances
             const recipeAppl = recipe.appliance.toLowerCase();
-            if ( endsWithCommaOrPeriodRegex.test(recipeAppl) ) {
+            if ( endsWithCommaOrPeriodRegex.test(recipeAppl) ) {  // remove final ponctuation
                 // console.log('should be corrected: ', word);
                 return recipeAppl.substring(0, recipeAppl.length-1); 
             }

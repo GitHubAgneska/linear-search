@@ -4,7 +4,7 @@
 import {MenuListItem} from '../components/menu-listItem';
 import {RecipeModule} from '../modules/recipes';
 import {searchIntoCurrentList} from '../utils/search-algo';
-import {removeSpecialChars} from '../utils/remove-specialChars';
+import {removeSpecialChars} from '../utils/process-api-data';
 
 export class CollapsingMenu extends HTMLElement{
     constructor(categoryName, categoryElements){

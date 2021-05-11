@@ -1,4 +1,6 @@
-
+/* ================================================== */
+/* CARD COMPONENT ( based on bootstap card)
+/* ================================================== */
 card-component {
     margin: 1% 0;
     display: flex;
@@ -16,6 +18,7 @@ card-component {
             .card-header-recipe {
                 padding: 4% 0;
                 h5 {
+                    // &:nth-child(1) { font-weight:700;}
                     @include max-600px {font-size: 0.8em;font-weight : 500;}
                     @include min-600px { font-size: 1em;font-weight : 500;}
                 }
@@ -40,7 +43,6 @@ card-component {
                     height: 100%;
                     overflow: scroll;
                     // overflow: ellipsis; => only works on one line text
-
                 }
             }
         }
