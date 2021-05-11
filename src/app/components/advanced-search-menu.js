@@ -176,6 +176,8 @@ export class CollapsingMenu extends HTMLElement{
                     let tagsWrapper = document.querySelector('#tagsWrapper');
                     tagsWrapper.appendChild(searchItemTag);
                     setTagsList(searchTerm); // include current searchterm in tags list
+                    // close menu
+                    menuClose(event);
                 }
             }
         }
