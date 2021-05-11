@@ -1,6 +1,6 @@
 
 import {RecipeFactory} from '../utils/recipe-factory';
-import {SearchBar} from '../components/bootstrap-search-bar';
+import {SearchBar} from '../components/main-search-bar';
 import {CollapsingMenu} from '../components/advanced-search-menu';
 import {MenuListItem} from '../components/menu-listItem';
 import {CardTemplate} from '../components/bootstrap-card';
@@ -186,7 +186,7 @@ export const RecipeModule = (function() {
         displaySearchResults();
     }
 
-    // suggestions list should be reset at each new keystroke
+    // suggestions list DOM should be reset at each new keystroke
     function resetSuggestions(parent){
         parent = document.querySelector('#main-suggestions');
         while (parent.firstChild) { parent.removeChild(parent.firstChild); }
@@ -202,9 +202,15 @@ export const RecipeModule = (function() {
     }
     
     // reset method for resultsList or/and suggestions
-    function resetSearch(arr){
+    function resetSearchArray(arr){
         if (arr) { while( arr.length > 0  ) { arr.pop(); } // remove arr items
         } else { return; }
+    }
+
+
+    // reset all search
+    function resetSearch(event) {
+        window.location.reload();
     }
 
     // DISPLAY RECIPE LIST BY SEARCH TERM ----------------
@@ -365,14 +371,15 @@ export const RecipeModule = (function() {
         processCurrentMainSearch: processCurrentMainSearch,
         addSuggestionInList: addSuggestionInList,
         resetSuggestions:resetSuggestions,
-        resetSearch: resetSearch,
+        resetSearchArray: resetSearchArray,
         setResults: setResults,
         getResults: getResults,
         setSuggestions: setSuggestions,
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,
         processAdvancedSearch: processAdvancedSearch,
-        checkWhosOpen:checkWhosOpen
+        checkWhosOpen:checkWhosOpen,
+        resetSearch: resetSearch
         };
     
 }());
