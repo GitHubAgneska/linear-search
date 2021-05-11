@@ -1,36 +1,46 @@
 
 card-component {
-    margin:2%;
+    margin: 1% 0;
     display: flex;
+    max-width: 50%;
+    // *:not(.recipe-txt) { font-family: Lato;}
 
     .card.recipe-card {
         width: 400px !important; height: 350px !important;
-        img { height:45%; width:100%;}
+        img { height:45%; width:100%;  background:#C7BEBE;}
         
         .card-body {
-            padding: 2% 7% !important;
+            padding: 0 7% !important;
+            background:#E7E7E7;
 
             .card-header-recipe {
                 padding: 4% 0;
-                h5 { font-weight : 500; font-size: 1em;}
-            
+                h5 {
+                    @include max-600px {font-size: 0.8em;font-weight : 500;}
+                    @include min-600px { font-size: 1em;font-weight : 500;}
+                }
                 .card-time {
+                    height: 100%;
+                    @include flex(row, nowrap);justify-content: space-evenly;
                     .far.fa-clock {
+                        margin-right: 5px !important;
                         @include icon-base;
-                        @include icon-size;
+                        @include max-600px{font-size: 1em;}
+                        @include min-600px{@include icon-size;}
                     }
                 }
             }
         }
         .recipe-description {
             height: 60%;
-            overflow: hidden;
             .ingredients-list li, p  { font-size: 0.7em;}
             .recipe-txt { 
                 height: 100%;
                 p {
-                    text-overflow: ellipsis;
-                    overflow: hidden;
+                    height: 100%;
+                    overflow: scroll;
+                    // overflow: ellipsis; => only works on one line text
+
                 }
             }
         }
