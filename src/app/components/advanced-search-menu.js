@@ -4,6 +4,7 @@
 import {MenuListItem} from '../components/menu-listItem';
 import {RecipeModule} from '../modules/recipes';
 import {searchIntoCurrentList} from '../utils/search-algo';
+import {search} from '../utils/search-algo';
 import {removeSpecialChars} from '../utils/process-api-data';
 
 export class CollapsingMenu extends HTMLElement{
@@ -163,7 +164,10 @@ export class CollapsingMenu extends HTMLElement{
             inputFieldTouched = true;
             // and then CONFIRM CHOICE by pressing ENTER:
             if ( event.key === 'Enter') {
-                // a new tag for search word is generated above menus
+                // launch search for term in current results
+                RecipeModule.processAdvancedSearch(searchTerm, currentCategoryName);
+
+                // a new tag for search word is generated above menus if term exists in api data
                 // ( check first if exists already )
                 let currentTags = getTagsList();
                 if ( !currentTags.includes(searchTerm) ) {
@@ -171,10 +175,8 @@ export class CollapsingMenu extends HTMLElement{
                     initTagsWrapper();
                     let tagsWrapper = document.querySelector('#tagsWrapper');
                     tagsWrapper.appendChild(searchItemTag);
-                    setTagsList(searchTerm);
+                    setTagsList(searchTerm); // include current searchterm in tags list
                 }
-                // launch search for term in current results
-                RecipeModule.processAdvancedSearch(searchTerm, currentCategoryName);
             }
         }
 
@@ -233,12 +235,12 @@ export class CollapsingMenu extends HTMLElement{
             } else { return; }
         }
 
-
         // case where user deletes chars until field = empty or deletes the whole searchterm
         // when input has been touched + searchterm is empty + focus still on input
         function handleManualSearchReset(currentSuggestions){
             if ( inputFieldTouched && !searchTerm && searchInputField == document.activeElement ){
                 currentSuggestions = []; // empty previous data
+                RecipeModule.removeNoResults(); // remove no results message if needed
                 resetSuggestions(currentSuggestions);// remove dom suggestions
                 // hide suggestions wrapper
                 cardBodySuggestions.style.display = 'none';
@@ -250,6 +252,12 @@ export class CollapsingMenu extends HTMLElement{
         // HANDLE TAGS OF ADVANCED SEARCH ==================================================
         let setTagsList = function(tag) { currentTags.push(tag); }; // keep track of tags to prevent displaying the same one more than once
         let getTagsList = function() { return currentTags; }; // AND is used by search method that needs an up-to-date array of tags
+        let removeTagFromList = function(tag) {
+            console.log('currenttags==', currentTags, 'type==', typeof(currentTags));
+            let tagIndex = currentTags.indexOf(tag);
+            currentTags.splice(tagIndex, 1);
+            return currentTags;
+        };
 
         // create WRAPPER FOR TAGS to come : happens ONCE with 1st list item selection or typed word
         function initTagsWrapper() {
@@ -266,7 +274,6 @@ export class CollapsingMenu extends HTMLElement{
         function createTag(searchTerm) { 
             let searchItemTag = document.createElement('div');
             searchItemTag.setAttribute('class', 'searchTag');
-
             searchItemTag.setAttribute('id', 'searchTag-' + searchTerm );
 
             let tagCloseIcon = document.createElement('i');
@@ -275,11 +282,10 @@ export class CollapsingMenu extends HTMLElement{
 
             const containsParenthesesRegex = /\((.*)\)/;
 
-            if ( containsParenthesesRegex.test(searchTerm) ){ 
+            if ( containsParenthesesRegex.test(searchTerm) ){ // ---------- to review
                 console.log('contains parentheses');
                 removeSpecialChars(searchTerm);
             }
-            
             console.log('searchTerm after remove==', searchTerm);
             let tagText = document.createTextNode(searchTerm);
             searchItemTag.appendChild(tagText);
@@ -296,6 +302,11 @@ export class CollapsingMenu extends HTMLElement{
             let tagToRemove = closeIcon.parentNode;
             let tagsWrapper = document.querySelector('#tagsWrapper');
             tagsWrapper.removeChild(tagToRemove);
+
+            // update results list
+            removeTagFromList(tagToRemove.textContent);
+            currentTags = getTagsList();
+            currentTags.forEach(term => {RecipeModule.processAdvancedSearch(term, currentCategoryName); });
         }
     }
 }

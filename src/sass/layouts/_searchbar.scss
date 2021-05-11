@@ -29,3 +29,13 @@
         &:focus { background-color: pink;}
     }
 }
+
+
+.no-results-message {
+    border: 1px solid orange; @include border-radius(5px);
+    color: orange;
+    padding:1%; margin:1%;
+    // height:50px; 
+    // width:50%;
+
+}

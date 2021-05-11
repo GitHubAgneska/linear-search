@@ -61,6 +61,7 @@ export class SearchBar extends HTMLElement {
                 console.log('NEW SEARCH PENDING');
                 RecipeModule.resetSearchArray(); // data array
                 RecipeModule.resetSuggestions(); // dom
+                RecipeModule.removeNoResults(); // remove no results message if needed
             }
         }
         

@@ -207,7 +207,6 @@ export const RecipeModule = (function() {
         } else { return; }
     }
 
-
     // reset all search
     function resetSearch(event) {
         window.location.reload();
@@ -231,6 +230,22 @@ export const RecipeModule = (function() {
         arrayOfCategoryElements = updateCategoryLists(results); // order advanced search menus update;
         // display categories elements in menus
         updateAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
+    }
+
+    // DISPLAY NO RESULTS MESSAGE
+    let noResultsBlock = document.createElement('div');
+    noResultsBlock.setAttribute('id', 'no-results-message');
+    noResultsBlock.setAttribute('class','no-results-message' );
+    let noResultsMessage = document.createTextNode('Pas de résultat pour la recherche!');
+    noResultsBlock.appendChild(noResultsMessage);
+
+    function displayNoResults() {
+        const advancedSearchWrapper = document.querySelector('.adv-search-wrapper');
+        root.insertBefore(noResultsBlock, advancedSearchWrapper);
+    }
+    function removeNoResults() {
+        let noResultsBlock = document.querySelector('#no-results-message');
+        if (root.contains(noResultsBlock)) { root.removeChild(noResultsBlock);}
     }
 
     // SEARCH FUNCTIONALITY : ADVANCED SEARCH ====================================================================================================================
@@ -286,7 +301,6 @@ export const RecipeModule = (function() {
                 if ( !ustensilsList.includes(ust) ) // skip if already in list
                 ustensilsList.push(ust);
             });
-    
         });
         arrayOfCategoryElements.push(ingredientsList,appliancesList, ustensilsList );
         return arrayOfCategoryElements;
@@ -379,7 +393,9 @@ export const RecipeModule = (function() {
         displaySearchResults: displaySearchResults,
         processAdvancedSearch: processAdvancedSearch,
         checkWhosOpen:checkWhosOpen,
-        resetSearch: resetSearch
+        resetSearch: resetSearch,
+        displayNoResults:displayNoResults,
+        removeNoResults:removeNoResults
         };
     
 }());

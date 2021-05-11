@@ -28,7 +28,8 @@ export function search(recipes, searchterm) {
     if (resultsList.length > 0) {
         RecipeModule.setResults(resultsList); // return updated results array to Module
     } else {
-        console.log('NO RESULTS FOUND');
+        RecipeModule.displayNoResults();
+        return; // stop search
     }
 
     if (suggestions.length > 0 ) { 
@@ -230,6 +231,7 @@ export function advancedSearch(currentResults, searchTerm, currentCategoryName){
                     return advancedSearchResults;
                 }
             }
+
         }
     });
     console.log('results of ADVANCED SEARCH =====',advancedSearchResults );

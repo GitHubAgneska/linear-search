@@ -37,7 +37,7 @@ export class CardTemplate extends HTMLElement {
                 let newListItemContent = document.createTextNode(ingredient.ingredient);
                 if (ingredient.quantity) { newListItemContent.textContent+= ': ' + ingredient.quantity; }
                 if (ingredient.unit) {
-                    if (ingredient.unit === 'g') { // skip space if unit is 'grammes' / 'g'
+                    if (ingredient.unit === 'g' || ingredient.unit === 'ml') { // skip space if unit is 'grammes' / 'g' or ml
                         newListItemContent.textContent+= '' + ingredient.unit;
                     } else {
                         newListItemContent.textContent+= ' ' + ingredient.unit; }
