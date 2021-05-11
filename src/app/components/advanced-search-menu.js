@@ -4,7 +4,6 @@
 import {MenuListItem} from '../components/menu-listItem';
 import {RecipeModule} from '../modules/recipes';
 import {searchIntoCurrentList} from '../utils/search-algo';
-import {search} from '../utils/search-algo';
 import {removeSpecialChars} from '../utils/process-api-data';
 
 export class CollapsingMenu extends HTMLElement{
@@ -110,6 +109,10 @@ export class CollapsingMenu extends HTMLElement{
             currentSibling.setAttribute('isActive', 'true');// mark collapsing menu as active (for module to avoid multiple openings)
             activeSibling = currentSibling; // mark collapsing menu as active (for responsive method)
 
+            // reset input from previous search
+            const inputField = currentSibling.querySelector('input');
+            if (inputField.value) { inputField.value = '';  }
+
             // switch menu header
             menuHeaderClose.style.display = 'none';
             menuHeaderOpen.style.display = 'flex';
@@ -177,7 +180,7 @@ export class CollapsingMenu extends HTMLElement{
                     tagsWrapper.appendChild(searchItemTag);
                     setTagsList(searchTerm); // include current searchterm in tags list
                     // close menu
-                    menuClose(event);
+                    caretUp.click();
                 }
             }
         }
