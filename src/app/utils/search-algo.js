@@ -27,7 +27,8 @@ export function search(recipes, searchterm) {
     if (suggestions.length > 0 ) { 
         RecipeModule.setSuggestions(suggestions); // return updated suggestions list array to Module
     } else {
-        console.log('NO SUGGESTIONS FOUND');
+        return;
+        // console.log('NO SUGGESTIONS FOUND');
     }
 }
 
@@ -40,7 +41,7 @@ function searchInName(recipe, name, searchterm){
         // if part of a word in array matches current searchterm 
         // ex : searchterm = 'soup' - => should match 'soupe' in [ 'soupe', 'de', 'concombre' ]
             if (word.includes(searchterm)) { 
-                console.log(' searching for ==', searchterm, 'match in name is==', word);
+                // console.log(' searching for ==', searchterm, 'match in name is==', word);
 
                 // (if not there already) store suggestion in array : all words beginning with these letters
                 if ( !suggestions.includes(word)) {

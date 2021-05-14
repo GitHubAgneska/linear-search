@@ -9,6 +9,8 @@ import {search} from '../utils/search-algo';
 import {advancedSearch} from '../utils/search-algo';
 // import {checkUnitType} from '../utils/process-api-data';
 import {treatUnits} from '../utils/process-api-data';
+import {checkDoublonsBeforeAddingToArray} from '../utils/process-api-data';
+import {checkString} from '../utils/process-api-data';
 
 /* ================================================== */
 /* MODULE IN CHARGE OF ALL COMPONENTS + LOGIC */
@@ -82,35 +84,11 @@ export const RecipeModule = (function() {
                 recipe.appliance,
                 recipe.ustensils
             );
-            
-            // set up CATEGORY MENU LISTS : DEFAULT ( = all recipes ) ========================
-            // retrieve category elements : all ingredients
-            const recipeIngr = recipe.ingredients; // is an array
-            recipeIngr.forEach( item => { // = object : { ingr / unit / quantity }
-                // checkUnitType(item); ---- to review : exceptions !
-                treatUnits(item);
-                if ( !ingredientsList.includes(item.ingredient.toLowerCase()) ) // skip if already in list
-                ingredientsList.push(item.ingredient.toLowerCase());
-            });
-            
-            const endsWithCommaOrPeriodRegex = /\.|,$/i;
-            // retrieve category elements : all appliances
-            const recipeAppl = recipe.appliance.toLowerCase();
-            if ( endsWithCommaOrPeriodRegex.test(recipeAppl) ) {  // remove final ponctuation
-                // console.log('should be corrected: ', word);
-                return recipeAppl.substring(0, recipeAppl.length-1); 
-            }
-            if (!appliancesList.includes(recipeAppl)) { appliancesList.push(recipeAppl); }
-            
-            // retrieve category elements : all ustensils
-            const recipeUst = recipe.ustensils;
-            recipeUst.forEach(ust => {
-                if ( !ustensilsList.includes(ust.toLowerCase()) ) // skip if already in list
-                ustensilsList.push(ust.toLowerCase());
-            });
-            
             // generate view for recipe
             generateRecipeCard(recipe);
+            
+            // set up CATEGORY MENU LISTS : DEFAULT ( = all recipes )
+            updateCategoryLists(recipes);
             
             // all recipes casted, ordered as coming from api (default)
             recipesList.push(newRecipe);
@@ -137,9 +115,9 @@ export const RecipeModule = (function() {
     // SEARCH FUNCTIONALITY : MAIN SEARCH ==================================================================================================
     // RETRIEVE current search term and call search method
     function processCurrentMainSearch(currentSearchTerm) {
-        console.log(currentSearchTerm);
+        // console.log(currentSearchTerm);
         if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
-            console.log('currentSearchTerm is 3 chars long');
+            // console.log('currentSearchTerm is 3 chars long');
             search(recipes, currentSearchTerm); // launch search for term in recipes list
         }
     }
@@ -275,8 +253,8 @@ export const RecipeModule = (function() {
         });
     }
 
-    // UPDATE CATEGORY LIST ELEMENTS AFTER SEARCH IN MAIN SEARCH
-    // when search term in main search produces a list of recipes,
+    // SET UP or UPDATE CATEGORY LIST ELEMENTS
+    // set up : all recipes / update : when search term in main search produces a list of recipes,
     // the categories menus lists are updated with corresponding recipes ingredients/appliances/ustensils
     function updateCategoryLists(recipes) {
         // first, reset menus lists from previous data
@@ -288,18 +266,35 @@ export const RecipeModule = (function() {
         // then for each recipe of results, retrieve elements for each category
         recipes.forEach( recipe => {
 
+            // retrieve category elements : all ingredients
             const recipeIngr = recipe.ingredients;
-            recipeIngr.forEach( ingre => {
-                if ( !ingredientsList.includes(ingre) ) // skip if already in list
-                ingredientsList.push(ingre.ingredient);
+            recipeIngr.forEach( item => {
+                let currentIngredient = item.ingredient;
+                currentIngredient = currentIngredient.toLowerCase();
+                checkString(currentIngredient);
+
+                treatUnits(item); // checkUnitType(item); ---- to review : exceptions !
+                // check doublons before adding
+                checkDoublonsBeforeAddingToArray(ingredientsList,currentIngredient);
             });
 
-            if (!appliancesList.includes(recipe.appliance)) { appliancesList.push(recipe.appliance); }
+            // retrieve category elements : all appliances
+            let currentAppliance = recipe.appliance;
+            currentAppliance = currentAppliance.toLowerCase();
+            // remove ponctuation, accents, 
+            checkString(currentAppliance);
+            // check doublons before adding
+            checkDoublonsBeforeAddingToArray(appliancesList,currentAppliance);
+
     
+            // retrieve category elements : all ustensils
             const recipeUst = recipe.ustensils;
             recipeUst.forEach(ust => {
-                if ( !ustensilsList.includes(ust) ) // skip if already in list
-                ustensilsList.push(ust);
+                let currentUstensil = ust;
+                currentUstensil = currentUstensil.toLowerCase();
+                checkString(currentUstensil);
+                // check doublons before adding
+                checkDoublonsBeforeAddingToArray(ustensilsList,currentUstensil);
             });
         });
         arrayOfCategoryElements.push(ingredientsList,appliancesList, ustensilsList );
@@ -346,7 +341,7 @@ export const RecipeModule = (function() {
     // ISSUE = init categories lists items DEFAULT = done in component, BUT UPDATING categories lists items = done here in MODULE  ========= TO REVIEW 
     // handle select item in list : send it into input field
     function selectItemInList(event, categoryName) { 
-        console.log('categoryName===', categoryName);
+        // console.log('categoryName===', categoryName);
         let word = event.target.innerText; // text inside <p> element where event occurs
         let btn = document.querySelector('#btn-'+categoryName);
         // activate field input 'artificially' via btn

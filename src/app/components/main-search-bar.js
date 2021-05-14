@@ -84,8 +84,6 @@ export class SearchBar extends HTMLElement {
             }
         }, false);
     }
-
-
 }
 // register custom element in the built-in CustomElementRegistry object
 customElements.define('searchbar-component', SearchBar);

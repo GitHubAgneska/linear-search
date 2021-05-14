@@ -619,7 +619,7 @@
                     "unit": "tiges"
                 },
                 {
-                    "ingredient": "huile d'olives",
+                    "ingredient": "huile d'olive",
                     "quantity": 2,
                     "unit": "cuillère à soupe"
                 }
@@ -1405,7 +1405,7 @@
                     "unit": "grammes"
                 },
                 {
-                    "ingredient": "Huile d'olives",
+                    "ingredient": "Huile d'olive",
                     "quantity": 25,
                     "unit": "cl"
                 },
@@ -1872,7 +1872,7 @@
                     "quantity": 6
                 },
                 {
-                    "ingredient": "Poudre d'amendes",
+                    "ingredient": "Poudre d'amandes",
                     "quantity": 500,
                     "unit": "grammes"
                 },
