@@ -8,7 +8,6 @@ let advancedSearchResults = []; // list of recipes matching advanced search
 // search term in recipes list
 export function search(recipes, searchterm) {
     resultsList = [];suggestions = []; // reset these 2 at every new keystroke
-
     RecipeModule.resetSuggestions(); // reset displayed suggestions list
 
     recipes.forEach( recipe => {
@@ -20,15 +19,13 @@ export function search(recipes, searchterm) {
     // console.log('CURRENT suggestions for word ==', suggestions);
     if (resultsList.length > 0) {
         RecipeModule.setResults(resultsList); // return updated results array to Module
-    } else {
+    } else { 
         RecipeModule.displayNoResults();
         return; // stop search
     }
-    if (suggestions.length > 0 ) { 
+    if ( suggestions.length > 0 ) {
         RecipeModule.setSuggestions(suggestions); // return updated suggestions list array to Module
-    } else {
-        return;
-        // console.log('NO SUGGESTIONS FOUND');
+        } else { return;
     }
 }
 

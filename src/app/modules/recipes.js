@@ -86,16 +86,12 @@ export const RecipeModule = (function() {
             );
             // generate view for recipe
             generateRecipeCard(recipe);
-            
             // set up CATEGORY MENU LISTS : DEFAULT ( = all recipes )
-            updateCategoryLists(recipes);
-            
+            updateCategoryLists(recipes); // returns arrayOfCategoryElements
             // all recipes casted, ordered as coming from api (default)
             recipesList.push(newRecipe);
         });
         setResults(recipesList);
-
-        arrayOfCategoryElements.push(ingredientsList,appliancesList, ustensilsList );
         initAdvancedSearchSection();
         setUpAdvancedSearchView(arrayOfCategoryElements); // default == all recipes (= array of arrays [appliancesList, ustensilsList, ingredientsList])
     }
@@ -117,7 +113,6 @@ export const RecipeModule = (function() {
     function processCurrentMainSearch(currentSearchTerm) {
         // console.log(currentSearchTerm);
         if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
-            // console.log('currentSearchTerm is 3 chars long');
             search(recipes, currentSearchTerm); // launch search for term in recipes list
         }
     }
