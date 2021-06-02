@@ -107,21 +107,36 @@ export const RecipeModule = (function() {
         root.appendChild(recipesListWrapper);
     }
 
-    // BROWSER - PERF TESTS --------------------
-    const t0 = performance.now();
-    // -----------------------------------------
 
+    let t0, t1;
+    
     // SEARCH FUNCTIONALITY : MAIN SEARCH ==================================================================================================
     // RETRIEVE current search term and call search method
     function processCurrentMainSearch(currentSearchTerm) {
         // console.log(currentSearchTerm);
         if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
+
+            // BROWSER - PERF TESTS --------------------
+            t0 = performance.now();
+            // -----------------------------------------
+            
             search(recipes, currentSearchTerm); // launch search for term in recipes list
         }
     }
 
+
+
     // STORE results in the module, until display method needs them
-    let setResults = function(results) { storedResults = results; };
+    let setResults = function(results) { 
+        storedResults = results;
+        // BROWSER - PERF TESTS --------------------
+        t1 = performance.now();
+        console.log('FIND SEARCH TERM took', t1 - t0, 'milliseconds');
+        // -----------------------------------------
+    };
+
+
+
     let getResults = function() { return storedResults; };
 
     // STORE suggestions in the module, until display method needs them
@@ -208,10 +223,6 @@ export const RecipeModule = (function() {
         updateAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
     }
 
-    // BROWSER - PERF TESTS --------------------
-    const t1 = performance.now();
-    console.log(`Call to doSomething took ${t1 - t0} milliseconds.`);
-    // -----------------------------------------
 
     // DISPLAY NO RESULTS MESSAGE
     let noResultsBlock = document.createElement('div');
@@ -377,6 +388,9 @@ export const RecipeModule = (function() {
             }
         });
     }
+
+
+
 
     // PUBLIC PART OF MODULE
     return {

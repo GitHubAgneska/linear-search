@@ -44,16 +44,19 @@ export class SearchBar extends HTMLElement {
         let currentSearchTerm = '';
         let inputFieldTouched = false;
 
+
+
         mainInputSearch.addEventListener('input', function(event){
             currentSearchTerm = event.target.value;
+
             // process input as it enters field = init match search
             RecipeModule.processCurrentMainSearch(currentSearchTerm);
-            
+
             inputFieldTouched = true;
             handleManualSearchReset();
         }, false);
 
-        
+
         // case where user deletes chars until field = empty or deletes the whole searchterm
         // when input has been touched + searchterm is empty + focus still on input
         function handleManualSearchReset(){

@@ -4,6 +4,9 @@ let resultsList = []; // list of recipes matching search
 let suggestions = []; // list of suggested words matching search
 let advancedSearchResults = []; // list of recipes matching advanced search
 
+
+
+
 // MAIN SEARCH ======================================================================================================
 // search term in recipes list
 export function search(recipes, searchterm) {
@@ -28,6 +31,7 @@ export function search(recipes, searchterm) {
         } else { return;
     }
 }
+
 
 // search in each recipe name
 function searchInName(recipe, name, searchterm){

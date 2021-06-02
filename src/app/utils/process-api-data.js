@@ -3,59 +3,51 @@
 /* ALL METHODS USED TO PROCESS INCOMING API DATA
 /* ================================================== */
 
-import { result } from "lodash";
-
-// recipe -> 'ingredients' : [ { 'ingredient': 'sucre', 'quantity': 300, 'UNIT': 'grammes'} ] => 'grammes' => 'g'
-
-// any character that is not a word character or whitespace
-const regexNotCharOrWhiteSpace = /[^\w\s]/g;
-const parenthesesRegExp = /\(([^)]+)\)/;
-const endsWithCommaOrPeriodRegex = /\.|,$/i;
-const eContainsAccentRegex = /[èéêë]/g;
-const iContainsAccentRegex = /[î]/g;
-
+// standard string processing
 export function checkString(str) {
-    removeSpecialChars(str);
-    replaceAccents(str);
-    removePonctuation(str);
+    str = str.toLowerCase();
+    str = replaceAccents(str);
+    str = removePunctuation(str);
+    return str;
 }
-
 // STRINGS --------------------------------------------------------------------------------------------------
-// process string to escape/remove parentheses -> ex: 'thon rouge (ou blanc)' => 'thon rouge ou blanc'
-export function removeSpecialChars(str){  
-    let index = str.search(parenthesesRegExp); // = returns inde
-    if ( index !== -1 ) {
-        // console.log('contains parentheses', index);
-        let result = str.substring(0, index-1 ).concat(str.substring(index+1, str.length-1));
-        removeSpecialChars(result);// check again
-    } else { 
-        return str;
-    }
-    return result;
-}
 
-// replace accented 'e' char with regular 'e' char - ex: 'crême' -> 'creme'
+// replace accented e', 'a', 'i', ç , char with regular char - ex: 'crême' -> 'creme'
 export function replaceAccents(str) {
-    if (eContainsAccentRegex.test(str)) {  
-        let indexOfAccent = str.search(eContainsAccentRegex);
-        let result =  str.replace(str.charAt(indexOfAccent), 'e');
-        return replaceAccents(result); // check again
-    }
-    if (iContainsAccentRegex.test(str)) {  
-        let indexOfAccent = str.search(iContainsAccentRegex);
-        let result =  str.replace(str.charAt(indexOfAccent), 'i');
-        return replaceAccents(result); // check again
-    }
-    else { let result = str; return result; }
+    const containsAnyAccentRegex = /[çèéêëîïâàä]/g;
+    const eContainsAccentRegex = /[èéêë]/g;
+    const iContainsAccentRegex = /[îï]/g;
+    const aContainsAccentRegex = /[âàä]/g;
+    const cContainsAccentRegex = /[ç]/g;
+
+    let containsAnyAccent = containsAnyAccentRegex.test(str);
+    
+    if (containsAnyAccent) {  
+        let indexOfAccent = str.search(containsAnyAccentRegex);
+        // determine which it is
+        // 'e'
+        if ( eContainsAccentRegex.test(str.charAt(indexOfAccent))) {
+            str =  str.replace(str.charAt(indexOfAccent), 'e');
+        // 'i'
+        } else if (iContainsAccentRegex.test(str.charAt(indexOfAccent))) {
+            str =  str.replace(str.charAt(indexOfAccent), 'i');
+        // 'a'
+        } else if (aContainsAccentRegex.test(str.charAt(indexOfAccent))) {
+            str =  str.replace(str.charAt(indexOfAccent), 'a');
+        // 'c'
+        }  else if (cContainsAccentRegex.test(str.charAt(indexOfAccent))) {
+            str =  str.replace(str.charAt(indexOfAccent), 'c');
+        } 
+        return replaceAccents(str); // check again
+
+    } else { return str; }
 }
 
-// remove ponctuation at the end of a string
-export function removePonctuation(str) {
-    if ( endsWithCommaOrPeriodRegex.test(str) ) {
-        return str.substring(0, str.length-1); 
-    }
+// remove ponctuation
+export function removePunctuation(str) {
+    let punctuationless = str.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g,'');
+    return str = punctuationless.replace(/\s{2,}/g,' '); // remove additional spaces added in place of punctation
 }
-
 
 // ARRAYS --------------------------------------------------------------------------------------------------
 // Prevent adding same word ending with/without 's' in ARRAYS: SUGGESTIONS/CATEGORY lists - ex : 'fraise' + 'fraises' => keep only 'fraises'
