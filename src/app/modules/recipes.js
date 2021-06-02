@@ -107,6 +107,9 @@ export const RecipeModule = (function() {
         root.appendChild(recipesListWrapper);
     }
 
+    // BROWSER - PERF TESTS --------------------
+    const t0 = performance.now();
+    // -----------------------------------------
 
     // SEARCH FUNCTIONALITY : MAIN SEARCH ==================================================================================================
     // RETRIEVE current search term and call search method
@@ -204,6 +207,11 @@ export const RecipeModule = (function() {
         // display categories elements in menus
         updateAdvancedSearchView(arrayOfCategoryElements); // = array of arrays [appliancesList, ustensilsList, ingredientsList]
     }
+
+    // BROWSER - PERF TESTS --------------------
+    const t1 = performance.now();
+    console.log(`Call to doSomething took ${t1 - t0} milliseconds.`);
+    // -----------------------------------------
 
     // DISPLAY NO RESULTS MESSAGE
     let noResultsBlock = document.createElement('div');
