@@ -364,6 +364,22 @@ export const RecipeModule = (function() {
             listELement.addEventListener('click', function(event){ selectItemInList(event, categoryName); }, false);
         });
     }
+    // case where all tags have been removed from advanced search :
+    // IF there was a main search => reset displaying main search results
+    // ELSE => reset default view
+    let mainInputSearchActive;
+    function handleAdvancedSearchReset() {
+        const mainInputSearch = document.querySelector('#main-search-input');
+        
+        if ( mainInputSearch.value ) { 
+            mainInputSearchActive = true;
+            processCurrentMainSearch(mainInputSearch.value);
+
+        } else { 
+            mainInputSearchActive = false;
+            resetDefaultView();
+        }
+    }
 
 
     //  ======== !! TO REVIEW : REDEFINITION OF EXISTING METHOD in CollapsingMenu component : 
@@ -386,7 +402,6 @@ export const RecipeModule = (function() {
         advancedSearch(advancedSearchRecipes, searchTerm, currentCategoryName);
         advancedSearchResults = RecipeModule.getResults();
         displaySearchResults(advancedSearchResults);
-
     }
 
     // method used to close a menu if another one is called to open
@@ -423,7 +438,8 @@ export const RecipeModule = (function() {
         checkWhosOpen:checkWhosOpen,
         resetSearch: resetSearch,
         displayNoResults:displayNoResults,
-        removeNoResults:removeNoResults
+        removeNoResults:removeNoResults,
+        handleAdvancedSearchReset:handleAdvancedSearchReset
         };
     
 }());

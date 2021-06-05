@@ -305,7 +305,6 @@ export class CollapsingMenu extends HTMLElement{
                 console.log('contains parentheses');
                 removePunctuation(searchTerm);
             }
-            console.log('searchTerm after remove==', searchTerm);
             let tagText = document.createTextNode(searchTerm);
             searchItemTag.appendChild(tagText);
             searchItemTag.appendChild(tagCloseIcon);
@@ -319,7 +318,8 @@ export class CollapsingMenu extends HTMLElement{
         // ELSE => reset default view
         function checkNoRemainingTag() {
             let tagsWrapper = document.querySelector('#tagsWrapper');
-            if ( !tagsWrapper.childNodes ) { console.log('ALL TAGS REMOVED !');
+            if (  !tagsWrapper.hasChildNodes()  ) { 
+                // console.log('ALL TAGS REMOVED !');
                 noTagsRemaining = true;
             }
             return noTagsRemaining;
