@@ -68,7 +68,7 @@ export class SearchBar extends HTMLElement {
         function handleManualSearchReset(){
             if ( inputFieldTouched && !currentSearchTerm && mainInputSearch == document.activeElement ){
                 console.log('NEW SEARCH PENDING');
-                RecipeModule.resetAllForNewSearch();
+                RecipeModule.resetAllFromPreviousSearch();
                 RecipeModule.resetDefaultView();
             }
         }

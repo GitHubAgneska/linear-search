@@ -37,6 +37,9 @@ export const RecipeModule = (function() {
     let advancedSearchRecipes = [];
     let advancedSearchResults = [];
 
+    // SET-UP LOCAL STORAGE for all recipes array
+    const myStorage = window.localStorage;
+
     // fetch all recipes
     fetch(localUrl)
     .then(response => {
@@ -91,6 +94,8 @@ export const RecipeModule = (function() {
             // all recipes casted, ordered as coming from api (default)
             recipesList.push(newRecipe);
         });
+        // (will be used every time the page needs to display default view)
+        myStorage.setItem('allRecipes',JSON.stringify(recipesList));
         setResults(recipesList);
         initAdvancedSearchSection();
         setUpAdvancedSearchView(arrayOfCategoryElements); // default == all recipes (= array of arrays [appliancesList, ustensilsList, ingredientsList])
@@ -134,10 +139,16 @@ export const RecipeModule = (function() {
 
 
     let getResults = function() { return storedResults; };
+    let resetResults = function() { storedResults = []; };
 
     // STORE suggestions in the module, until display method needs them
     let setSuggestions = function(suggestions) { storedSuggestions = suggestions; };
     let getSuggestions = function() { return storedSuggestions; };
+
+
+    function resetAllFromPreviousSearch() {
+        resetSuggestions(); resetResults();
+    }
 
 
     // HANDLE SUGGESTIONS ---------------
@@ -199,18 +210,26 @@ export const RecipeModule = (function() {
         window.location.reload();
     }
 
+    function resetDefaultView() {
+        let allrecipes = JSON.parse(myStorage.getItem('allRecipes' || '[]')); // console.log('ALL RECIPES FROM LOCAL STORAGE==', allrecipes);
+        setResults(allrecipes);
+        displaySearchResults(allrecipes);
+    }
+
     // DISPLAY RECIPE LIST BY SEARCH TERM ----------------
     // when an array of results for the search term is ready to be displayed in UI
         // 'ready' means: a suggestion has been selected
         // OR : user presses 'enter' or clicks 'submit' icon
     function displaySearchResults(results) {
-        results = getResults();
-        // store current list for advanced search to search into
-        advancedSearchRecipes = getResults();
         // reset current list of recipes
         let recipesListWrapper = document.querySelector('#recipes-list');
         //reset recipes list wrapper
         while (recipesListWrapper.firstChild) { recipesListWrapper.removeChild(recipesListWrapper.firstChild); }
+
+        // store current list for advanced search to search into
+        advancedSearchRecipes = getResults();
+        results = getResults();
+        if (!results) { results = JSON.parse(myStorage.getItem('allRecipes' || '[]')); }
         // generate recipe elements to display based on new results
         results.forEach(recipe => { generateRecipeCard(recipe); });
         // set categories elements based on new results
@@ -389,11 +408,15 @@ export const RecipeModule = (function() {
     return {
         processCurrentMainSearch: processCurrentMainSearch,
         addSuggestionInList: addSuggestionInList,
+        
         resetSuggestions:resetSuggestions,
         resetSearchArray: resetSearchArray,
         setResults: setResults,
         getResults: getResults,
         setSuggestions: setSuggestions,
+        resetAllFromPreviousSearch:resetAllFromPreviousSearch,
+        resetDefaultView:resetDefaultView,
+
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,
         processAdvancedSearch: processAdvancedSearch,
