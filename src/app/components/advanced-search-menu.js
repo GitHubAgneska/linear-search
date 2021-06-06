@@ -226,6 +226,7 @@ export class CollapsingMenu extends HTMLElement{
         }
 
         function displayCurrentSuggestions(currentSuggestions) {
+            resetSuggestions();  
             // first, hide the whole current list
             cardBodyList.style.display = 'none';
             // suggestions wrapper becomes visible
