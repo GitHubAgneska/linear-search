@@ -25,12 +25,27 @@ export class SearchBar extends HTMLElement {
             </div>`;
 
         const mainInputSearch = this.querySelector('#main-search-input');
+    
         let searchIcon = this.querySelector('#search-addon');
         searchIcon.classList.add('d-inline-block');
         let resetSearchIcon = this.querySelector('#reset-search-icon');
         resetSearchIcon.style.display = 'none'; // default
 
-        resetSearchIcon.addEventListener('click', function(event) { RecipeModule.resetSearch(event); });
+        let advSearchIsActive = () => {
+            const tagsWrapper = document.querySelector('#tagsWrapper');
+            if ( tagsWrapper && tagsWrapper.hasChildNodes() ) { return true; } else { return false; }
+        };
+
+        resetSearchIcon.addEventListener('click', function(event) { 
+            if ( advSearchIsActive() ) {
+                resetInput(event);
+            } else { RecipeModule.resetSearch();}
+        });
+
+        function resetInput(event) {
+            mainInputSearch.value = event.target;
+            return mainInputSearch.value = '';
+        }
 
         // prepare a wrapper for incoming suggestions: it will be empty and non visible until items come in
         const suggestionsWrapperParent = this.querySelector('.form-outline');
@@ -57,6 +72,7 @@ export class SearchBar extends HTMLElement {
             currentSearchTerm = event.target.value;
             if ( event.key === 'Backspace') {
                 handleManualSearchReset();
+                RecipeModule.removeNoResults();
                 return false; // prevent more search
             }
             if ( event.key === 'Enter' ) { RecipeModule.confirmCurrentChars(); } // allow manual searchterm confirmation

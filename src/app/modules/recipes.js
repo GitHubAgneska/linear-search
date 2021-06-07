@@ -112,32 +112,18 @@ export const RecipeModule = (function() {
         root.appendChild(recipesListWrapper);
     }
 
-
-    let t0, t1;
     
     // SEARCH FUNCTIONALITY : MAIN SEARCH ==================================================================================================
     // RETRIEVE current search term and call search method
     function processCurrentMainSearch(currentSearchTerm) {
         // console.log(currentSearchTerm);
         if ( currentSearchTerm.length >= 3 ) { // launch search from 3 chars to make suggestions
-            // BROWSER - PERF TESTS --------------------
-            t0 = performance.now();
-            // -----------------------------------------
             search(recipes, currentSearchTerm); // launch search for term in recipes list
         }
     }
 
-
     // STORE results in the module, until display method needs them
-    let setResults = function(results) { 
-        storedResults = results;
-        // BROWSER - PERF TESTS --------------------
-        t1 = performance.now();
-        console.log('FIND SEARCH TERM took', t1 - t0, 'milliseconds');
-        // -----------------------------------------
-    };
-
-
+    let setResults = function(results) { storedResults = results; };
     let getResults = function() { return storedResults; };
     let resetResults = function() { storedResults = []; };
 
@@ -145,10 +131,7 @@ export const RecipeModule = (function() {
     let setSuggestions = function(suggestions) { storedSuggestions = suggestions; };
     let getSuggestions = function() { return storedSuggestions; };
 
-
-    function resetAllFromPreviousSearch() {
-        resetSuggestions(); resetResults();
-    }
+    function resetAllFromPreviousSearch() { resetSuggestions(); resetResults(); removeNoResults(); }
 
 
     // HANDLE SUGGESTIONS ---------------
@@ -182,6 +165,16 @@ export const RecipeModule = (function() {
         resetSuggestions();
         // order display of list results for this word
         displaySearchResults();
+    }
+
+      // case where user presses 'enter' in search bar 
+    // -> if searchterm is partial => will display all recipes linked to all suggested words ------ TO REVIEW : will do the samr if word is complete..
+    function confirmCurrentChars() {
+        // let suggested = getSuggestedResults();
+        let results = getResults();
+        setResults(results);
+        displaySearchResults(results);
+        resetSuggestions(); // reset suggestions data
     }
 
     // suggestions list DOM should be reset at each new keystroke
@@ -425,6 +418,7 @@ export const RecipeModule = (function() {
         setSuggestions: setSuggestions,
         resetAllFromPreviousSearch:resetAllFromPreviousSearch,
         resetDefaultView:resetDefaultView,
+        confirmCurrentChars:confirmCurrentChars,
 
         retrieveFirstSuggestion: retrieveFirstSuggestion,
         displaySearchResults: displaySearchResults,

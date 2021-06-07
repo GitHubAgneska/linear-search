@@ -4,12 +4,19 @@ let resultsList = []; // list of recipes matching search
 let suggestions = []; // list of suggested words matching search
 let advancedSearchResults = []; // list of recipes matching advanced search
 
-
+// BROWSER PERF TESTS --------------------------------------------------
+let t0, t1;
+// ---------------------------------------------------------------------
 
 
 // MAIN SEARCH ======================================================================================================
 // search term in recipes list
 export function search(recipes, searchterm) {
+
+    // BROWSER - PERF TESTS --------------------
+    t0 = performance.now();
+    // -----------------------------------------
+
     resultsList = [];suggestions = []; // reset these 2 at every new keystroke
     RecipeModule.resetSuggestions(); // reset displayed suggestions list
 
@@ -22,12 +29,16 @@ export function search(recipes, searchterm) {
     // console.log('CURRENT suggestions for word ==', suggestions);
     if (resultsList.length > 0) {
         RecipeModule.setResults(resultsList); // return updated results array to Module
+        t1 = performance.now(); 
+        console.log('FIND SEARCH TERM : ', searchterm ,' AND RETRIEVE RESULTS TOOK', t1 - t0, 'milliseconds');
     } else { 
         RecipeModule.displayNoResults();
         return; // stop search
     }
     if ( suggestions.length > 0 ) {
         RecipeModule.setSuggestions(suggestions); // return updated suggestions list array to Module
+        t1 = performance.now(); 
+        console.log('FIND MATCHES FOR SEARCH TERM : ', searchterm ,'TOOK', t1 - t0, 'milliseconds');
         } else { return;
     }
 }
