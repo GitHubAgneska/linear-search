@@ -13,6 +13,8 @@ let t0, t1;
 // search term in recipes list
 export function search(recipes, searchterm) {
 
+    t0 = 0; t1 = 0;
+
     // BROWSER - PERF TESTS --------------------
     t0 = performance.now();
     // -----------------------------------------
@@ -28,17 +30,21 @@ export function search(recipes, searchterm) {
     // console.log('results=====',resultsList );
     // console.log('CURRENT suggestions for word ==', suggestions);
     if (resultsList.length > 0) {
+        t1 = performance.now();
         RecipeModule.setResults(resultsList); // return updated results array to Module
-        t1 = performance.now(); 
-        console.log('FIND SEARCH TERM : ', searchterm ,' AND RETRIEVE RESULTS TOOK', t1 - t0, 'milliseconds');
+        if (t1 - t0 > 0 ) {
+            console.log('******* FIND MATCHES FOR SEARCH TERM : ', searchterm ,' AND RETRIEVE RESULTS TOOK', t1 - t0, 'milliseconds' ,'\n','----> RESULTS===',resultsList);
+        }
     } else { 
         RecipeModule.displayNoResults();
         return; // stop search
     }
     if ( suggestions.length > 0 ) {
+        t1 = performance.now();
         RecipeModule.setSuggestions(suggestions); // return updated suggestions list array to Module
-        t1 = performance.now(); 
-        console.log('FIND MATCHES FOR SEARCH TERM : ', searchterm ,'TOOK', t1 - t0, 'milliseconds');
+        if (t1 - t0 > 0 ) {
+            console.log('******* FIND SUGGESTIONS FOR SEARCH TERM : ', searchterm ,'TOOK', t1 - t0, 'milliseconds','\n','----> SUGGESTIONS===',suggestions);
+        }
         } else { return;
     }
 }
@@ -46,6 +52,11 @@ export function search(recipes, searchterm) {
 
 // search in each recipe name
 function searchInName(recipe, name, searchterm){
+    t0 = 0; t1 = 0;
+
+    // BROWSER - PERF TESTS --------------------
+    t0 = performance.now();
+     // -----------------------------------------
 
     let arrayFromName = name.toLowerCase().split(' ');  // 'Soupe de concombre' => [ 'soupe', 'de', 'concombre' ]
     // search match in each word of the name (or in word if name = one word)
@@ -54,6 +65,13 @@ function searchInName(recipe, name, searchterm){
         // ex : searchterm = 'soup' - => should match 'soupe' in [ 'soupe', 'de', 'concombre' ]
             if (word.includes(searchterm)) { 
                 // console.log(' searching for ==', searchterm, 'match in name is==', word);
+
+                // BROWSER - PERF TESTS --------------------
+                t1 = performance.now();
+                if (t1 - t0 > 0 ) {
+                    console.log('======= searchInName MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds');
+                }
+                // -----------------------------------------
 
                 // (if not there already) store suggestion in array : all words beginning with these letters
                 if ( !suggestions.includes(word)) {
@@ -78,6 +96,11 @@ function searchInName(recipe, name, searchterm){
 // ex : 'poi' => should find 'poivre' and skip 'poivrez'
 // + skip ',' in 'poivre,'
 function searchInDescription(recipe, description, searchterm){
+    t0 = 0; t1 = 0;
+
+    // BROWSER - PERF TESTS --------------------
+    t0 = performance.now();
+    // -----------------------------------------
 
     let arrayFromDesc = description.toLowerCase().split(' ');  // 'Eplucher les concombres, poivrez, ' => [ 'eplucher', 'les', 'concombres', 'poivrez,' ,  ]
     // search match in each word of the description
@@ -92,6 +115,14 @@ function searchInDescription(recipe, description, searchterm){
         
         // if word includes searchterm and is not a verb
         if ( word.includes(searchterm) && !(isAverbRegex.test(word))) {
+
+            // BROWSER - PERF TESTS --------------------
+            t1 = performance.now();
+            if (t1 - t0 > 0 ) {
+                console.log('======= searchInDesc MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds');
+            } 
+            // -----------------------------------------
+
             // console.log(' searching for ==', searchterm, 'match in description is==', word);
             // if matching word ends with comma/period : remove them ()
             if ( endsWithCommaOrPeriodRegex.test(word) ) {
@@ -115,6 +146,12 @@ function searchInDescription(recipe, description, searchterm){
 }
 
 function searchInIngredients(recipe, recipeIngredients, searchterm){
+    t0 = 0; t1 = 0;
+
+    // BROWSER - PERF TESTS --------------------
+    t0 = performance.now();
+    // -----------------------------------------
+
     // recipe ingredients is an array of objects
     // match search occurs in 1st key/value of each object (ignoring rest of ingredients key/values : 'unit' and 'quantity')  
     // ex : recipe.ingredients :[ { 'ingredient':'concombre'}, { 'ingredient':'citron'} ]
@@ -124,6 +161,12 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
                 let ingredientName = value.toLowerCase();
                 // ingredientName can be one word or several words
                 if ( ingredientName.includes(searchterm) ) {
+                // BROWSER - PERF TESTS --------------------
+                    t1 = performance.now();
+                    if (t1 - t0 > 0 ) {
+                        console.log('======= searchInIngredients MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds');
+                    } 
+                // -----------------------------------------
                     if ( !suggestions.includes(ingredientName)) {
                         // CASE ONE - suggest word : search 'lait' will not suggest 'chocolat au lait' 
                         suggestions.push(ingredientName);
@@ -168,7 +211,7 @@ export function advancedSearch(currentResults, searchTerm, currentCategoryName){
                     let recipeIngredients = currentRecipe.ingredients;
                     recipeIngredients.forEach( item => {  // for each ingredient object of ingredients array     
                         for (const [key, value] of Object.entries(item) ) { // for each key:value of ingredient object
-                            if (key === 'ingredient') { console.log('key====', key );
+                            if (key === 'ingredient') { // console.log('key====', key );
                                 let ingredientName = value.toLowerCase();  // console.log('value====', ingredientName ); console.log('searchTerm====', searchTerm );   
                                 if ( ingredientName === searchTerm.toLowerCase()  || ingredientName.includes(searchTerm.toLowerCase())  ) {
                                     // prevent multiple addings when user continues typing word that has already been found - ideally, search should stop if matches are found?
