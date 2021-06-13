@@ -69,7 +69,7 @@ function searchInName(recipe, name, searchterm){
                 // BROWSER - PERF TESTS --------------------
                 t1 = performance.now();
                 if (t1 - t0 > 0 ) {
-                    console.log('======= searchInName MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds');
+                    console.log('======= searchInName MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds', '\n MATCHES ===== ', word );
                 }
                 // -----------------------------------------
 
@@ -96,7 +96,7 @@ function searchInName(recipe, name, searchterm){
 // ex : 'poi' => should find 'poivre' and skip 'poivrez'
 // + skip ',' in 'poivre,'
 function searchInDescription(recipe, description, searchterm){
-    t0 = 0; t1 = 0;
+    t0 = 0; t1 = 0; console.log('resetting t0 /t1');
 
     // BROWSER - PERF TESTS --------------------
     t0 = performance.now();
@@ -119,7 +119,7 @@ function searchInDescription(recipe, description, searchterm){
             // BROWSER - PERF TESTS --------------------
             t1 = performance.now();
             if (t1 - t0 > 0 ) {
-                console.log('======= searchInDesc MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds');
+                console.log('======= searchInDesc MATCH FOUND FOR ---> ',searchterm,' <--- TOOK', t1 - t0, 'milliseconds','\n MATCHES ===== ', word );
             } 
             // -----------------------------------------
 
@@ -164,7 +164,7 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
                 // BROWSER - PERF TESTS --------------------
                     t1 = performance.now();
                     if (t1 - t0 > 0 ) {
-                        console.log('======= searchInIngredients MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds');
+                        console.log('======= searchInIngredients MATCH FOUND FOR ---> ',searchterm,'<--- TOOK', t1 - t0, 'milliseconds','\n MATCHES ===== ', ingredientName);
                     } 
                 // -----------------------------------------
                     if ( !suggestions.includes(ingredientName)) {
