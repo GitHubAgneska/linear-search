@@ -5,7 +5,7 @@ let suggestions = []; // list of suggested words matching search
 let advancedSearchResults = []; // list of recipes matching advanced search
 
 // BROWSER PERF TESTS --------------------------------------------------
-let t0, t1;
+let t0Total, t1Total;
 // ---------------------------------------------------------------------
 
 
@@ -13,10 +13,10 @@ let t0, t1;
 // search term in recipes list
 export function search(recipes, searchterm) {
 
-    t0 = 0; t1 = 0;
+    t0Total = 0; t1Total = 0;
 
     // BROWSER - PERF TESTS --------------------
-    t0 = performance.now();
+    t0Total = performance.now();
     // -----------------------------------------
 
     resultsList = [];suggestions = []; // reset these 2 at every new keystroke
@@ -30,32 +30,32 @@ export function search(recipes, searchterm) {
     // console.log('results=====',resultsList );
     // console.log('CURRENT suggestions for word ==', suggestions);
     if (resultsList.length > 0) {
-        t1 = performance.now();
+        t1Total = performance.now();
         RecipeModule.setResults(resultsList); // return updated results array to Module
-        if (t1 - t0 > 0 ) {
-            console.log('******* FIND MATCHES FOR SEARCH TERM : ', searchterm ,' AND RETRIEVE RESULTS TOOK', t1 - t0, 'milliseconds' ,'\n','----> RESULTS===',resultsList);
+        if (t1Total - t0Total > 0 ) {
+            console.log('******* FIND MATCHES FOR SEARCH TERM : ', searchterm ,' AND RETRIEVE RESULTS TOOK', t1Total - t0Total, 'milliseconds' ,'\n','----> RESULTS===',resultsList);
         }
     } else { 
         RecipeModule.displayNoResults();
         return; // stop search
     }
     if ( suggestions.length > 0 ) {
-        t1 = performance.now();
+        t1Total = performance.now();
         RecipeModule.setSuggestions(suggestions); // return updated suggestions list array to Module
-        if (t1 - t0 > 0 ) {
-            console.log('******* FIND SUGGESTIONS FOR SEARCH TERM : ', searchterm ,'TOOK', t1 - t0, 'milliseconds','\n','----> SUGGESTIONS===',suggestions);
+        if (t1Total - t0Total > 0 ) {
+            console.log('******* FIND SUGGESTIONS FOR SEARCH TERM : ', searchterm ,'TOOK', t1Total - t0Total, 'milliseconds','\n','----> SUGGESTIONS===',suggestions);
         }
         } else { return;
     }
 }
 
-
+let t0Name, t1Name;
 // search in each recipe name
 function searchInName(recipe, name, searchterm){
-    t0 = 0; t1 = 0;
+    t0Name = 0; t1Name = 0;
 
     // BROWSER - PERF TESTS --------------------
-    t0 = performance.now();
+    t0Name = performance.now();
      // -----------------------------------------
 
     let arrayFromName = name.toLowerCase().split(' ');  // 'Soupe de concombre' => [ 'soupe', 'de', 'concombre' ]
@@ -64,12 +64,12 @@ function searchInName(recipe, name, searchterm){
         // if part of a word in array matches current searchterm 
         // ex : searchterm = 'soup' - => should match 'soupe' in [ 'soupe', 'de', 'concombre' ]
             if (word.includes(searchterm)) { 
-                // console.log(' searching for ==', searchterm, 'match in name is==', word);
+                console.log(' searching for ==', searchterm, 'match in name is==', word);
 
                 // BROWSER - PERF TESTS --------------------
-                t1 = performance.now();
-                if (t1 - t0 > 0 ) {
-                    console.log('======= searchInName MATCH FOUND FOR ',searchterm,' TOOK', t1 - t0, 'milliseconds', '\n MATCHES ===== ', word );
+                t1Name = performance.now();
+                if (t1Name - t0Name > 0 ) {
+                    console.log('======= searchIn NAME ==> MATCH FOUND FOR ',searchterm,' TOOK', t1Name - t0Name, 'milliseconds', '\n MATCHES ===== ', word );
                 }
                 // -----------------------------------------
 
@@ -92,14 +92,16 @@ function searchInName(recipe, name, searchterm){
     return resultsList;
 }
 
+
+let t0Desc, t1Desc;
 // in description, we need to retrieve matching ingredients, and skip verbs
 // ex : 'poi' => should find 'poivre' and skip 'poivrez'
 // + skip ',' in 'poivre,'
 function searchInDescription(recipe, description, searchterm){
-    t0 = 0; t1 = 0; console.log('resetting t0 /t1');
+    t0Desc = 0; t1Desc = 0; console.log('resetting t0 /t1');
 
     // BROWSER - PERF TESTS --------------------
-    t0 = performance.now();
+    t0Desc = performance.now();
     // -----------------------------------------
 
     let arrayFromDesc = description.toLowerCase().split(' ');  // 'Eplucher les concombres, poivrez, ' => [ 'eplucher', 'les', 'concombres', 'poivrez,' ,  ]
@@ -117,9 +119,9 @@ function searchInDescription(recipe, description, searchterm){
         if ( word.includes(searchterm) && !(isAverbRegex.test(word))) {
 
             // BROWSER - PERF TESTS --------------------
-            t1 = performance.now();
-            if (t1 - t0 > 0 ) {
-                console.log('======= searchInDesc MATCH FOUND FOR ---> ',searchterm,' <--- TOOK', t1 - t0, 'milliseconds','\n MATCHES ===== ', word );
+            t1Desc = performance.now();
+            if (t1Desc - t0Desc > 0 ) {
+                console.log('======= searchInDesc MATCH FOUND FOR ---> ', searchterm ,' <--- TOOK', t1Desc - t0Desc, 'milliseconds','\n MATCHES ===== ', word );
             } 
             // -----------------------------------------
 
@@ -145,11 +147,12 @@ function searchInDescription(recipe, description, searchterm){
     return resultsList;
 }
 
+let t0Ingre, t1Ingre;
 function searchInIngredients(recipe, recipeIngredients, searchterm){
-    t0 = 0; t1 = 0;
+    t0Ingre = 0; t1Ingre = 0;
 
     // BROWSER - PERF TESTS --------------------
-    t0 = performance.now();
+    t0Ingre = performance.now();
     // -----------------------------------------
 
     // recipe ingredients is an array of objects
@@ -162,9 +165,9 @@ function searchInIngredients(recipe, recipeIngredients, searchterm){
                 // ingredientName can be one word or several words
                 if ( ingredientName.includes(searchterm) ) {
                 // BROWSER - PERF TESTS --------------------
-                    t1 = performance.now();
-                    if (t1 - t0 > 0 ) {
-                        console.log('======= searchInIngredients MATCH FOUND FOR ---> ',searchterm,'<--- TOOK', t1 - t0, 'milliseconds','\n MATCHES ===== ', ingredientName);
+                    t1Ingre = performance.now();
+                    if (t1Ingre - t0Ingre > 0 ) {
+                        console.log('======= searchInIngredients MATCH FOUND FOR ---> ',searchterm,'<--- TOOK', t1Ingre - t0Ingre, 'milliseconds','\n MATCHES ===== ', ingredientName);
                     } 
                 // -----------------------------------------
                     if ( !suggestions.includes(ingredientName)) {
